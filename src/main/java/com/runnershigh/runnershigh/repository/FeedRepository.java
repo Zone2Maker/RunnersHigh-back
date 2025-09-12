@@ -35,12 +35,7 @@ public class FeedRepository {
 
     // 주간 좋아요 순위 5개 피드 조회
     public List<GetFeedDetailRespDto> getWeeklyTopFeeds() {
-        // 조회 기간 설정 (지금부터 -7일)
-        LocalDateTime start = LocalDateTime.now().minusDays(7);
-        // 조회기간 마지막 날(지금까지)
-        LocalDateTime end = LocalDateTime.now();
-        LocalDateTime today = LocalDateTime.now();
-        return feedMapper.getWeeklyTopFeeds(start, end);
+        return feedMapper.getWeeklyTopFeeds();
     }
 
     // feed객체 자체를 받아서
