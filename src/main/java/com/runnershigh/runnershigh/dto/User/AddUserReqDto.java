@@ -1,7 +1,15 @@
 package com.runnershigh.runnershigh.dto.User;
 
 import com.runnershigh.runnershigh.entity.User;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class AddUserReqDto {
 
     private String email;

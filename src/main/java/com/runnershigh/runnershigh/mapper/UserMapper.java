@@ -30,6 +30,7 @@ public interface UserMapper {
     //신규 회원 추가
     public int addUser (User user);
 
+    //회원 정보 수정 - 닉네임, 프로필이미지
     public int updateUser(User user);
 
 }
