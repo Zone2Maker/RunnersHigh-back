@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.runnershigh.runnershigh.mapper.MessageMapper">
+    <insert id="addMessage" useGeneratedKeys="true" keyProperty="messageId">
+        INSERT INTO
+            message_tb
+        VALUES
+            (0, #{crewId}, #{userId}, #{message}, #{messageType}, NOW(), NOW())
+    </insert>
+    <select id="getMessageList" resultType="GetMessageListRespDto">
+        SELECT
+            mb.message_id,
+            mb.user_id,
+            mb.message,
+            mb.message_type,
+            mb.create_dt,
+
+            ut.nickname,
+            ut.profile_img_url
+        FROM
+            message_tb mb
+            INNER JOIN user_tb ut ON (mb.user_id = ut.user_id)
+        WHERE
+            mb.crew_id = #{crewId}
+            AND
+        <!-- 해당 유저의 가입일 이후의 메시지만 -->
+            mb.create_dt >= (
+                SELECT create_dt
+                FROM crew_user_tb
+                WHERE user_id = #{userId} AND crew_id = #{crewId}
+            )
+        ORDER BY
+            mb.create_dt ASC
+        LIMIT #{page} OFFSET ${(page - 1) * size}
+    </select>
+    <select id="getLastReadMessageId">
+        SELECT
+            last_read_message_id
+        FROM
+            message_tb
+        WHERE
+            user_id = #{userId}
+            AND
+            crew_id = #{crewId}
+    </select>
+</mapper>
