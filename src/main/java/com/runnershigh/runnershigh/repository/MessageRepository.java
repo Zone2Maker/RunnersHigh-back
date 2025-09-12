@@ -1,6 +1,5 @@
 package com.runnershigh.runnershigh.repository;
 
-import com.runnershigh.runnershigh.dto.message.GetLastReadMessageIdReqDto;
 import com.runnershigh.runnershigh.dto.message.GetMessageListReqDto;
 import com.runnershigh.runnershigh.dto.message.GetMessageListRespDto;
 import com.runnershigh.runnershigh.entity.Message;
@@ -23,15 +22,17 @@ public class MessageRepository {
         } catch (DuplicateKeyException e) {
             return Optional.empty();
         }
-        return Optional.of();
-    }
-
-    public int getLastReadMessageId(GetLastReadMessageIdReqDto getLastReadMessageIdReqDto) {
-        return messageMapper.getLastReadMessageId(getLastReadMessageIdReqDto);
+        return Optional.of(message);
     }
 
     public List<GetMessageListRespDto> getMessageList(GetMessageListReqDto getMessageListReqDto) {
-        return messageMapper.getMessageList(getMessageListReqDto);
+        int page = getMessageListReqDto.getPage();
+        int size = getMessageListReqDto.getSize();
+        int crewId = getMessageListReqDto.getCrewId();
+        int userId = getMessageListReqDto.getUserId();
+        int offset = page * size;
+
+        return messageMapper.getMessageList(page, offset, crewId, userId);
     }
 
 }
