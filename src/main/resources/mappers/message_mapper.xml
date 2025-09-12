@@ -33,7 +33,7 @@
             )
         ORDER BY
             mb.create_dt ASC
-        LIMIT #{size} OFFSET ${(page-1) * size}
+        LIMIT #{size} OFFSET ${offset}
     </select>
 
 </mapper>
