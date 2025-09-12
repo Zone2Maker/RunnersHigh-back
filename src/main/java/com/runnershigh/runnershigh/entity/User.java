@@ -1,5 +1,6 @@
 package com.runnershigh.runnershigh.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Builder;
 import lombok.Data;
 
@@ -11,11 +12,11 @@ import java.util.List;
 public class User {
     private Integer userId;
     private String email;
+    @JsonIgnore
     private String password;
     private String nickname;
     private String profileImgUrl;
-    private Integer crewId;
-    private LocalDateTime last_login_dt;
+    private LocalDateTime lastLoginDt;
     private LocalDateTime createDt;
     private LocalDateTime updateDt;
 
