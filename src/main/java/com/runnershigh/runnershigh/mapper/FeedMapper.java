@@ -15,12 +15,10 @@ import java.util.Optional;
 public interface FeedMapper {
     // 피드 목록 조회
     // userId Integer nullable 체크때문에 사용하라는데...
-    List<GetFeedRespDto> getFeedList(@Param("userId") Integer userId,
-                                     @Param("page") Integer page,
-                                     @Param("size") Integer size);
+    List<GetFeedRespDto> getFeedList(int userId, int page, int offset);
 
     // 내가 좋아요한 피드 목록
-    List<GetILikedFeedRespDto> getILikedFeedList(int userId);
+    List<GetILikedFeedRespDto> getILikedFeedList(int userId, int page, int offset);
 
     // 피드 상세
     Optional<GetFeedDetailRespDto> getFeedDetailByFeedId(@Param("feedId") int feedId);

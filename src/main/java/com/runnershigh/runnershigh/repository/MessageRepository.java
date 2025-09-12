@@ -26,7 +26,13 @@ public class MessageRepository {
     }
 
     public List<GetMessageListRespDto> getMessageList(GetMessageListReqDto getMessageListReqDto) {
-        return messageMapper.getMessageList(getMessageListReqDto);
+        int page = getMessageListReqDto.getPage();
+        int size = getMessageListReqDto.getSize();
+        int crewId = getMessageListReqDto.getCrewId();
+        int userId = getMessageListReqDto.getUserId();
+        int offset = page * size;
+
+        return messageMapper.getMessageList(page, offset, crewId, userId);
     }
 
 }

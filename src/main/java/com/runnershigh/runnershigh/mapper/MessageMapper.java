@@ -10,5 +10,5 @@ import java.util.List;
 @Mapper
 public interface MessageMapper {
     int addMessage(Message message);
-    List<GetMessageListRespDto> getMessageList(GetMessageListReqDto getMessageListReqDto);
+    List<GetMessageListRespDto> getMessageList(int page, int offset, int crewId, int userId);
 }
