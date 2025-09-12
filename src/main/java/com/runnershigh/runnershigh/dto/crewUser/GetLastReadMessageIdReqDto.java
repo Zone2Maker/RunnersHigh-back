@@ -1,4 +1,4 @@
-package com.runnershigh.runnershigh.dto.message;
+package com.runnershigh.runnershigh.dto.crewUser;
 
 import lombok.Data;
 
