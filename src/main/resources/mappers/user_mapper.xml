@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.runnershigh.runnershigh.mapper.UserMapper">
+
+    <resultMap id="RoleResultMap" type="com.runnershigh.runnershigh.entity.Role">
+        <id property="roleId" column="role_id"/>
+        <result property="roleName" column="role_name"/>
+        <result property="roleNameKor" column="role_name_kor"/>
+    </resultMap>
+    <resultMap id="UserResultMap" type="com.runnershigh.runnershigh.entity.User">
+        <id property="userId" column="user_id" />
+        <result property="email" column="email" />
+        <result property="password" column="password" />
+        <result property="nickname" column="nickname" />
+        <result property="profileImgUrl" column="profile_img_url" />
+        <result property="lastLoginDt" column="last_login_dt" />
+        <result property="createDt" column="create_dt" />
+        <result property="updateDt" column="update_dt" />
+        <collection property="userRoles" resultMap="UserRoleResultMap" />
+    </resultMap>
+    <resultMap id="UserRoleResultMap" type="com.runnershigh.runnershigh.entity.UserRole">
+        <id property="userRoleId" column="user_role_id" />
+        <result property="userId" column="urt_user_id" />
+        <result property="roleId" column="urt_role_id" />
+        <result property="createDt" column="urt_create_dt" />
+        <result property="updateDt" column="urt_update_dt" />
+        <association property="role" resultMap="RoleResultMap" />
+    </resultMap>
+<!--    getUserInfo - userId, email, nickname 동적쿼리 이용해서
+3가지 중 하나로 회원 정보와 권한을 함께 조회-->
+    <select id="getUserInfo" resultMap="UserResultMap">
+        SELECT
+            ut.user_id,
+            ut.email,
+            ut.password,
+            ut.nickname,
+            ut.profile_img_url,
+            ut.last_login_dt,
+            ut.create_dt,
+            ut.update_dt,
+            urt.user_role_id,
+            urt.user_id as urt_user_id,
+            urt.role_id as urt_role_id,
+            urt.create_dt as urt_create_dt,
+            urt.update_dt as urt_update_dt,
+            rt.role_id,
+            rt.role_name,
+            rt.role_name_kor
+        FROM
+            user_tb ut
+        LEFT JOIN
+            user_role_tb urt ON ut.user_id = urt.user_id
+        LEFT JOIN
+            role_tb rt ON urt.role_id = rt.role_id
+        <where>
+            <if test="userId != null"> AND ut.user_id = #{userId} </if>
+            <if test="email != null"> AND ut.email = #{email} </if>
+            <if test="nickname != null"> AND ut.nickname = #{nickname} </if>
+        </where>
+    </select>
+
+<!--    checkUserExist - email, nickname -->
+    <select id="checkUserExist" resultType="int">
+        SELECT EXISTS (
+        SELECT 1
+        FROM user_tb
+        <where>
+            <choose>
+                <when test="email != null"> email = #{email} </when>
+                <when test="nickname != null"> nickname = #{nickname} </when>
+            </choose>
+        </where>
+        )
+    </select>
+<!--//중복 방지용으로 존재 여부만 체크하는 것일 경우
+    //COUNT 대신 EXISTS (0/1 리턴) 쓰는 게 나음-->
+
+<!--addUser -  신규회원 저장-->
+    <insert id="addUser" useGeneratedKeys="true" keyProperty="userId">
+    insert into
+        user_tb (email, password, nickname, profile_img_url, last_login_dt, create_dt, update_dt)
+    values
+        (#{email}, #{password}, #{nickname}, #{profileImgUrl}, #{lastLoginDt}, now(), #{updateDt})
+    </insert>
+
+<!--udateUser - 유저 정보 변경 (닉네임, 프로필이미지)-->
+    <update id="updateUser">
+    UPDATE user_tb
+    <set>
+        <if test="nickname != null and nickname != ''">
+            nickname = #{nickname},
+        </if>
+        <if test="profileImgUrl != null and profileImgUrl != ''">
+            profile_img_url = #{profileImgUrl},
+        </if>
+        <if test="password != null and password != ''">
+            password = #{password},
+        </if>
+        update_dt = NOW()
+    </set>
+    WHERE
+    user_id = #{userId}
+    </update>
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+</mapper>
