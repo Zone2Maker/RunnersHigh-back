@@ -9,6 +9,7 @@ public class Feed {
     private Integer feedId;
     private Integer userId;
     private String feedImgUrl;
+    private String feedStatus;
     private String feedLocation;
     private String feedLongitude;
     private String feedLatitude;
