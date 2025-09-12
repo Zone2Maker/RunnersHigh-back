@@ -1,9 +1,7 @@
 package com.runnershigh.runnershigh.dto.message;
 
-import com.runnershigh.runnershigh.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
