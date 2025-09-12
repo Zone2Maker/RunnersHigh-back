@@ -95,9 +95,6 @@
         <if test="profileImgUrl != null and profileImgUrl != ''">
             profile_img_url = #{profileImgUrl},
         </if>
-        <if test="password != null and password != ''">
-            password = #{password},
-        </if>
         update_dt = NOW()
     </set>
     WHERE
