@@ -4,9 +4,11 @@ import com.runnershigh.runnershigh.dto.ApiRespDto;
 import com.runnershigh.runnershigh.entity.User;
 import com.runnershigh.runnershigh.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+@Service
 public class UserService {
     @Autowired
     private UserRepository userRepository;
@@ -44,6 +46,7 @@ public class UserService {
 
     //회원 정보 수정 - updateUser
     //현재 로그인된 사용자의 userId 필요함
+//    @Transactional
 //    public ApiRespDto<?> updateUser (UpdateUserReqDto updateUserReqDto) {
 //        //요청 DTO에 담긴 userId와 실제 로그인한 사용자의 userId가 일치하는지 확인하는 부분
 //        //실제 로그인한 사용자 id -
