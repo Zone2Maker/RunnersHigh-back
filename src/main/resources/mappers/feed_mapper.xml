@@ -4,7 +4,6 @@
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.runnershigh.runnershigh.mapper.FeedMapper">
 
-
     <!--    쿼리 결과를 DTO 객체로 매핑-->
     <!--    주간 BEST5 게시물-->
     <select id="getWeeklyTopFeeds" resultType="com.runnershigh.runnershigh.dto.feed.GetFeedRespDto">
@@ -39,7 +38,7 @@
         </where>
         GROUP BY f.feed_id, f.feed_img_url
         ORDER BY f.create_dt DESC
-        LIMIT #{size} OFFSET #{(page-1) * size}
+        LIMIT #{size} OFFSET #{offset}
     </select>
 
     <!-- 내가 좋아요한 피드 목록 조회 -->
@@ -56,7 +55,7 @@
 
     <!-- 피드 상세 + 작성자 매핑 -->
     <!--  의문점 : getFeed 모달에 왜 페이지네이션 필요한지  -->
-    <select id="getFeedDetailByFeedId" resultType="GetFeedDetailRespDto">
+    <select id="getFeedDetailByFeedId" resultType="com.runnershigh.runnershigh.dto.feed.GetFeedDetailRespDto">
         SELECT
             f.feed_id,
             f.user_id,
@@ -72,13 +71,13 @@
             LEFT JOIN like_tb l ON f.feed_id = l.feed_id
         GROUP BY f.feed_id, f.user_id, f.feed_img_url, f.feed_location,
                 u.user_id, u.nickname, u.profile_img_url
-        ORDER BY f.create_dt DESC;
-        LIMIT #{size} OFFSET #{(page-1) * size}
+        ORDER BY f.create_dt DESC
     </select>
 
     <!--  피드 추가(생성)  -->
     <insert id="addFeed" parameterType="com.runnershigh.runnershigh.entity.Feed" useGeneratedKeys="true" keyProperty="feedId">
         INSERT INTO feed_tb (
+            feed_id,
             user_id,
             feed_img_url,
             feed_status,
@@ -89,6 +88,7 @@
             update_dt
             )
         VALUES (
+            0,
             #{userId},
             #{feedImgUrl},
             #{feedStatus},

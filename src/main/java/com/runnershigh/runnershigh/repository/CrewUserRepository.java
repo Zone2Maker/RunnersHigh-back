@@ -1,6 +1,6 @@
 package com.runnershigh.runnershigh.repository;
 
-import com.runnershigh.runnershigh.dto.crewUser.JoinCrewReqDto;
+import com.runnershigh.runnershigh.dto.crewUser.GetLastReadMessageIdReqDto;
 import com.runnershigh.runnershigh.entity.CrewUser;
 import com.runnershigh.runnershigh.mapper.CrewUserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,5 +13,9 @@ public class CrewUserRepository {
 
     public int joinCrew(CrewUser crewUser) {
         return crewUserMapper.joinCrew(crewUser);
+    }
+
+    public int getLastReadMessageId(GetLastReadMessageIdReqDto getLastReadMessageIdReqDto) {
+        return crewUserMapper.getLastReadMessageId(getLastReadMessageIdReqDto);
     }
 }

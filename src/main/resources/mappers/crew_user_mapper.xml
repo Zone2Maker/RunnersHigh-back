@@ -20,4 +20,14 @@
             NOW(),
             NOW()
     </insert>
+    <select id="getLastReadMessageId">
+        SELECT
+            last_read_message_id
+        FROM
+            crew_user_tb
+        WHERE
+            user_id = #{userId}
+            AND
+            crew_id = #{crewId}
+    </select>
 </mapper>
