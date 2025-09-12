@@ -1,4 +1,4 @@
-package com.runnershigh.runnershigh.dto.user;
+package com.runnershigh.runnershigh.dto.User;
 
 import com.runnershigh.runnershigh.entity.User;
 import lombok.AllArgsConstructor;
