@@ -14,20 +14,20 @@ public class UserRepository {
     @Autowired
     private UserMapper userMapper;
 
-public Optional<User> getUserInfo(Integer userId, String email, String nickname) {
-    return userMapper.getUserInfo(userId, email, nickname);
-}
+    public Optional<User> getUserInfo(Integer userId, String email, String nickname) {
+        return userMapper.getUserInfo(userId, email, nickname);
+    }
 
-public int checkUserExist(String email, String nickname) {
-    return userMapper.checkUserExist(email, nickname);
-}
+    public int checkUserExist(String email, String nickname) {
+        return userMapper.checkUserExist(email, nickname);
+    }
 
-public int addUser(User user) {
-    return userMapper.addUser(user);
-}
+    public int addUser(User user) {
+        return userMapper.addUser(user);
+    }
 
-public int updateUser(User user) {
-    return userMapper.updateUser(user);
-}
+    public int updateUser(User user) {
+        return userMapper.updateUser(user);
+    }
 }
 
