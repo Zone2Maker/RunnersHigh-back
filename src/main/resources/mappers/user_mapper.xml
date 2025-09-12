@@ -82,7 +82,7 @@
     insert into
         user_tb (email, password, nickname, profile_img_url, last_login_dt, create_dt, update_dt)
     values
-        (#{email}, #{password}, #{nickname}, #{profileImgUrl}, #{lastLoginDt}, now(), #{updateDt})
+        (#{email}, #{password}, #{nickname}, #{profileImgUrl}, #{lastLoginDt}, now(), null)
     </insert>
 
 <!--udateUser - 유저 정보 변경 (닉네임, 프로필이미지)-->
