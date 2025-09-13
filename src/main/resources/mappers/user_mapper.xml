@@ -9,6 +9,14 @@
         <result property="roleName" column="role_name"/>
         <result property="roleNameKor" column="role_name_kor"/>
     </resultMap>
+    <resultMap id="UserRoleResultMap" type="com.runnershigh.runnershigh.entity.UserRole">
+        <id property="userRoleId" column="user_role_id" />
+        <result property="userId" column="urt_user_id" />
+        <result property="roleId" column="urt_role_id" />
+        <result property="createDt" column="urt_create_dt" />
+        <result property="updateDt" column="urt_update_dt" />
+        <association property="role" resultMap="RoleResultMap" />
+    </resultMap>
     <resultMap id="UserResultMap" type="com.runnershigh.runnershigh.entity.User">
         <id property="userId" column="user_id" />
         <result property="email" column="email" />
@@ -20,14 +28,7 @@
         <result property="updateDt" column="update_dt" />
         <collection property="userRoles" resultMap="UserRoleResultMap" />
     </resultMap>
-    <resultMap id="UserRoleResultMap" type="com.runnershigh.runnershigh.entity.UserRole">
-        <id property="userRoleId" column="user_role_id" />
-        <result property="userId" column="urt_user_id" />
-        <result property="roleId" column="urt_role_id" />
-        <result property="createDt" column="urt_create_dt" />
-        <result property="updateDt" column="urt_update_dt" />
-        <association property="role" resultMap="RoleResultMap" />
-    </resultMap>
+
 <!--    getUserInfo - userId, email, nickname 동적쿼리 이용해서
 3가지 중 하나로 회원 정보와 권한을 함께 조회-->
     <select id="getUserInfo" resultMap="UserResultMap">
@@ -55,9 +56,9 @@
         LEFT JOIN
             role_tb rt ON urt.role_id = rt.role_id
         <where>
-            <if test="userId != null"> AND ut.user_id = #{userId} </if>
-            <if test="email != null"> AND ut.email = #{email} </if>
-            <if test="nickname != null"> AND ut.nickname = #{nickname} </if>
+            <if test="userId != null and userId != ''">ut.user_id = #{userId} </if>
+            <if test="email != null and email != ''"> OR ut.email = #{email} </if>
+            <if test="nickname != null and nickname != '' "> OR ut.nickname = #{nickname} </if>
         </where>
     </select>
 
@@ -67,10 +68,8 @@
         SELECT 1
         FROM user_tb
         <where>
-            <choose>
-                <when test="email != null"> email = #{email} </when>
-                <when test="nickname != null"> nickname = #{nickname} </when>
-            </choose>
+            <if test="email != null and email != ''">email = #{email}</if>
+            <if test="nickname != null and nickname != '' ">OR nickname = #{nickname}</if>
         </where>
         )
     </select>
