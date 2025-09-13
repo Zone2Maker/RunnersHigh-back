@@ -3,7 +3,6 @@ package com.runnershigh.runnershigh.controller;
 import com.runnershigh.runnershigh.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -32,6 +31,7 @@ public class UserController {
     }
 
 //    // 회원정보 수정 - POST 방식
+    //TODO : 로그인한 사용자 정보 필요
 //    @PostMapping("/update")
 //    public ResponseEntity<?> updateUser(
 //            @RequestParam Integer userId,

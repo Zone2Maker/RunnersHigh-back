@@ -25,8 +25,6 @@ public interface UserMapper {
             @Param("nickname") String nickname
     );
 
-
-
     //신규 회원 추가
     public int addUser (User user);
 
