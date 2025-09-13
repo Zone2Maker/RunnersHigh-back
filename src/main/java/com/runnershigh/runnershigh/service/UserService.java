@@ -5,6 +5,7 @@ import com.runnershigh.runnershigh.entity.User;
 import com.runnershigh.runnershigh.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -44,13 +45,13 @@ public class UserService {
         return new ApiRespDto<>("success", "사용 가능한 이메일 또는 닉네임입니다.", null);
     }
 
-    //회원 정보 수정 - updateUser
-    //현재 로그인된 사용자의 userId 필요함
+//    회원 정보 수정 - updateUser
+//    현재 로그인된 사용자의 userId 필요함
 //    @Transactional
-//    public ApiRespDto<?> updateUser (UpdateUserReqDto updateUserReqDto) {
+//    public ApiRespDto<?> updateUser (com.runnershigh.runnershigh.dto.User.UpdateUserReqDto updateUserReqDto) {
 //        //요청 DTO에 담긴 userId와 실제 로그인한 사용자의 userId가 일치하는지 확인하는 부분
 //        //실제 로그인한 사용자 id -
-//        if ("로그인된 사용자".userId.equals(updateUserReqDto.getUserId()) {
+//        if ("로그인된 사용자.userId.equals"(updateUserReqDto.getUserId())) {
 //            return new ApiRespDto<>("failed", "프로필 수정 권한이 없습니다", null);
 //        }
 //        User user = updateUserReqDto.toEntity();
