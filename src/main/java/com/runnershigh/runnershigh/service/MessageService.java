@@ -1,21 +1,63 @@
 package com.runnershigh.runnershigh.service;
 
 import com.runnershigh.runnershigh.dto.ApiRespDto;
+import com.runnershigh.runnershigh.dto.message.SaveMessageReqDto;
 import com.runnershigh.runnershigh.dto.message.GetMessageListReqDto;
 import com.runnershigh.runnershigh.dto.message.GetMessageListRespDto;
 import com.runnershigh.runnershigh.dto.message.GetMessageRespDto;
+import com.runnershigh.runnershigh.entity.Message;
+import com.runnershigh.runnershigh.repository.CrewRepository;
+import com.runnershigh.runnershigh.repository.CrewUserRepository;
 import com.runnershigh.runnershigh.repository.MessageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class MessageService {
     @Autowired
     private MessageRepository messageRepository;
 
+    @Autowired
+    private CrewRepository crewRepository;
+
+    @Autowired
+    private CrewUserRepository crewUserRepository;
+
     // 메세지 저장 메서드
+    public ApiRespDto<?> saveMessage(SaveMessageReqDto saveMessageReqDto, int crewId
+                                     /*PrincipalUser principalUser*/) {
+        // Security 구현하면 principalUser의 userId랑 addMessageReqDto의 userId랑 비교해서 다르면 권한ㄴㄴ
+//        if(getMessageListReqDto.getUserId() != principalUser.getUserId()) {
+//            return new ApiRespDto<>("failed", "접근 권한이 없습니다.", null);
+//        }
+
+        // 보낸 사용자가 해당 크루의 멤버가 맞는지 확인
+        boolean isMember = crewUserRepository.getCrewUserByCrewIdAndUserId(crewId, saveMessageReqDto.getUserId());
+
+        if(!isMember) {
+            return new ApiRespDto<>("failed", "크루 멤버만 메시지를 보낼 수 있습니다.", null);
+        }
+
+        Message newMessage = Message.builder()
+                .crewId(crewId)
+                .userId(saveMessageReqDto.getUserId())
+                .message(saveMessageReqDto.getMessage())
+                .messageType(saveMessageReqDto.getMessageType())
+                .createDt(LocalDateTime.now())
+                .build();
+
+        Optional<Message> optionalMessage = messageRepository.saveMessage(newMessage);
+
+        if(optionalMessage.isEmpty()) {
+            return new ApiRespDto<>("failed", "서버에 문제가 발생했습니다.", null);
+        }
+
+        return new ApiRespDto<>("success", "메시지가 전송되었습니다.", optionalMessage.get());
+    }
 
     // 메시지 목록 불러오는 메서드
     public ApiRespDto<?> getMessageList(GetMessageListReqDto getMessageListReqDto

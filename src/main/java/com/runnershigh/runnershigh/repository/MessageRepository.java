@@ -16,9 +16,9 @@ public class MessageRepository {
     @Autowired
     private MessageMapper messageMapper;
 
-    private Optional<Message> addMessage(Message message) {
+    public Optional<Message> saveMessage(Message message) {
         try {
-            messageMapper.addMessage(message);
+            messageMapper.saveMessage(message);
         } catch (DuplicateKeyException e) {
             return Optional.empty();
         }

@@ -18,4 +18,8 @@ public class CrewUserRepository {
     public int getLastReadMessageId(GetLastReadMessageIdReqDto getLastReadMessageIdReqDto) {
         return crewUserMapper.getLastReadMessageId(getLastReadMessageIdReqDto);
     }
+
+    public boolean getCrewUserByCrewIdAndUserId(int crewId, int userId) {
+        return crewUserMapper.getCrewUserByCrewIdAndUserId(crewId, userId);
+    }
 }

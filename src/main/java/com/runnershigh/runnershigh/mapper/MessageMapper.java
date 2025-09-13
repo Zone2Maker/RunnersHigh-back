@@ -9,6 +9,6 @@ import java.util.List;
 
 @Mapper
 public interface MessageMapper {
-    int addMessage(Message message);
+    int saveMessage(Message message);
     List<GetMessageRespDto> getMessageList(GetMessageListReqDto getMessageListReqDto);
 }
