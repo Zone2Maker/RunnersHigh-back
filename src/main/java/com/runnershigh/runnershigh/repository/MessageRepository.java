@@ -1,6 +1,5 @@
 package com.runnershigh.runnershigh.repository;
 
-import com.runnershigh.runnershigh.dto.message.GetMessageListReqDto;
 import com.runnershigh.runnershigh.dto.message.GetMessageRespDto;
 import com.runnershigh.runnershigh.entity.Message;
 import com.runnershigh.runnershigh.mapper.MessageMapper;
@@ -25,8 +24,12 @@ public class MessageRepository {
         return Optional.of(message);
     }
 
-    public List<GetMessageRespDto> getMessageList(GetMessageListReqDto getMessageListReqDto) {
-        return messageMapper.getMessageList(getMessageListReqDto);
+    public List<GetMessageRespDto> getMessageList(int crewId, int userId, int cursorMessageId, int size) {
+        return messageMapper.getMessageList(crewId, userId, cursorMessageId, size);
+    }
+
+    public Optional<GetMessageRespDto> getMessageByMessageId(int messageId) {
+        return messageMapper.getMessageByMessageId(messageId);
     }
 
 }
