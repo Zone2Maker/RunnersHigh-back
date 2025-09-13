@@ -21,16 +21,13 @@ import java.util.Optional;
 @Component
 public class JwtAuthenticationFilter implements Filter {
 
-//    @Autowired
-//    private JwtUtils jwtUtils;
+    @Autowired
+    private JwtUtils jwtUtils;
 
-    private final JwtUtils jwtUtils;
+
     @Autowired
     private UserRepository userRepository;
 
-    public JwtAuthenticationFilter(JwtUtils jwtUtils) {
-        this.jwtUtils = jwtUtils;
-    }
 
 
     //dofilter 가져옴

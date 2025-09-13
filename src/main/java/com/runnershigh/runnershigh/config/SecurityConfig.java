@@ -5,6 +5,7 @@ import com.runnershigh.runnershigh.security.handler.OAuth2SuccessHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -18,13 +19,12 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @Configuration
 public class SecurityConfig {
 
-    private final JwtAuthenticationFilter jwtAuthenticationFilter;
-
-    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
-        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
-    }
     @Autowired
-    private OAuth2SuccessHandler oAuth2SuccessHandler;
+    public JwtAuthenticationFilter jwtAuthenticationFilter;
+
+
+//    @Autowired
+//    private OAuth2SuccessHandler oAuth2SuccessHandler;
 
     //TODO: OAuth2PrincipalUserService 구현 후 의존성 주입
 
@@ -34,6 +34,7 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
     // CORS
+    @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
         corsConfiguration.addAllowedOriginPattern(CorsConfiguration.ALL);          // 모든 출처 허용
@@ -58,11 +59,12 @@ public class SecurityConfig {
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         // SCRF 보호 비활성화
         // 쿠키 기반 인증일 때 문제가 되고, JWT 쓰는 경우 일반적으로 비활성화
-        http.csrf(csrf -> csrf.disable())
-            // 모든 HTTP 요청에 대해 접근 허용
-            .authorizeHttpRequests(auth -> {
-                auth.anyRequest().permitAll(); // 어떤 요청이든 전부 허용
-            });
+        http.authorizeHttpRequests(auth -> {
+            auth.requestMatchers("/auth/**", "/user/check", "/oauth2/**", "/auth/oauth2/**").permitAll()    //요청주소 - 허용할 주소
+            // 피드, 크루 조회 여부에 따라 변경
+            .requestMatchers(HttpMethod.GET, "/feed/**", "/crew/**").permitAll()
+            .anyRequest().authenticated();                 //위에 주소 제외 모든 요청은 인증필요
+        });
 
         //TODO: OAuth2 설정 추가
 
