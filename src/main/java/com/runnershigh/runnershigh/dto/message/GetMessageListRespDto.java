@@ -1,23 +1,15 @@
 package com.runnershigh.runnershigh.dto.message;
 
-import com.runnershigh.runnershigh.entity.User;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
+@Builder
 public class GetMessageListRespDto {
-    // Message 필드
-    private Integer messageId;
-    private Integer userId;
-    private String message;
-    private String messageType;
-    private LocalDateTime createDt;
-
-    // User 필드
-    private String nickname;
-    private String profileImgUrl;
+    private List<GetMessageRespDto> messages;
+    private Integer nextCursor; // 다음 요청에 사용할 cursorId
 }

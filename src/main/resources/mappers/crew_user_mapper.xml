@@ -30,4 +30,12 @@
             AND
             crew_id = #{crewId}
     </select>
+
+    <select id="getCrewUserByCrewIdAndUserId" resultType="boolean">
+        SELECT EXISTS (
+            SELECT 1
+            FROM crew_user_tb
+            WHERE crew_id = #{crewId} AND user_id = #{userId}
+            )
+    </select>
 </mapper>
