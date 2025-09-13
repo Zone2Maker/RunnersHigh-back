@@ -44,4 +44,21 @@
         LIMIT #{size}
     </select>
 
+    <select id="getMessageByMessageId" resultType="com.runnershigh.runnershigh.dto.message.GetMessageRespDto">
+        SELECT
+            mb.message_id,
+            mb.user_id,
+            mb.message,
+            mb.message_type,
+            mb.create_dt,
+
+            ut.nickname,
+            ut.profile_img_url
+        FROM
+            message_tb mb
+            INNER JOIN user_tb ut ON (mb.user_id = ut.user_id)
+        WHERE
+            mb.message_id = #{messageId}
+    </select>
+
 </mapper>
