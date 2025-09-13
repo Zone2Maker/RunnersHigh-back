@@ -33,11 +33,11 @@
             LEFT JOIN like_tb l ON f.feed_id = l.feed_id
         <where>
             <if test="userId != null">
-                AND f.user_id = #{userId}
+                f.user_id = #{userId}
             </if>
         </where>
         GROUP BY f.feed_id, f.feed_img_url
-        ORDER BY f.create_dt DESC
+        ORDER BY f.create_dt DESC, f.feed_id DESC
         LIMIT #{size} OFFSET #{offset}
     </select>
 
@@ -51,6 +51,8 @@
             LEFT JOIN like_tb l ON f.feed_id = l.feed_id
         WHERE
             l.user_id = #{userId}
+        ORDER BY f.create_dt DESC, f.feed_id DESC
+        LIMIT #{size} OFFSET #{offset}
     </select>
 
     <!-- 피드 상세 + 작성자 매핑 -->
@@ -61,7 +63,6 @@
             f.user_id,
             f.feed_img_url,
             f.feed_location,
-            u.user_id,
             u.nickname,
             u.profile_img_url,
             COUNT(l.like_id) AS likeCount
@@ -69,13 +70,15 @@
             feed_tb f
             JOIN user_tb u ON f.user_id = u.user_id
             LEFT JOIN like_tb l ON f.feed_id = l.feed_id
+        WHERE
+            f.feed_id = #{feedId}
         GROUP BY f.feed_id, f.user_id, f.feed_img_url, f.feed_location,
-                u.user_id, u.nickname, u.profile_img_url
+                 u.nickname, u.profile_img_url
         ORDER BY f.create_dt DESC
     </select>
 
     <!--  피드 추가(생성)  -->
-    <insert id="addFeed" parameterType="com.runnershigh.runnershigh.entity.Feed" useGeneratedKeys="true" keyProperty="feedId">
+    <insert id="addFeed" useGeneratedKeys="true" keyProperty="feedId">
         INSERT INTO feed_tb (
             feed_id,
             user_id,
@@ -91,7 +94,7 @@
             0,
             #{userId},
             #{feedImgUrl},
-            #{feedStatus},
+            'ACTIVE',
             #{feedLocation},
             #{feedLongitude},
             #{feedLatitude},
