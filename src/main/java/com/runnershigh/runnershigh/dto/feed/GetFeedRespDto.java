@@ -8,5 +8,5 @@ import lombok.Data;
 public class GetFeedRespDto {
     private Integer feedId;
     private String feedImgUrl;
-    private String likeCount;
+    private Integer likeCount;
 }
