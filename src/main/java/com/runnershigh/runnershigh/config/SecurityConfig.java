@@ -1,5 +1,8 @@
 package com.runnershigh.runnershigh.config;
 
+import com.runnershigh.runnershigh.security.Filter.JwtAuthenticationFilter;
+import com.runnershigh.runnershigh.security.handler.OAuth2SuccessHandler;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -14,6 +17,16 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 public class SecurityConfig {
+
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+
+    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
+        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+    }
+    @Autowired
+    private OAuth2SuccessHandler oAuth2SuccessHandler;
+
+    //TODO: OAuth2PrincipalUserService 구현 후 의존성 주입
 
     //비밀번호 암호화를 위한 Bean 등록
     @Bean
@@ -51,11 +64,8 @@ public class SecurityConfig {
                 auth.anyRequest().permitAll(); // 어떤 요청이든 전부 허용
             });
 
-        //OAuth2 설정 추가
-        http.oauth2Login(oauth2 -> oauth2
-                .userInfoEndpoint(userInfo -> userInfo.userService(oAuth2PrincipalUserService))
-                .successHandler(oAuth2SuccessHandler)
-        );
+        //TODO: OAuth2 설정 추가
+
 
 
         return http.build();

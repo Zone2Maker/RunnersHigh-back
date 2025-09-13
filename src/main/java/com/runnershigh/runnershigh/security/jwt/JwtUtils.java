@@ -15,14 +15,13 @@ import java.security.Key;
 import java.util.Date;
 
 @Component
-@RequiredArgsConstructor
 public class JwtUtils {
 
     private final Key KEY;
 
-    //JWT 비밀키
-    public JwtUtils(@Value("${jwt.secret}") String secret) { KEY = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret)); }
-
+    public JwtUtils(@Value("${jwt.secret}") String secret) {
+        this.KEY = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret));
+    }
     //토큰 만들기 - JWT 엑세스 토큰 문자열로 반환
     public String generateAccessToken(String userId) {
         return Jwts.builder()
