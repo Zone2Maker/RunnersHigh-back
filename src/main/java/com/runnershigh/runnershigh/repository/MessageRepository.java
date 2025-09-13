@@ -1,7 +1,7 @@
 package com.runnershigh.runnershigh.repository;
 
 import com.runnershigh.runnershigh.dto.message.GetMessageListReqDto;
-import com.runnershigh.runnershigh.dto.message.GetMessageListRespDto;
+import com.runnershigh.runnershigh.dto.message.GetMessageRespDto;
 import com.runnershigh.runnershigh.entity.Message;
 import com.runnershigh.runnershigh.mapper.MessageMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,23 +16,17 @@ public class MessageRepository {
     @Autowired
     private MessageMapper messageMapper;
 
-    private Optional<Message> addMessage(Message message) {
+    public Optional<Message> saveMessage(Message message) {
         try {
-            messageMapper.addMessage(message);
+            messageMapper.saveMessage(message);
         } catch (DuplicateKeyException e) {
             return Optional.empty();
         }
         return Optional.of(message);
     }
 
-    public List<GetMessageListRespDto> getMessageList(GetMessageListReqDto getMessageListReqDto) {
-        int page = getMessageListReqDto.getPage();
-        int size = getMessageListReqDto.getSize();
-        int crewId = getMessageListReqDto.getCrewId();
-        int userId = getMessageListReqDto.getUserId();
-        int offset = page * size;
-
-        return messageMapper.getMessageList(page, offset, crewId, userId);
+    public List<GetMessageRespDto> getMessageList(GetMessageListReqDto getMessageListReqDto) {
+        return messageMapper.getMessageList(getMessageListReqDto);
     }
 
 }
