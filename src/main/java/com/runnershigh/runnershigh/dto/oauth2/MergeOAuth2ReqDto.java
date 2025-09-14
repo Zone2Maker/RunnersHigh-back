@@ -1,8 +1,11 @@
 package com.runnershigh.runnershigh.dto.oauth2;
 
 import com.runnershigh.runnershigh.entity.OAuth2User;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
-public class OAuth2MergeReqDto {
+@Data
+public class MergeOAuth2ReqDto {
     private String email;
     private String password;
     private String provider;

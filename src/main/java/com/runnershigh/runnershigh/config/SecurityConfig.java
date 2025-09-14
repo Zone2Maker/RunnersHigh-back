@@ -1,6 +1,8 @@
 package com.runnershigh.runnershigh.config;
 
 import com.runnershigh.runnershigh.security.filter.JwtAuthenticationFilter;
+import com.runnershigh.runnershigh.security.handler.OAuth2SuccessHandler;
+import com.runnershigh.runnershigh.service.OAuth2PrincipalUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,11 +23,11 @@ public class SecurityConfig {
     @Autowired
     public JwtAuthenticationFilter jwtAuthenticationFilter;
 
+    @Autowired
+    private OAuth2SuccessHandler oAuth2SuccessHandler;
 
-//    @Autowired
-//    private OAuth2SuccessHandler oAuth2SuccessHandler;
-
-    //TODO: OAuth2PrincipalUserService 구현 후 의존성 주입
+    @Autowired
+    private OAuth2PrincipalUserService oAuth2PrincipalUserService;
 
     // 비밀번호 암호화(해싱), 검증
     @Bean
@@ -79,9 +81,15 @@ public class SecurityConfig {
             .anyRequest().authenticated();                 //위에 주소 제외 모든 요청은 인증필요
         });
 
-        //TODO: OAuth2 설정 추가
-
-
+        // 소셜 로그인 활성화
+        http.oauth2Login(oauth2 ->
+                // 로그인에 성공한 사용자의 정보를 가져온 후 처리 과정
+                oauth2.userInfoEndpoint(userInfo ->
+                        userInfo.userService(oAuth2PrincipalUserService))
+                        // 처리 과정이 끝난 후의 실행 로직
+                        .successHandler(oAuth2SuccessHandler));
+        // Spring Security가 만들어주는 기본 로그인 주소
+        // http://localhost:8080/oauth2/authorization
 
         return http.build();
     }
