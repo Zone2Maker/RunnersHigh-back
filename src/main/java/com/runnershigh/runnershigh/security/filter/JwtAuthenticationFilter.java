@@ -32,7 +32,7 @@ public class JwtAuthenticationFilter implements Filter {
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws ServletException, IOException {
         // 클라이언트가 Header에 "Authorization"에 JWT 토큰담아서 요청 보냄
         HttpServletRequest request = (HttpServletRequest) servletRequest;
-        System.out.println("필터는 탔니?");
+
         // 요청 방식 리스트, POST, GET 메서드만 쓸 거
         List<String> methods = List.of("POST", "GET");
 
@@ -47,7 +47,7 @@ public class JwtAuthenticationFilter implements Filter {
         System.out.println(authorization);
         // JWT 토큰이 맞으면 인증 시작
         if (jwtUtils.isBearer(authorization)) {
-            System.out.println("Bearer 검증 끝");
+
             // 순수 JWT 토큰
             String accessToken = jwtUtils.removeBearer(authorization);
 
@@ -74,7 +74,7 @@ public class JwtAuthenticationFilter implements Filter {
                             .build();
                     // 인증 객체 생성
                     Authentication authentication = new UsernamePasswordAuthenticationToken(principalUser, "", principalUser.getAuthorities());
-                    System.out.println("인증 객체 생성: " + authentication);
+
                     // SecurityContextHolder에 인증 객체 저장
                     // '이번 요청이 처리되는 동안'에만 다른 Controller, Service..에서 꺼내쓸 수 있게 됨
                     // => Controller에서 @Authentication PrincipalUser principalUser

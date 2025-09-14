@@ -1,6 +1,9 @@
 package com.runnershigh.runnershigh.config;
 
+import com.runnershigh.runnershigh.handler.StompHandler;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
@@ -12,6 +15,9 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     // STOMP(Simple Text Oriented Messaging Protocol)
     // WebSocket 위 텍스트 기반 메시징 프로토콜 (PUB/SUB 기반)
     // @MessageMapping으로 메시지 발행 시 엔드포인트 별도 분리 가능
+
+    @Autowired
+    private StompHandler stompHandler; // StompHandler 의존성 주입
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
@@ -35,5 +41,13 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                 .withSockJS();
         // sockjs는 WebSocket을 지원하지 않는 버전의 브라우저에서
                 // WebSocket을 사용할 수 있게 해주는 라이브러리
+    }
+
+    @Override
+    public void configureClientInboundChannel(ChannelRegistration registration) {
+        // STOMP 메시지 처리 전, stompHandler가 인터셉트하도록 등록
+        // 이 과정에서 메시지의 Header가 CONNECT면 인증 객체를 SecurityContextHolder에 넣어줄 것
+        // 왜냐면 WebSocket은 연결 최초에만 SecurityFilterChain을 거치기 때문에..
+        registration.interceptors(stompHandler);
     }
 }
