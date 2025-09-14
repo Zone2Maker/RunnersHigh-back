@@ -1,9 +1,12 @@
 package com.runnershigh.runnershigh.controller;
 
-import com.runnershigh.runnershigh.dto.crew.AddCrewReqDto;
+import com.runnershigh.runnershigh.dto.crew.RegisterCrewReqDto;
+import com.runnershigh.runnershigh.dto.crew.JoinCrewReqDto;
+import com.runnershigh.runnershigh.security.model.PrincipalUser;
 import com.runnershigh.runnershigh.service.CrewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -13,12 +16,13 @@ public class CrewController {
     private CrewService crewService;
 
     @PostMapping("")
-    public ResponseEntity<?> addCrew(@RequestBody AddCrewReqDto addCrewReqDto){
-        return ResponseEntity.ok(crewService.addCrew(addCrewReqDto));
+    public ResponseEntity<?> addCrew(@RequestBody RegisterCrewReqDto registerCrewReqDto,
+                                     @AuthenticationPrincipal PrincipalUser principalUser){
+        return ResponseEntity.ok(crewService.addCrew(registerCrewReqDto, principalUser));
     }
 
     @GetMapping("")
-    public ResponseEntity<?> getCrewList(@RequestParam(defaultValue=  "0") Integer page,
+    public ResponseEntity<?> getCrewList(@RequestParam(defaultValue=  "1") Integer page,
                                          @RequestParam(defaultValue = "12") Integer size,
                                          @RequestParam(required = false) String search,
                                          @RequestParam(required = false) String region){
@@ -30,10 +34,13 @@ public class CrewController {
         return ResponseEntity.ok(crewService.getCrewByCrewId(crewId));
     }
 
-    @GetMapping("/weekly-top5")
-    public ResponseEntity<?>  getWeekTop5(){
-        return ResponseEntity.ok(crewService.getWeekTop5());
+    @GetMapping("/weekly-top")
+    public ResponseEntity<?> getWeeklyTopCrews(){
+        return ResponseEntity.ok(crewService.getWeeklyTopCrews());
     }
 
-    //    @PostMapping("/join") 크루 참가 => CrewUserRepository 구현 후 작성
+    @PostMapping("/join")
+    public ResponseEntity<?> joinCrew(@RequestBody JoinCrewReqDto joinCrewReqDto){
+        return ResponseEntity.ok(crewService.joinCrew(joinCrewReqDto));
+    }
 }

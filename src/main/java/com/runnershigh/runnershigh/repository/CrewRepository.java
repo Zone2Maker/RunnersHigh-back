@@ -1,7 +1,7 @@
 package com.runnershigh.runnershigh.repository;
 
-import com.runnershigh.runnershigh.dto.crew.CrewRespDto;
-import com.runnershigh.runnershigh.dto.crew.RankRespDto;
+import com.runnershigh.runnershigh.dto.crew.GetCrewRespDto;
+import com.runnershigh.runnershigh.dto.crew.GetCrewRankRespDto;
 import com.runnershigh.runnershigh.entity.Crew;
 import com.runnershigh.runnershigh.mapper.CrewMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,16 +23,16 @@ public class CrewRepository {
         return Optional.of(crew);
     }
 
-    public List<CrewRespDto> getCrewList(Integer page, Integer size, String search, String region){
-        return crewMapper.getCrewList(page, size, search, region);
+    public List<GetCrewRespDto> getCrewList(Integer offset, Integer size, String search, String region){
+        return crewMapper.getCrewList(offset, size, search, region);
     }
 
-    public Optional<CrewRespDto> getCrewByCrewId(Integer crewId){
+    public Optional<GetCrewRespDto> getCrewByCrewId(Integer crewId){
         return crewMapper.getCrewByCrewId(crewId);
     }
 
-    public List<RankRespDto> getWeekTop5(){
-        return crewMapper.getWeekTop5();
+    public List<GetCrewRankRespDto> getWeeklyTopCrews(){
+        return crewMapper.getWeeklyTopCrews();
     }
 
 }

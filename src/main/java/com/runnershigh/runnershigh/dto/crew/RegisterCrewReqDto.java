@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class AddCrewReqDto {
+public class RegisterCrewReqDto {
     private Integer userId;
     private String crewName;
     private String crewDetail;

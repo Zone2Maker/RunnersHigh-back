@@ -1,9 +1,10 @@
 package com.runnershigh.runnershigh.mapper;
 
-import com.runnershigh.runnershigh.dto.crew.CrewRespDto;
-import com.runnershigh.runnershigh.dto.crew.RankRespDto;
+import com.runnershigh.runnershigh.dto.crew.GetCrewRespDto;
+import com.runnershigh.runnershigh.dto.crew.GetCrewRankRespDto;
 import com.runnershigh.runnershigh.entity.Crew;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -11,7 +12,14 @@ import java.util.Optional;
 @Mapper
 public interface CrewMapper {
     int addCrew(Crew crew);
-    List<CrewRespDto> getCrewList(Integer page, Integer size, String search, String region);
-    Optional<CrewRespDto> getCrewByCrewId(Integer crewId);
-    List<RankRespDto> getWeekTop5();
+
+    List<GetCrewRespDto> getCrewList(
+            @Param("offset") Integer offset,
+            @Param("size") Integer size,
+            @Param("search") String search,
+            @Param("region") String region);
+
+    Optional<GetCrewRespDto> getCrewByCrewId(@Param("crewId") Integer crewId);
+
+    List<GetCrewRankRespDto> getWeeklyTopCrews();
 }
