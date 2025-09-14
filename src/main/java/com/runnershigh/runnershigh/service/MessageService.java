@@ -33,7 +33,6 @@ public class MessageService {
                                      /*PrincipalUser principalUser*/) {
         // Security 구현하면 principalUser의 userId만 사용
         // MessageResDto에도 userId 없어도 됨
-
         // 보낸 사용자가 해당 크루의 멤버가 맞는지 확인
         // 이것도 principalUser의 userId로 확인
         boolean isMember = crewUserRepository.getCrewUserByCrewIdAndUserId(crewId, saveMessageReqDto.getUserId());

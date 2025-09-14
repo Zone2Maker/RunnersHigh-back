@@ -18,8 +18,7 @@ public class WebSocketController {
     @MessageMapping("/crew/{crewId}") // 클라이언트 -> /pub/crew/{crewId}로 발행
     @SendTo("/sub/crew/{crewId}") // 클라이언트 -> /sub/crew/{crewId}를 구독
     public ApiRespDto<?> message(@DestinationVariable Integer crewId,
-                                 SaveMessageReqDto saveMessageReqDto
-                                /* @AuthenticationPrincipal PrincipalUser principalUser */) {
+                                 SaveMessageReqDto saveMessageReqDto) {
         // Security 하면 인증 객체도 넘겨주기
         return messageService.saveMessage(crewId, saveMessageReqDto);
     }
