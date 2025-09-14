@@ -29,8 +29,8 @@
         <collection property="userRoles" resultMap="UserRoleResultMap" />
     </resultMap>
 
-<!--    getUserInfo - userId, email, nickname 동적쿼리 이용해서
-3가지 중 하나로 회원 정보와 권한을 함께 조회-->
+    <!-- getUserInfo - userId, email, nickname 동적쿼리 이용해서
+    3가지 중 하나로 회원 정보와 권한을 함께 조회-->
     <select id="getUserInfo" resultMap="UserResultMap">
         SELECT
             ut.user_id,
@@ -41,63 +41,77 @@
             ut.last_login_dt,
             ut.create_dt,
             ut.update_dt,
+
             urt.user_role_id,
             urt.user_id as urt_user_id,
             urt.role_id as urt_role_id,
             urt.create_dt as urt_create_dt,
             urt.update_dt as urt_update_dt,
+
             rt.role_id,
             rt.role_name,
             rt.role_name_kor
         FROM
             user_tb ut
         LEFT JOIN
-            user_role_tb urt ON ut.user_id = urt.user_id
+            user_role_tb urt ON (ut.user_id = urt.user_id)
         LEFT JOIN
-            role_tb rt ON urt.role_id = rt.role_id
+            role_tb rt ON (urt.role_id = rt.role_id)
         <where>
-            <if test="userId != null and userId != ''">ut.user_id = #{userId} </if>
-            <if test="email != null and email != ''"> OR ut.email = #{email} </if>
-            <if test="nickname != null and nickname != '' "> OR ut.nickname = #{nickname} </if>
+            <if test="userId != null">
+                ut.user_id = #{userId}
+            </if>
+            <if test="email != null and email != ''">
+                OR ut.email = #{email}
+            </if>
+            <if test="nickname != null and nickname != ''">
+                OR ut.nickname = #{nickname}
+            </if>
         </where>
     </select>
 
-<!--    checkUserExist - email, nickname -->
+    <!-- 이메일 or 닉네임으로 존재 여부 확인 -->
     <select id="checkUserExist" resultType="int">
         SELECT EXISTS (
         SELECT 1
-        FROM user_tb
+        FROM
+            user_tb
         <where>
-            <if test="email != null and email != ''">email = #{email}</if>
-            <if test="nickname != null and nickname != '' ">OR nickname = #{nickname}</if>
+            <if test="email != null and email != ''">
+                email = #{email}
+            </if>
+            <if test="nickname != null and nickname != '' ">
+                OR nickname = #{nickname}
+            </if>
         </where>
         )
     </select>
-<!--//중복 방지용으로 존재 여부만 체크하는 것일 경우
-    //COUNT 대신 EXISTS (0/1 리턴) 쓰는 게 나음-->
+    <!-- 중복 방지용으로 존재 여부만 체크하는 것일 경우
+        COUNT 대신 EXISTS (0/1 리턴) 쓰는 게 나음 -->
 
-<!--addUser -  신규회원 저장-->
+    <!-- 회원가입 -->
     <insert id="addUser" useGeneratedKeys="true" keyProperty="userId">
-    insert into
-        user_tb (email, password, nickname, profile_img_url, last_login_dt, create_dt, update_dt)
-    values
-        (#{email}, #{password}, #{nickname}, #{profileImgUrl}, now(), now(), null)
+        INSERT INTO
+            user_tb
+        VALUES
+            (0, #{email}, #{password}, #{nickname}, #{profileImgUrl}, NOW(), NOW(), NOW())
     </insert>
 
-<!--udateUser - 유저 정보 변경 (닉네임, 프로필이미지)-->
+    <!-- 프로필 업데이트 -->
     <update id="updateUser">
-    UPDATE user_tb
-    <set>
-        <if test="nickname != null and nickname != ''">
-            nickname = #{nickname},
-        </if>
-        <if test="profileImgUrl != null and profileImgUrl != ''">
-            profile_img_url = #{profileImgUrl},
-        </if>
-        update_dt = NOW()
-    </set>
-    WHERE
-    user_id = #{userId}
+        UPDATE
+            user_tb
+        <set>
+            <if test="nickname != null and nickname != ''">
+                nickname = #{nickname},
+            </if>
+            <if test="profileImgUrl != null and profileImgUrl != ''">
+                profile_img_url = #{profileImgUrl},
+            </if>
+            update_dt = NOW()
+        </set>
+        WHERE
+            user_id = #{userId}
     </update>
 
 
