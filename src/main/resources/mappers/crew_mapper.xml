@@ -9,7 +9,7 @@
         VALUES
             (0, #{userId}, #{crewName}, #{crewDetail}, #{crewImgUrl}, #{crewRegion}, "ACTIVE", #{maxMembers}, now(), null);
     </insert>
-    <select id="getCrewList" resultType="com.runnershigh.runnershigh.dto.crew.CrewRespDto">
+    <select id="getCrewList" resultType="com.runnershigh.runnershigh.dto.crew.GetCrewRespDto">
         SELECT
             ct.*,
             COUNT(cu.user_id) AS currentMembers
@@ -28,9 +28,11 @@
                 AND crew_region = #{region}
             </if>
         </where>
-        GROUP BY ct.crew_id;
+        GROUP BY ct.crew_id
+        ORDER BY ct.create_dt DESC
+        LIMIT #{size} OFFSET #{offset};
     </select>
-    <select id="getCrewByCrewId" resultType="com.runnershigh.runnershigh.dto.crew.CrewRespDto">
+    <select id="getCrewByCrewId" resultType="com.runnershigh.runnershigh.dto.crew.GetCrewRespDto">
         SELECT
             ct.*,
             COUNT(cu.user_id) AS currentMembers
@@ -40,11 +42,11 @@
         WHERE
             ct.crew_id = #{crewId};
     </select>
-    <select id="getWeekTop5" resultType="com.runnershigh.runnershigh.dto.crew.RankRespDto">
+    <select id="getWeeklyTopCrews" resultType="com.runnershigh.runnershigh.dto.crew.GetCrewRankRespDto">
         SELECT
-            ct.crew_id,
-            ct.crew_name,
-            COALESCE(SUM(lt.like_count), 0) AS totalLikes
+            ct.*,
+            COALESCE(SUM(lt.like_count), 0) AS totalLikes,
+            COUNT(cu.user_id) AS currentMembers
         FROM
             crew_tb AS ct
             LEFT JOIN crew_user_tb cu ON ct.crew_id = cu.crew_id
@@ -63,7 +65,8 @@
         GROUP BY
             ct.crew_id, ct.crew_name
         ORDER BY
-            totalLikes DESC
+            totalLikes DESC,
+            currentMembers DESC
         LIMIT 5;
     </select>
 </mapper>

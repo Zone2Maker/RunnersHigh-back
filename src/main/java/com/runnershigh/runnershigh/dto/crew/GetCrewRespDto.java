@@ -5,7 +5,7 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 @Data
-public class CrewRespDto {
+public class GetCrewRespDto {
     private Integer crewId;
     private Integer userId;
     private String crewName;
