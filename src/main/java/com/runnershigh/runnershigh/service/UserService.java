@@ -30,7 +30,7 @@ public class UserService {
     }
 
 
-    //이메일 / 닉네임 중복확인 - checkDuplicate
+    // 이메일 / 닉네임 중복확인 - checkDuplicate
     public ApiRespDto<?> checkDuplicate(String email, String nickname) {
         if ((email == null || email.trim().isEmpty()) && (nickname == null || nickname.trim().isEmpty())) {
             return new ApiRespDto<>("failed", "이메일 또는 닉네임 중 하나를 입력해주세요.", null);

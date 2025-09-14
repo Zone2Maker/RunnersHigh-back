@@ -22,8 +22,14 @@ public class UserRepository {
         return userMapper.checkUserExist(email, nickname);
     }
 
-    public int addUser(User user) {
-        return userMapper.addUser(user);
+    public Optional<User> addUser(User user) {
+        try {
+            userMapper.addUser(user);
+        } catch(Exception e) {
+            return Optional.empty();
+        }
+
+        return Optional.of(user);
     }
 
     public int updateUser(User user) {

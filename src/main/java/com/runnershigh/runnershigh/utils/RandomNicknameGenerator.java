@@ -1,4 +1,4 @@
-package com.runnershigh.runnershigh.random;
+package com.runnershigh.runnershigh.utils;
 
 import java.util.List;
 import java.util.Random;
@@ -29,12 +29,5 @@ public class RandomNicknameGenerator {
         String noun = nouns.get(random.nextInt(nouns.size()));
         int num = random.nextInt(1000); // 0~999
         return adj + " " + noun + num;
-    }
-
-    // 테스트용 main
-    public static void main(String[] args) {
-        for (int i = 0; i < 10; i++) {
-            System.out.println(generate());
-        }
     }
 }

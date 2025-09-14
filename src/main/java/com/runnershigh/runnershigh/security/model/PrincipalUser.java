@@ -16,18 +16,15 @@ import java.util.stream.Collectors;
 @Data
 @Builder
 public class PrincipalUser implements UserDetails {
-
-    private final User user;
-
     private Integer userId;
-    private String username;
+    private String username;    // 닉네임
     @JsonIgnore
     private String password;
     private String email;
-    private String profileImg;
+    private String profileImgUrl;
     private List<UserRole> userRoles;
 
-    //userRole(rolename 가져와서) 통해 Simple~ (권한 객체)를 만드는 것
+    // 권한 목록 가져오기
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return userRoles.stream().map(userRole -> new SimpleGrantedAuthority(userRole.getRole().getRoleName()))

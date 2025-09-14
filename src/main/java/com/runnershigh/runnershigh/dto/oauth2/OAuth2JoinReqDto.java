@@ -2,10 +2,8 @@ package com.runnershigh.runnershigh.dto.oauth2;
 
 import com.runnershigh.runnershigh.entity.OAuth2User;
 import com.runnershigh.runnershigh.entity.User;
-import com.runnershigh.runnershigh.random.RandomNicknameGenerator;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @Data

@@ -5,10 +5,10 @@ import com.runnershigh.runnershigh.dto.user.JoinReqDto;
 import com.runnershigh.runnershigh.dto.user.LoginReqDto;
 import com.runnershigh.runnershigh.entity.User;
 import com.runnershigh.runnershigh.entity.UserRole;
-import com.runnershigh.runnershigh.random.RandomNicknameGenerator;
 import com.runnershigh.runnershigh.repository.UserRepository;
 import com.runnershigh.runnershigh.repository.UserRoleRepository;
 import com.runnershigh.runnershigh.security.jwt.JwtUtils;
+import com.runnershigh.runnershigh.utils.RandomNicknameGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -30,43 +30,37 @@ public class AuthService {
     @Autowired
     private JwtUtils jwtUtils;
 
-
-
+    // 회원가입
     @Transactional(rollbackFor = Exception.class)
     public ApiRespDto<?> join(JoinReqDto joinReqDto) {
-
         if (userRepository.getUserInfo(null, joinReqDto.getEmail(), null).isPresent()) {
             return new ApiRespDto<>("failed", "이미 사용 중인 이메일입니다.", null);
         }
 
-        // 닉네임은 랜덤이므로 가입 시 체크 필요 없음 ??
-//        User user = joinReqDto.toEntity(bCryptPasswordEncoder);
-//        if (userRepository.getUserInfo(null, null, user.getNickname()).isPresent()) {
-//            user.setNickname(RandomNicknameGenerator.generate());
-//            return new ApiRespDto<>("failed", "이미 사용 중인 닉네임입니다.", null);
-//        }
+        String randomNickname = RandomNicknameGenerator.generate();
 
+        // 닉네임 중복 안될 때 까지 생성
+        while(userRepository.checkUserExist(null, randomNickname) == 1) {
+            randomNickname = RandomNicknameGenerator.generate();
+        };
 
         try {
-            // 사용자 정보 추가
-            User user = joinReqDto.toEntity(bCryptPasswordEncoder);
-            int addUserResult = userRepository.addUser(user);
-//            System.out.println("insert result: " + addUserResult);  확인용
-//            System.out.println("userId after insert: " + user.getUserId());
-            if (addUserResult == 0) {
-                // DB INSERT 실패 시 대비
-                throw new RuntimeException("회원 정보 추가에 실패했습니다.");
+            User user = joinReqDto.toEntity(bCryptPasswordEncoder, randomNickname);
+            Optional<User> optionalUser = userRepository.addUser(user);
+
+            if(optionalUser.isEmpty()) {
+                return new ApiRespDto<>("failed", "서버 오류로 회원가입에 실패했습니다.1", null);
             }
 
-            // 사용자에게 기본 역할(ROLE_TEMPORARY) 부여
+            // 권한 넣어주기
             UserRole userRole = UserRole.builder()
-                    .userId(user.getUserId())
-                    .roleId(3)                 //임시사용자
+                    .userId(optionalUser.get().getUserId())
+                    .roleId(2) // 일반 사용자, 메일 인증할 거면 임시사용자
                     .build();
 
             int addUserRoleResult = userRoleRepository.addUserRole(userRole);
             if (addUserRoleResult == 0) {
-                throw new RuntimeException("사용자 권한 부여에 실패했습니다.");
+                return new ApiRespDto<>("failed", "서버 오류로 회원가입에 실패했습니다.", null);
             }
 
             return new ApiRespDto<>("success", "회원가입이 성공적으로 완료되었습니다.", user);
@@ -76,20 +70,19 @@ public class AuthService {
         }
     }
 
-
-    //로그인
+    // 로그인
     public ApiRespDto<?> login(LoginReqDto loginReqDto) {
         // 이메일로 사용자 정보 조회
         Optional<User> optionalUser = userRepository.getUserInfo(null, loginReqDto.getEmail(), null);
         if (optionalUser.isEmpty()) {
-            return new ApiRespDto<>("failed", "이메일 또는 비밀번호가 일치하지 않습니다.", null);
+            return new ApiRespDto<>("failed", "사용자 정보를 확인해주세요.", null);
         }
 
         User user = optionalUser.get();
 
-        // 비밀번호 일치 여부 확인
+        // 비밀번호 일치 여부 확인, (평문, 암호문 순)
         if (!bCryptPasswordEncoder.matches(loginReqDto.getPassword(), user.getPassword())) {
-            return new ApiRespDto<>("failed", "이메일 또는 비밀번호가 일치하지 않습니다.", null);
+            return new ApiRespDto<>("failed", "사용자 정보를 확인해주세요.", null);
         }
 
         // JWT 토큰 발급
