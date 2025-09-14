@@ -1,17 +1,11 @@
-package com.runnershigh.runnershigh.entity;
+package com.runnershigh.runnershigh.dto.crew;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Data
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
-public class Crew {
+public class CrewRespDto {
     private Integer crewId;
     private Integer userId;
     private String crewName;
@@ -22,4 +16,5 @@ public class Crew {
     private Integer maxMembers;
     private LocalDateTime createDt;
     private LocalDateTime updateDt;
+    private Integer currentMembers;
 }

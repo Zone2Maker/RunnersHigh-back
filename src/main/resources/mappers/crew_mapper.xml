@@ -5,12 +5,17 @@
 <mapper namespace="com.runnershigh.runnershigh.mapper.CrewMapper">
     <insert id="addCrew" useGeneratedKeys="true" keyProperty="crewId">
         INSERT INTO crew_tb
-            (crew_id, user_id, crew_name, crew_detail, crew_img_url, crew_region, crew_status, max_members, current_members, create_dt, update_dt)
+            (crew_id, user_id, crew_name, crew_detail, crew_img_url, crew_region, crew_status, max_members, create_dt, update_dt)
         VALUES
-            (0, #{userId}, #{crewName}, #{crewDetail}, #{crewImgUrl}, #{crewRegion}, "ACTIVE", #{maxMembers}, 1, now(), now() );
+            (0, #{userId}, #{crewName}, #{crewDetail}, #{crewImgUrl}, #{crewRegion}, "ACTIVE", #{maxMembers}, now(), null);
     </insert>
-    <select id="getCrewList">
-        SELECT * FROM crew_tb
+    <select id="getCrewList" resultType="com.runnershigh.runnershigh.dto.crew.CrewRespDto">
+        SELECT
+            ct.*,
+            COUNT(cu.user_id) AS currentMembers
+        FROM
+            crew_tb AS ct
+            LEFT JOIN crew_user_tb cu ON ct.crew_id = cu.crew_id
         <where>
             <if test="search != null">
                 (
@@ -23,14 +28,42 @@
                 AND crew_region = #{region}
             </if>
         </where>
+        GROUP BY ct.crew_id;
     </select>
-    <select id="getCrewByCrewId">
+    <select id="getCrewByCrewId" resultType="com.runnershigh.runnershigh.dto.crew.CrewRespDto">
         SELECT
-            *
+            ct.*,
+            COUNT(cu.user_id) AS currentMembers
         FROM
-            crew_tb
+            crew_tb AS ct
+            LEFT JOIN crew_user_tb cu ON ct.crew_id = cu.crew_id
         WHERE
-            crew_id = #{crewId};
+            ct.crew_id = #{crewId};
     </select>
-
+    <select id="getWeekTop5" resultType="com.runnershigh.runnershigh.dto.crew.RankRespDto">
+        SELECT
+            ct.crew_id,
+            ct.crew_name,
+            COALESCE(SUM(lt.like_count), 0) AS totalLikes
+        FROM
+            crew_tb AS ct
+            LEFT JOIN crew_user_tb cu ON ct.crew_id = cu.crew_id
+            LEFT JOIN user_tb ut ON cu.user_id = ut.user_id
+            LEFT JOIN (
+                SELECT
+                    user_id,
+                    COUNT(*) AS like_count
+                FROM
+                    like_tb
+                WHERE
+                    create_dt >= DATE_SUB(NOW(), INTERVAL 7 DAY)
+                GROUP BY
+                    user_id
+            ) AS lt ON(ut.user_id = lt.user_id)
+        GROUP BY
+            ct.crew_id, ct.crew_name
+        ORDER BY
+            totalLikes DESC
+        LIMIT 5;
+    </select>
 </mapper>
