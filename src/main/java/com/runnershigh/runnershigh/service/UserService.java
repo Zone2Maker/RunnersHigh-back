@@ -1,8 +1,10 @@
 package com.runnershigh.runnershigh.service;
 
 import com.runnershigh.runnershigh.dto.ApiRespDto;
+import com.runnershigh.runnershigh.dto.user.UpdateUserReqDto;
 import com.runnershigh.runnershigh.entity.User;
 import com.runnershigh.runnershigh.repository.UserRepository;
+import com.runnershigh.runnershigh.security.model.PrincipalUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,7 +16,7 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    //회원 정보 조회 - getUserInfo
+    // 회원 정보 조회
     public ApiRespDto<?> getUserInfo(Integer userId, String email, String nickname) {
         if (userId == null && email == null && nickname == null) {
             return new ApiRespDto<>("failed", "파라미터가 유효하지 않습니다. userId, email, nickname 중 하나는 필수입니다.", null);
@@ -29,7 +31,7 @@ public class UserService {
         return new ApiRespDto<>("success", "회원 정보를 조회했습니다.", optionalUser.get());
     }
 
-    // 이메일 / 닉네임 중복확인 - checkDuplicate
+    // 이메일 / 닉네임 중복 확인
     public ApiRespDto<?> checkDuplicate(String email, String nickname) {
         if ((email == null || email.trim().isEmpty()) && (nickname == null || nickname.trim().isEmpty())) {
             return new ApiRespDto<>("failed", "잘못된 요청입니다.", null);
@@ -44,25 +46,21 @@ public class UserService {
         return new ApiRespDto<>("success", "사용 가능한 이메일 또는 닉네임입니다.", null);
     }
 
-//    회원 정보 수정 - updateUser
-//    TODO: 현재 로그인한 사용자의 userId 필요함
-//    @Transactional
-//    public ApiRespDto<?> updateUser (com.runnershigh.runnershigh.dto.User.UpdateUserReqDto updateUserReqDto) {
-//        //요청 DTO에 담긴 userId와 실제 로그인한 사용자의 userId가 일치하는지 확인하는 부분
-//        //실제 로그인한 사용자 id -
-//        if ("로그인된 사용자.userId.equals"(updateUserReqDto.getUserId())) {
-//            return new ApiRespDto<>("failed", "프로필 수정 권한이 없습니다", null);
-//        }
-//        User user = updateUserReqDto.toEntity();
-//        int result = userRepository.updateUser(user);
-//
-//        if (result != 1) {
-//            return new ApiRespDto<>("failed", "회원 정보 수정에 실패하였습니다.", null);
-//        }
-//
-//        return new ApiRespDto<>("success", "회원 정보가 수정되었습니다.", null);
-//
-//    }
+    // 회원 정보 수정
+    @Transactional(rollbackFor = Exception.class)
+    public ApiRespDto<?> updateUser(UpdateUserReqDto updateUserReqDto, PrincipalUser principalUser) {
+        // 요청 DTO에 담긴 userId와 실제 로그인한 사용자의 userId가 일치하는지 확인
+        if (!principalUser.getUserId().equals(updateUserReqDto.getUserId())) {
+            return new ApiRespDto<>("failed", "프로필 수정 권한이 없습니다", null);
+        }
 
+        User user = updateUserReqDto.toEntity();
+        int result = userRepository.updateUser(user);
 
+        if (result != 1) {
+            return new ApiRespDto<>("failed", "회원 정보 수정에 실패하였습니다.", null);
+        }
+
+        return new ApiRespDto<>("success", "회원 정보가 수정되었습니다.", null);
+    }
 }

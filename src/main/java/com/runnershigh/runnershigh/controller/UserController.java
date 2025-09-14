@@ -1,8 +1,11 @@
 package com.runnershigh.runnershigh.controller;
 
+import com.runnershigh.runnershigh.dto.user.UpdateUserReqDto;
+import com.runnershigh.runnershigh.security.model.PrincipalUser;
 import com.runnershigh.runnershigh.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -30,14 +33,12 @@ public class UserController {
         return ResponseEntity.ok(userService.checkDuplicate(email, nickname));
     }
 
-//    // 회원정보 수정 - POST 방식
-    //TODO : 로그인한 사용자 정보 필요
-//    @PostMapping("/update")
-//    public ResponseEntity<?> updateUser(
-//            @RequestParam Integer userId,
-//            @RequestBody UpdateUserReqDto updateUserReqDto) {
-//
-//        userService.updateUser(userId, updateRequest);
-//        return ResponseEntity.ok("회원정보가 성공적으로 수정되었습니다.");
-//    }
+    // 회원정보 수정
+    @PostMapping("/update")
+    public ResponseEntity<?> updateUser(@RequestBody UpdateUserReqDto updateUserReqDto,
+                                        @AuthenticationPrincipal PrincipalUser principalUser) {
+
+        System.out.println("여기 옴?");
+        return ResponseEntity.ok(userService.updateUser(updateUserReqDto, principalUser));
+    }
 }

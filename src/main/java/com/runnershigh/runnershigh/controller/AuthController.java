@@ -30,16 +30,13 @@ public class AuthController {
         return ResponseEntity.ok(authService.login(loginReqDto));
     }
 
-    // 프론트하면서 getPrincipal 하려고 추가한 부분
-    // 현재 로그인된 사용자의 상세 데이터(PrincipalUser)를 프론트엔드에 전달하는 역할
+    // 로그인한 사용자의 인증 객체를 반환
     @GetMapping("/principal")
     public ResponseEntity<?> getPrincipal() {
+        // SecurityContextHolder에 저장되어 있는 사용자 정보
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        // 사용자가 로그인을 성공하면, Spring Security는 그 사용자의 인증 정보(누구인지, 어떤 권한이 있는지 등)를
-        // SecurityContextHolder 라는 특별한 보관소에 저장
         PrincipalUser principalUser = (PrincipalUser) authentication.getPrincipal();
-        // 현재 사용자의 인증 정보(Authentication)를 꺼내는 과정
-        // 인증 정보(Authentication) 안에는 사용자의 핵심 정보 -> 이것을 PrincipalUser 로 저장
+
         ApiRespDto<?> apiRespDto = new ApiRespDto<>("success", "", principalUser);
 
         return ResponseEntity.ok(apiRespDto);

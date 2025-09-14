@@ -32,7 +32,8 @@ public class JwtUtils {
 
     // Bearer 토큰 검증
     public boolean isBearer(String token) {
-        return token != null && !token.startsWith("Bearer ");
+        return token != null && token.startsWith("Bearer ");
+        // !token.startsWith("Bearer ") 라고 해서 필터 안됐음..
     }
 
     // removeBearer - 순수 토큰만 추출
