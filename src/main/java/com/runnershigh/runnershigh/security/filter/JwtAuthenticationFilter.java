@@ -32,7 +32,7 @@ public class JwtAuthenticationFilter implements Filter {
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws ServletException, IOException {
         // 클라이언트가 Header에 "Authorization"에 JWT 토큰담아서 요청 보냄
         HttpServletRequest request = (HttpServletRequest) servletRequest;
-
+        System.out.println("필터는 탔니?");
         // 요청 방식 리스트, POST, GET 메서드만 쓸 거
         List<String> methods = List.of("POST", "GET");
 
@@ -44,9 +44,10 @@ public class JwtAuthenticationFilter implements Filter {
 
         // 요청 Header에서 토큰 가져오기
         String authorization = request.getHeader("Authorization");
-
+        System.out.println(authorization);
         // JWT 토큰이 맞으면 인증 시작
         if (jwtUtils.isBearer(authorization)) {
+            System.out.println("Bearer 검증 끝");
             // 순수 JWT 토큰
             String accessToken = jwtUtils.removeBearer(authorization);
 
@@ -54,8 +55,8 @@ public class JwtAuthenticationFilter implements Filter {
                 // 토큰에서 사용자 정보(Payload) 파싱
                 // Signature 위조나 토큰 만료시 JWTException 발생
                 Claims claims = jwtUtils.getClaims(accessToken);
-
                 Integer userId = Integer.parseInt(claims.getId());
+
                 // 토큰에서 파싱한 userId로 DB에서 사용자 조회
                 Optional<User> optionalUser = userRepository.getUserInfo(userId, null, null);
 
@@ -71,9 +72,9 @@ public class JwtAuthenticationFilter implements Filter {
                             .profileImgUrl(user.getProfileImgUrl())
                             .userRoles(user.getUserRoles())
                             .build();
-
                     // 인증 객체 생성
                     Authentication authentication = new UsernamePasswordAuthenticationToken(principalUser, "", principalUser.getAuthorities());
+                    System.out.println("인증 객체 생성: " + authentication);
                     // SecurityContextHolder에 인증 객체 저장
                     // '이번 요청이 처리되는 동안'에만 다른 Controller, Service..에서 꺼내쓸 수 있게 됨
                     // => Controller에서 @Authentication PrincipalUser principalUser
@@ -88,9 +89,7 @@ public class JwtAuthenticationFilter implements Filter {
                 e.printStackTrace();
             }
         }
-        
         // 인증에 실패하든 성공하든 필터링 중단하지 않고 다음 필터로 넘어감
         filterChain.doFilter(servletRequest, servletResponse);
-
     }
 }
