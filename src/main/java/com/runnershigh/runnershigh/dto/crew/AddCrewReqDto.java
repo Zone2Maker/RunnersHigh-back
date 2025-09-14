@@ -1,4 +1,4 @@
-package com.runnershigh.runnershigh.dto;
+package com.runnershigh.runnershigh.dto.crew;
 
 import com.runnershigh.runnershigh.entity.Crew;
 import lombok.AllArgsConstructor;
