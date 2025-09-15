@@ -71,28 +71,34 @@ public class MessageService {
     }
 
     // 메시지 목록 불러오는 메서드
-    public ApiRespDto<?> getMessageList(int crewId, int cursorMessageId, int size, PrincipalUser principalUser) {
+    public ApiRespDto<?> getMessageList(Integer crewId, Integer cursorMessageId, Integer size, PrincipalUser principalUser) {
         // 메세지 목록 요청한 사용자가 크루 회원인지 확인
         boolean isMember = crewUserRepository.existsByCrewIdAndUserId(crewId, principalUser.getUserId());
         if(!isMember) {
             return new ApiRespDto<>("failed", "접근 권한이 없습니다.", null);
         }
 
-        // 클라이언트는 맨 처음 요청에 nextCursor로 null을 줄 것임
-        // 그러면 xml에서는 받아서 그냥 최신 size개 메시지를 반환해줌.
-        List<GetMessageRespDto> messages = messageRepository.getMessageList(crewId, principalUser.getUserId(), cursorMessageId, size);
+        // 클라이언트는 맨 처음 요청에 nextCursor로 null을 준다
+        // 그러면 백엔드는 최신순으로 size+1만큼 조회한다
+        // 모든 messageId는 Integer의 최대값보다 작으므로 where절 무력화
+        if(cursorMessageId == null) {
+            cursorMessageId = Integer.MAX_VALUE;
+        }
 
-        Integer newCursor = null;
-        // 불러온 메시지 목록이 있을 때 -> 즉, 없을 때(마지막 까지 가져왔을 때)는 null로 클라이언트에게 반환
-        // 그러면 클라이언트는 이제 반환할 메시지가 없다는 것을 알게 됨
-        if(!messages.isEmpty()) {
-            // 가져온 목록 중 가장 오래된 메시지의 ID를 다음 커서로 설정
-            newCursor = messages.get(messages.size() - 1).getMessageId();
+        // cursorMessageId 보다 작은 messageId의 최신 메시지 중에서 size + 1만큼 가져오기.
+        List<GetMessageRespDto> messages = messageRepository.getMessageList(crewId, principalUser.getUserId(), cursorMessageId, size + 1);
+
+        // 만약 messages가 size+1개 라면 다음 페이지가 있다는 것
+        // nextCursor는 size번 메시지의 id가 된다 (인덱스가 0부터 시작하므로)
+        Integer nextCursor = null;
+        if(messages.size() > size) {
+            nextCursor = messages.get(size).getMessageId();
+            messages.remove(size);
         }
 
         GetMessageListRespDto getMessageListRespDto = GetMessageListRespDto.builder()
                 .messages(messages)
-                .nextCursor(newCursor)
+                .nextCursor(nextCursor)
                 .build();
 
         return new ApiRespDto<>("success", "채팅 목록을 불러왔습니다.", getMessageListRespDto);
