@@ -15,8 +15,8 @@ public class MessageController {
     private MessageService messageService;
 
     // 채팅 리스트 불러오기
-    @PostMapping("")
-    // GET http://localhost:8080/crews/5/messages?cursor=1001&size=20
+    @GetMapping("")
+    // GET http://localhost:8080/crews/5/messages?cursorMessageId=1001&size=50
     public ResponseEntity<?> getMessageList(@PathVariable Integer crewId,
                                             @RequestParam(required = false) Integer cursorMessageId,
                                             @RequestParam(defaultValue = "50") Integer size,
