@@ -19,13 +19,13 @@ public class FeedRepository {
     private FeedMapper feedMapper;
 
     // 피드 목록 조회
-    public List<GetFeedRespDto> getFeedList(Integer userId, int size, int offset) {
-        return feedMapper.getFeedList(userId, size, offset); // liked 카운트만 해서 필요없다고 함
+    public List<GetFeedRespDto> getFeedList(Integer userId, Integer size, Integer cursorFeedId) {
+        return feedMapper.getFeedList(userId, size, cursorFeedId); // liked 카운트만 해서 필요없다고 함
     }
 
     // 내가 좋아요한 피드 목록
-    public List<GetILikedFeedRespDto> getILikedFeedList(Integer userId, Integer size, Integer offset) {
-        return feedMapper.getILikedFeedList(userId, size, offset);
+    public List<GetILikedFeedRespDto> getILikedFeedList(Integer userId, Integer size, Integer cursorFeedId) {
+        return feedMapper.getILikedFeedList(userId, size, cursorFeedId);
     }
 
     // 피드 상세 조회

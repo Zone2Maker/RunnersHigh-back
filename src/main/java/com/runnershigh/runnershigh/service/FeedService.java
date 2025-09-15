@@ -21,10 +21,8 @@ public class FeedService {
     private FeedRepository feedRepository;
 
     // 피드 목록 조회
-    public ApiRespDto<?> getFeedList(Integer userId, Integer page, Integer size) {
-        // 페이지네이션 계산
-        int offset = page * size;
-        List<GetFeedRespDto> feeds = feedRepository.getFeedList(userId, size, offset);
+    public ApiRespDto<?> getFeedList(Integer userId, Integer cursorFeedId, Integer size) {
+        List<GetFeedRespDto> feeds = feedRepository.getFeedList(userId, size, cursorFeedId);
 
         if (feeds.isEmpty()) {
             return new ApiRespDto<>("failed", "조회할 피드가 없습니다.", null);
@@ -33,13 +31,11 @@ public class FeedService {
     }
 
     // 내가 좋아요한 피드 목록 조회
-    public ApiRespDto<?> getILikedFeedList(Integer userId, Integer page, Integer size) {
+    public ApiRespDto<?> getILikedFeedList(Integer userId, Integer cursorFeedId, Integer size) {
         if (userId <= 0) {
             return new ApiRespDto<>("failed", "유효하지 않은 사용자 ID입니다.", null);
         }
-        // 페이지네이션 계산
-        int offset = page * size;
-        List<GetILikedFeedRespDto> feeds = feedRepository.getILikedFeedList(userId, size, offset);
+        List<GetILikedFeedRespDto> feeds = feedRepository.getILikedFeedList(userId, size, cursorFeedId);
 
         // 좋아요한 피드 목록 failed...? 좋아요한 피드 목록은 0일 수 있음! (확인해볼 것)
         if (feeds.isEmpty()) {
