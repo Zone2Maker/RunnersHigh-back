@@ -19,7 +19,7 @@ public class MessageController {
     // GET http://localhost:8080/crews/5/messages?cursor=1001&size=20
     public ResponseEntity<?> getMessageList(@PathVariable Integer crewId,
                                             @RequestParam(required = false) Integer cursorMessageId,
-                                            @RequestParam(defaultValue = "50") int size,
+                                            @RequestParam(defaultValue = "50") Integer size,
                                             @AuthenticationPrincipal PrincipalUser principalUser) {
         // 키셋 페이지네이션
         // 클라이언트가 다음 메시지를 요청할 때 기준점으로 삼을 값이 필요

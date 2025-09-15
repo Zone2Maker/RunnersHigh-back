@@ -25,19 +25,13 @@
         WHERE
             mb.crew_id = #{crewId}
             AND
+            mb.message_id <![CDATA[ < ]]> #{cursorMessageId}
         <!-- 해당 유저의 가입일 이후의 메시지만 -->
-            mb.create_dt >= (
+            AND mb.create_dt >= (
                 SELECT create_dt
                 FROM crew_user_tb
                 WHERE user_id = #{userId} AND crew_id = #{crewId}
-            )
-        <!-- cursorMessageId가 존재할 때 -->
-        <!-- cursorMessageId가 null이라는 것은 더 이상 불러올 메시지가 없다는 것 -->
-        <!-- 서비스 로직에서 확인하세요 -->
-        <if test="cursorMessageId != null">
-            <!-- 클라이언트가 알고 있는 가장 오래된 메시지ID보다 작은 것들 중에서 -->
-            AND mb.message_id <![CDATA[<]]> #{cursorMessageId}
-        </if>
+                )
         ORDER BY
             <!-- 최신 메시지부터 가져오도록 정렬 -->
             mb.create_dt DESC

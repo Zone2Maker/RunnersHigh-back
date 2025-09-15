@@ -101,7 +101,7 @@ public class CrewService {
             return new ApiRespDto<>("failed", "해당 크루는 정원초과로 가입이 불가능합니다." , null);
         }
 
-        boolean getCrewUserByCrewIdAndUserId = crewUserRepository.getCrewUserByCrewIdAndUserId(joinCrewReqDto.getCrewId(), joinCrewReqDto.getUserId());
+        boolean getCrewUserByCrewIdAndUserId = crewUserRepository.existsByCrewIdAndUserId(joinCrewReqDto.getCrewId(), joinCrewReqDto.getUserId());
         if(getCrewUserByCrewIdAndUserId){
             return new ApiRespDto<>("failed", "이미 함께하는 크루가 있습니다." , null);
         }
