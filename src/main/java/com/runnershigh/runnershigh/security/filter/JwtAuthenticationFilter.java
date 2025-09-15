@@ -44,7 +44,7 @@ public class JwtAuthenticationFilter implements Filter {
 
         // 요청 Header에서 토큰 가져오기
         String authorization = request.getHeader("Authorization");
-        System.out.println(authorization);
+        System.out.println("메세지 보냄. JWT필터: " + authorization);
         // JWT 토큰이 맞으면 인증 시작
         if (jwtUtils.isBearer(authorization)) {
 
