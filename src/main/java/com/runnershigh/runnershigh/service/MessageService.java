@@ -35,39 +35,39 @@ public class MessageService {
         System.out.println("saveMessage Service단: " + principalUser);
 
         // 메세지를 보낸 사용자가 크루의 회원이 맞는지 확인
-//        boolean isMember = crewUserRepository.existsByCrewIdAndUserId(crewId, principalUser.getUserId());
-//        if(!isMember) {
-//            return new ApiRespDto<>("failed", "크루 멤버만 메시지를 보낼 수 있습니다.", null);
-//        }
-//
-//        Message newMessage = Message.builder()
-//                .crewId(crewId)
-//                .userId(principalUser.getUserId())
-//                .message(saveMessageReqDto.getMessage())
-//                .messageType(saveMessageReqDto.getMessageType())
-//                .createDt(LocalDateTime.now())
-//                .build();
-//
-//        Optional<Message> optionalMessage = messageRepository.saveMessage(newMessage);
-//
-//        if(optionalMessage.isEmpty()) {
-//            return new ApiRespDto<>("failed", "서버에 문제가 발생했습니다.", null);
-//        }
-//
-//        Message savedMessage = optionalMessage.get();
-//
-//        // principalUser에서 메세지를 보낸 유저의 정보를 가져옴
-//        GetMessageRespDto respDto = GetMessageRespDto.builder()
-//                .messageId(savedMessage.getMessageId())
-//                .message(savedMessage.getMessage())
-//                .messageType(savedMessage.getMessageType())
-//                .createDt(savedMessage.getCreateDt())
-//                .userId(principalUser.getUserId())
-//                .nickname(principalUser.getUsername())  // 닉네임
-//                .profileImgUrl(principalUser.getProfileImgUrl())
-//                .build();
+        boolean isMember = crewUserRepository.existsByCrewIdAndUserId(crewId, principalUser.getUserId());
+        if(!isMember) {
+            return new ApiRespDto<>("failed", "크루 멤버만 메시지를 보낼 수 있습니다.", null);
+        }
 
-        return new ApiRespDto<>("success", "메시지가 전송되었습니다.", null);
+        Message newMessage = Message.builder()
+                .crewId(crewId)
+                .userId(principalUser.getUserId())
+                .message(saveMessageReqDto.getMessage())
+                .messageType(saveMessageReqDto.getMessageType())
+                .createDt(LocalDateTime.now())
+                .build();
+
+        Optional<Message> optionalMessage = messageRepository.saveMessage(newMessage);
+
+        if(optionalMessage.isEmpty()) {
+            return new ApiRespDto<>("failed", "서버에 문제가 발생했습니다.", null);
+        }
+
+        Message savedMessage = optionalMessage.get();
+
+        // principalUser에서 메세지를 보낸 유저의 정보를 가져옴
+        GetMessageRespDto respDto = GetMessageRespDto.builder()
+                .messageId(savedMessage.getMessageId())
+                .message(savedMessage.getMessage())
+                .messageType(savedMessage.getMessageType())
+                .createDt(savedMessage.getCreateDt())
+                .userId(principalUser.getUserId())
+                .nickname(principalUser.getUsername())  // 닉네임
+                .profileImgUrl(principalUser.getProfileImgUrl())
+                .build();
+
+        return new ApiRespDto<>("success", "메시지가 전송되었습니다.", respDto);
     }
 
     // 메시지 목록 불러오는 메서드
