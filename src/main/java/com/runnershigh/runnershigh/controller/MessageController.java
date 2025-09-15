@@ -1,9 +1,10 @@
 package com.runnershigh.runnershigh.controller;
 
+import com.runnershigh.runnershigh.security.model.PrincipalUser;
 import com.runnershigh.runnershigh.service.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-//import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -18,14 +19,11 @@ public class MessageController {
     // GET http://localhost:8080/crews/5/messages?cursor=1001&size=20
     public ResponseEntity<?> getMessageList(@PathVariable Integer crewId,
                                             @RequestParam(required = false) Integer cursorMessageId,
-                                            @RequestParam(defaultValue = "20") int size
-                                           /* @AuthenticationPrincipal PrincipalUser principalUser */) {
-//        int userId  = principalUser.getUser().getId();
-        int userId = 5;
-
+                                            @RequestParam(defaultValue = "50") int size,
+                                            @AuthenticationPrincipal PrincipalUser principalUser) {
         // 키셋 페이지네이션
         // 클라이언트가 다음 메시지를 요청할 때 기준점으로 삼을 값이 필요
         // 보통 마지막으로 본 메시지의 ID를 사용
-        return ResponseEntity.ok(messageService.getMessageList(crewId, userId, cursorMessageId, size));
+        return ResponseEntity.ok(messageService.getMessageList(crewId, cursorMessageId, size, principalUser));
     }
 }
