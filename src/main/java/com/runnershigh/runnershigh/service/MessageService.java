@@ -80,25 +80,21 @@ public class MessageService {
 
         // 클라이언트는 맨 처음 요청에 nextCursor로 null을 준다
         // 그러면 백엔드는 최신순으로 size+1만큼 조회한다
-        // 모든 messageId는 Integer의 최대값보다 작으므로 where절 무력화
-        if(cursorMessageId == null) {
-            cursorMessageId = Integer.MAX_VALUE;
-        }
 
         // cursorMessageId 보다 작은 messageId의 최신 메시지 중에서 size + 1만큼 가져오기.
         List<GetMessageRespDto> messages = messageRepository.getMessageList(crewId, principalUser.getUserId(), cursorMessageId, size + 1);
 
         // 만약 messages가 size+1개 라면 다음 페이지가 있다는 것
         // nextCursor는 size번 메시지의 id가 된다 (인덱스가 0부터 시작하므로)
-        Integer nextCursor = null;
+        Integer nextCursorMessageId = null;
         if(messages.size() > size) {
-            nextCursor = messages.get(size).getMessageId();
+            nextCursorMessageId = messages.get(size).getMessageId();
             messages.remove(size);
         }
 
         GetMessageListRespDto getMessageListRespDto = GetMessageListRespDto.builder()
                 .messages(messages)
-                .nextCursor(nextCursor)
+                .nextCursorMessageId(nextCursorMessageId)
                 .build();
 
         return new ApiRespDto<>("success", "채팅 목록을 불러왔습니다.", getMessageListRespDto);

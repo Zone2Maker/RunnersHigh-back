@@ -23,8 +23,8 @@ public class CrewRepository {
         return Optional.of(crew);
     }
 
-    public List<GetCrewRespDto> getCrewList(Integer offset, Integer size, String search, String region){
-        return crewMapper.getCrewList(offset, size, search, region);
+    public List<GetCrewRespDto> getCrewList(Integer cursorCrewId, Integer size, String search, String region){
+        return crewMapper.getCrewList(cursorCrewId, size, search, region);
     }
 
     public Optional<GetCrewRespDto> getCrewByCrewId(Integer crewId){

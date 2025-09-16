@@ -17,8 +17,11 @@
             crew_tb AS ct
             LEFT JOIN crew_user_tb cu ON ct.crew_id = cu.crew_id
         <where>
+            <if test="cursorCrewId != null">
+                ct.crew_id &lt; #{cursorCrewId}
+            </if>
             <if test="search != null">
-                (
+                AND (
                 crew_name LIKE CONCAT('%', #{search}, '%')
                 OR crew_detail LIKE CONCAT('%', #{search}, '%')
                 OR crew_region LIKE CONCAT('%', #{search}, '%')
@@ -29,8 +32,8 @@
             </if>
         </where>
         GROUP BY ct.crew_id
-        ORDER BY ct.create_dt DESC
-        LIMIT #{size} OFFSET #{offset};
+        ORDER BY crew_id DESC
+        LIMIT #{size};
     </select>
     <select id="getCrewByCrewId" resultType="com.runnershigh.runnershigh.dto.crew.GetCrewRespDto">
         SELECT

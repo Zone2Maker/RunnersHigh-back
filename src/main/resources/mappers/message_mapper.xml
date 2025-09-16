@@ -9,6 +9,7 @@
         VALUES
             (0, #{crewId}, #{userId}, #{message}, #{messageType}, NOW(), NOW())
     </insert>
+
     <select id="getMessageList" resultType="com.runnershigh.runnershigh.dto.message.GetMessageRespDto">
         SELECT
             mb.message_id,
@@ -22,19 +23,21 @@
         FROM
             message_tb mb
             INNER JOIN user_tb ut ON (mb.user_id = ut.user_id)
-        WHERE
+        <where>
             mb.crew_id = #{crewId}
-            AND
-            mb.message_id <![CDATA[ < ]]> #{cursorMessageId}
-        <!-- 해당 유저의 가입일 이후의 메시지만 -->
+            <!-- 해당 유저의 가입일 이후의 메시지만 -->
             AND mb.create_dt >= (
                 SELECT create_dt
                 FROM crew_user_tb
                 WHERE user_id = #{userId} AND crew_id = #{crewId}
-                )
+            )
+            <if test="cursorMessageId != null">
+                AND mb.message_id &lt; #{cursorMessageId}
+            </if>
+        </where>
         ORDER BY
             <!-- 최신 메시지부터 가져오도록 정렬 -->
-            mb.create_dt DESC
+            mb.message_id DESC
         LIMIT #{size}
     </select>
 

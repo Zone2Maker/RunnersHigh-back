@@ -22,11 +22,11 @@ public class CrewController {
     }
 
     @GetMapping("")
-    public ResponseEntity<?> getCrewList(@RequestParam(defaultValue=  "1") Integer page,
+    public ResponseEntity<?> getCrewList(@RequestParam(required = false) Integer cursorCrewId,
                                          @RequestParam(defaultValue = "12") Integer size,
                                          @RequestParam(required = false) String search,
                                          @RequestParam(required = false) String region){
-        return ResponseEntity.ok(crewService.getCrewList(page, size, search, region));
+        return ResponseEntity.ok(crewService.getCrewList(cursorCrewId, size, search, region));
     }
 
     @GetMapping("/{crewId}")

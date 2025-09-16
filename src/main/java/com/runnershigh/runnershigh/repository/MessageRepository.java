@@ -24,7 +24,7 @@ public class MessageRepository {
         return Optional.of(message);
     }
 
-    public List<GetMessageRespDto> getMessageList(int crewId, int userId, int cursorMessageId, int size) {
+    public List<GetMessageRespDto> getMessageList(Integer crewId, Integer userId, Integer cursorMessageId, Integer size) {
         return messageMapper.getMessageList(crewId, userId, cursorMessageId, size);
     }
 

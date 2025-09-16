@@ -14,7 +14,7 @@ public interface CrewMapper {
     int addCrew(Crew crew);
 
     List<GetCrewRespDto> getCrewList(
-            @Param("offset") Integer offset,
+            @Param("cursorCrewId") Integer cursorCrewId,
             @Param("size") Integer size,
             @Param("search") String search,
             @Param("region") String region);
