@@ -22,17 +22,17 @@ public class FeedController {
     // 피드 목록 조회
     @GetMapping("")
     public ApiRespDto<?> getFeedList(@RequestParam(required = false) Integer userId,
-                                     @RequestParam(defaultValue = "0") Integer page,
+                                     @RequestParam(defaultValue = "0") Integer cursorFeedId,
                                      @RequestParam(defaultValue = "12") Integer size) {
-        return feedService.getFeedList(userId, page, size);
+        return feedService.getFeedList(userId, cursorFeedId, size);
     }
 
     // 내가 좋아요한 피드 목록 조회
     @GetMapping("/liked")
     public ApiRespDto<?> getILikedFeedList(@RequestParam int userId,
-                                           @RequestParam(defaultValue = "0") Integer page,
+                                           @RequestParam(defaultValue = "0") Integer cursorFeedId,
                                            @RequestParam(defaultValue = "12") Integer size) {
-        return feedService.getILikedFeedList(userId, page, size);
+        return feedService.getILikedFeedList(userId, cursorFeedId, size);
     }
 
     // 피드 상세 조회

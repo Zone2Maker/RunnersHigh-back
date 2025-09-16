@@ -8,7 +8,6 @@ import com.runnershigh.runnershigh.mapper.FeedMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,13 +18,13 @@ public class FeedRepository {
     private FeedMapper feedMapper;
 
     // 피드 목록 조회
-    public List<GetFeedRespDto> getFeedList(Integer userId, int size, int offset) {
-        return feedMapper.getFeedList(userId, size, offset); // liked 카운트만 해서 필요없다고 함
+    public List<GetFeedRespDto> getFeedList(Integer userId, Integer cursorFeedId, Integer size) {
+        return feedMapper.getFeedList(userId, cursorFeedId, size);
     }
 
-    // 내가 좋아요한 피드 목록
-    public List<GetILikedFeedRespDto> getILikedFeedList(Integer userId, Integer size, Integer offset) {
-        return feedMapper.getILikedFeedList(userId, size, offset);
+    // 내가 좋아요한 피드 목록 조회
+    public List<GetILikedFeedRespDto> getILikedFeedList(Integer userId, Integer cursorFeedId, Integer size) {
+        return feedMapper.getILikedFeedList(userId, cursorFeedId, size);
     }
 
     // 피드 상세 조회
@@ -33,24 +32,21 @@ public class FeedRepository {
         return feedMapper.getFeedDetailByFeedId(feedId);
     }
 
-    // 주간 좋아요 순위 5개 피드 조회
+    // 주간 좋아요 순위 top 8 피드 조회
     public List<GetFeedDetailRespDto> getWeeklyTopFeeds() {
         return feedMapper.getWeeklyTopFeeds();
     }
 
-    // feed객체 자체를 받아서
+    // feed 객체를 받아 DB에 삽입
+    // 삽입 성공 시 feed 객체 반환, 실패 시 Optional.empty()
     public Optional<Feed> addFeed(Feed feed) {
         try {
-            // DB에 feed 삽입
             feedMapper.addFeed(feed);
-            // 예외 처리
         } catch (Exception e) {
-            // 없으면 빈 객체 반환
+            // 삽입 실패 시 빈 객체 반환
             return Optional.empty();
         }
-        // 삽입 성공시 feed 객체 반환
+        // 삽입 성공 시 feed 객체 반환
         return Optional.of(feed);
     }
-
-
 }
