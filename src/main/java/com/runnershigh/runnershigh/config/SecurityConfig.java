@@ -78,6 +78,7 @@ public class SecurityConfig {
                     .requestMatchers("/auth/**", "/user/check", "/oauth2/**", "/auth/oauth2/**").permitAll()    // 요청주소 - 허용할 주소
                     // 피드, 크루 조회 여부에 따라 변경
                     .requestMatchers(HttpMethod.GET, "/feed/**", "/crew/**", "/feed/weekly-top", "/crew/weekly-top").permitAll()
+                    .requestMatchers(HttpMethod.GET, "/auth/principal").authenticated()
                     .anyRequest().authenticated(); // 위에 주소 제외 모든 요청은 인증 필요
         });
 
