@@ -1,10 +1,7 @@
 package com.runnershigh.runnershigh.service;
 
 import com.runnershigh.runnershigh.dto.ApiRespDto;
-import com.runnershigh.runnershigh.dto.crew.RegisterCrewReqDto;
-import com.runnershigh.runnershigh.dto.crew.GetCrewRespDto;
-import com.runnershigh.runnershigh.dto.crew.JoinCrewReqDto;
-import com.runnershigh.runnershigh.dto.crew.GetCrewRankRespDto;
+import com.runnershigh.runnershigh.dto.crew.*;
 import com.runnershigh.runnershigh.entity.Crew;
 import com.runnershigh.runnershigh.repository.CrewRepository;
 import com.runnershigh.runnershigh.repository.CrewUserRepository;
@@ -59,13 +56,24 @@ public class CrewService {
         }
     }
 
-    public ApiRespDto<?> getCrewList (Integer page, Integer size, String search, String region) {
-        Integer offset = (page - 1) * size;
-        List<GetCrewRespDto> crewList = crewRepository.getCrewList(offset, size, search, region);
-        if(crewList.isEmpty()){
-            return new ApiRespDto<>("failed", "크루 목록을 불러오는 데에 실패했습니다.", null);
+    public ApiRespDto<?> getCrewList (Integer cursorCrewId, Integer size, String search, String region) {
+
+        List<GetCrewRespDto> crewList = crewRepository.getCrewList(cursorCrewId, size + 1, search, region);
+
+        // 만약 crewList가 size + 1개 라면 다음 페이지가 있다는 것
+        // nextCursor는 size번 메시지의 id가 된다 (인덱스가 0부터 시작하므로)
+        Integer nextCursorCrewId = null;
+        if(crewList.size() > size) {
+            nextCursorCrewId = crewList.get(size).getCrewId();
+            crewList.remove(size);
         }
-        return new ApiRespDto<>("success", "크루 목록 조회에 성공했습니다.", crewList);
+
+        GetCrewListRespDto respDto = GetCrewListRespDto.builder()
+                .crewList(crewList)
+                .nextCursorCrewId(nextCursorCrewId)
+                .build();
+
+        return new ApiRespDto<>("success", "크루 목록 조회에 성공했습니다.", respDto);
     }
 
     public ApiRespDto<?> getCrewByCrewId (Integer crewId) {

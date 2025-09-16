@@ -10,6 +10,6 @@ import java.util.Optional;
 @Mapper
 public interface MessageMapper {
     int saveMessage(Message message);
-    List<GetMessageRespDto> getMessageList(int crewId, int userId, int cursorMessageId, int size);
-    Optional<GetMessageRespDto> getMessageByMessageId(int messageId);
+    List<GetMessageRespDto> getMessageList(Integer crewId, Integer userId, Integer cursorMessageId, Integer size);
+    Optional<GetMessageRespDto> getMessageByMessageId(Integer messageId);
 }
