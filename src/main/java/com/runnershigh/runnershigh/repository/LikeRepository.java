@@ -1,5 +1,6 @@
 package com.runnershigh.runnershigh.repository;
 
+import com.runnershigh.runnershigh.dto.feed.RemoveLikeReqDto;
 import com.runnershigh.runnershigh.entity.Like;
 import com.runnershigh.runnershigh.mapper.LikeMapper;
 import lombok.RequiredArgsConstructor;
@@ -13,10 +14,10 @@ public class LikeRepository {
     private LikeMapper likeMapper;
 
     public int addLike(Like like) {
-        return likeMapper.insertLike(like);
+        return likeMapper.addLike(like);
     }
 
-    public int removeLike(Like like) {
-        return likeMapper.deleteLike(like);
+    public int removeLike(RemoveLikeReqDto removeLikeReqDto) {
+        return likeMapper.removeLike(removeLikeReqDto);
     }
 }

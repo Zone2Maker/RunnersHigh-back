@@ -4,10 +4,14 @@ import com.runnershigh.runnershigh.dto.ApiRespDto;
 import com.runnershigh.runnershigh.dto.feed.*;
 import com.runnershigh.runnershigh.entity.Feed;
 import com.runnershigh.runnershigh.repository.FeedRepository;
+import com.runnershigh.runnershigh.repository.LikeRepository;
+import com.runnershigh.runnershigh.security.model.PrincipalUser;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -15,6 +19,9 @@ public class FeedService {
 
     @Autowired
     private FeedRepository feedRepository;
+
+    @Autowired
+    private LikeRepository likeRepository;
 
     // 피드 목록 조회
     public ApiRespDto<?> getFeedList(Integer userId, Integer cursorFeedId, Integer size) {
@@ -97,12 +104,36 @@ public class FeedService {
 
     // 피드 추가 (Repository 1번만 호출 -> 트랜젝션 필요 없음)
     // 나중에 시큐리티 구현하면 principalUser의 userId랑 비교해서 접근 권한 검증
-    public ApiRespDto<?> addFeed(AddFeedReqDto addFeedReqDto) {
+    public ApiRespDto<?> addFeed(AddFeedReqDto addFeedReqDto, PrincipalUser principalUser) {
+        if(!Objects.equals(principalUser.getUserId(), addFeedReqDto.getUserId())) {
+            return new ApiRespDto<>("failed", "접근 권한이 없습니다.", null);
+        }
+
         Optional<Feed> optionalFeed = feedRepository.addFeed(addFeedReqDto.toEntity());
 
         if (optionalFeed.isEmpty()) {
             return new ApiRespDto<>("failed", "서버 오류로 피드 등록에 실패했습니다.", null);
         }
         return new ApiRespDto<>("success", "피드가 성공적으로 등록되었습니다.", optionalFeed.get());
+    }
+
+    public ApiRespDto<?> likeFeed(AddLikeReqDto addLikeReqDto) {
+        int result = likeRepository.addLike(addLikeReqDto.toEntity());
+
+        if(result != 1) {
+            return new ApiRespDto<>("failed", "서버 오류로 좋아요에 실패했습니다. 다시 시도해주세요.", null);
+        }
+
+        return new ApiRespDto<>("success", "좋아요 등록 성공", null);
+    }
+
+    public ApiRespDto<?> unlikeFeed(RemoveLikeReqDto removeLikeReqDto) {
+        int result = likeRepository.removeLike(removeLikeReqDto);
+
+        if(result != 1) {
+            return new ApiRespDto<>("failed", "서버 오류로 취소 실패했습니다. 다시 시도해주세요.", null);
+        }
+
+        return new ApiRespDto<>("success", "좋아요 취소 성공", null);
     }
 }
