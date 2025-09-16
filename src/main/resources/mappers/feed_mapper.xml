@@ -6,7 +6,7 @@
 
     <!--    쿼리 결과를 DTO 객체로 매핑-->
     <!--    주간 BEST5 게시물-->
-    <select id="getWeeklyTopFeeds" resultType="com.runnershigh.runnershigh.dto.feed.GetFeedRespDto">
+    <select id="getWeeklyTopFeeds" resultType="com.runnershigh.runnershigh.dto.feed.GetFeedDetailRespDto">
         SELECT
             f.feed_id,
             f.feed_img_url,
@@ -86,7 +86,7 @@
             f.feed_id = #{feedId}
         GROUP BY f.feed_id, f.user_id, f.feed_img_url, f.feed_location,
                  u.nickname, u.profile_img_url
-        ORDER BY f.create_dt DESC
+        <!-- ORDER BY f.create_dt DESC 단일 조회이기 때문에 정렬 필요없음 -->
     </select>
 
     <!--  피드 추가(생성)  -->
