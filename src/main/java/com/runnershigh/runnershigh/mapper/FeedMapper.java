@@ -15,7 +15,7 @@ import java.util.Optional;
 public interface FeedMapper {
     // 피드 목록 조회
     // userId Integer nullable 체크때문에 사용하라는데...
-    List<GetFeedRespDto> getFeedList(Integer userId, Integer size, Integer offset);
+    List<GetFeedRespDto> getFeedList(Integer userId, int size, Integer offset);
 
     // 내가 좋아요한 피드 목록
     List<GetILikedFeedRespDto> getILikedFeedList(Integer userId, int size, int offset);
