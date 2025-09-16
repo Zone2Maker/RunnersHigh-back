@@ -38,7 +38,7 @@
 
             <!-- 커서 기반 조건 추가 -->
             <if test="cursorFeedId != null">
-                AND f.feed_id &lt; #{cursorFeedId}
+                AND f.feed_id <![CDATA[ < ]]> #{cursorFeedId}
             </if>
 
         </where>
@@ -60,7 +60,7 @@
 
             <!-- 커서 기반 조건 -->
             <if test="cursorFeedId != null">
-                AND f.feed_id &lt; #{cursorFeedId}
+                AND f.feed_id <![CDATA[ < ]]> #{cursorFeedId}
             </if>
         </where>
         ORDER BY f.create_dt DESC, f.feed_id DESC
