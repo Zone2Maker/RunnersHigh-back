@@ -1,6 +1,5 @@
 package com.runnershigh.runnershigh.controller;
 
-import com.runnershigh.runnershigh.dto.ApiRespDto;
 import com.runnershigh.runnershigh.dto.feed.AddFeedReqDto;
 import com.runnershigh.runnershigh.dto.feed.AddLikeReqDto;
 import com.runnershigh.runnershigh.dto.feed.RemoveLikeReqDto;
@@ -10,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping("/feed")
@@ -28,17 +29,18 @@ public class FeedController {
     // 피드 목록 조회
     @GetMapping("")
     public ResponseEntity<?> getFeedList(@RequestParam(required = false) Integer userId,
-                                     @RequestParam(defaultValue = "0") Integer cursorFeedId,
-                                     @RequestParam(defaultValue = "12") Integer size) {
+                                         @RequestParam(required = false) Integer cursorFeedId,
+                                         @RequestParam(defaultValue = "18") Integer size) {
         return ResponseEntity.ok(feedService.getFeedList(userId, cursorFeedId, size));
     }
 
     // 내가 좋아요한 피드 목록 조회
     @GetMapping("/liked")
     public ResponseEntity<?> getILikedFeedList(@RequestParam int userId,
-                                           @RequestParam(defaultValue = "0") Integer cursorFeedId,
-                                           @RequestParam(defaultValue = "12") Integer size) {
-        return ResponseEntity.ok(feedService.getILikedFeedList(userId, cursorFeedId, size));
+                                               @RequestParam(required = false) Integer cursorFeedId,
+                                               @RequestParam(defaultValue = "18") Integer size,
+                                               @AuthenticationPrincipal PrincipalUser principalUser) {
+        return ResponseEntity.ok(feedService.getILikedFeedList(userId, cursorFeedId, size, principalUser));
     }
 
     // 피드 상세 조회

@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -15,6 +16,5 @@ import java.util.List;
 public class GetILikedFeedListRespDto {
     // 좋아요한 피드 목록
     private List<GetILikedFeedRespDto> feeds;
-    // 다음 페이지 커서
-    private Integer nextCursor;
+    private Integer nextCursorFeedId;   // 다음 페이지 요청 시 사용할 feed_id 커서
 }

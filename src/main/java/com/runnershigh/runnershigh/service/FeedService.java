@@ -7,7 +7,6 @@ import com.runnershigh.runnershigh.repository.FeedRepository;
 import com.runnershigh.runnershigh.repository.LikeRepository;
 import com.runnershigh.runnershigh.security.model.PrincipalUser;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,55 +24,48 @@ public class FeedService {
 
     // 피드 목록 조회
     public ApiRespDto<?> getFeedList(Integer userId, Integer cursorFeedId, Integer size) {
-
-        // 처음 요청이면 최대값 세팅
-        if (cursorFeedId == null) {
-            cursorFeedId = Integer.MAX_VALUE;
-        }
-
         // size + 1개 조회 후 다음 페이지 존재 여부 판단
         List<GetFeedRespDto> feeds = feedRepository.getFeedList(userId, cursorFeedId, size + 1);
-        // null 인 경우를 방어하기 위한 빈 리스트 초기화 코드는 FeedRepository나 Mapper에서 처리할 수 있음
-        // if (feeds == null) {
-        //    feeds = new ArrayList<>();
-        //}
 
-        Integer nextCursor = null;
+        Integer nextCursorFeedId = null;
+        // 조회된 데이터가 요청한 사이즈보다 크면 다음 페이지가 있는 것
         if (feeds.size() > size) {
-            nextCursor = feeds.get(size).getFeedId(); // size 번째 인덱스를 다음 커서로
-            feeds.remove(size);  // 마지막 데이터는 다음 페이지를 위해 제거
+            // 마지막 데이터(size 인덱스, 인덱스는 0부터이므로)를 다음 커서 기준으로 삼음
+            nextCursorFeedId = feeds.get(size).getFeedId(); // size 번째 인덱스를 다음 커서로
+
+            feeds.remove(size);  // 마지막 데이터는 응답에서 제외
         }
 
+        // 최종 응답 DTO
         GetFeedListRespDto respDto = GetFeedListRespDto.builder()
                 .feeds(feeds)
-                .nextCursor(nextCursor)
+                .nextCursorFeedId(nextCursorFeedId)
                 .build();
         return new ApiRespDto<>("success", "피드 목록 조회 성공", respDto);
     }
 
     // 내가 좋아요한 피드 목록 조회
-    public ApiRespDto<?> getILikedFeedList(Integer userId, Integer cursorFeedId, Integer size) {
-        if (userId == null || userId <= 0) {
-            return new ApiRespDto<>("failed", "유효하지 않은 사용자 ID입니다.", null);
-        }
-
-        // 처음 요청이면 최대값 세팅
-        if (cursorFeedId == null) {
-            cursorFeedId = Integer.MAX_VALUE;
+    public ApiRespDto<?> getILikedFeedList(Integer userId, Integer cursorFeedId, Integer size, PrincipalUser principalUser) {
+        if(!Objects.equals(userId, principalUser.getUserId())) {
+            return new ApiRespDto<>("failed", "접근 권한이 없습니다.", null);
         }
 
         // size + 1개 조회 후 다음 페이지 존재 여부 판단
         List<GetILikedFeedRespDto> feeds = feedRepository.getILikedFeedList(userId, cursorFeedId, size + 1);
 
-        Integer nextCursor = null;
+        Integer nextCursorFeedId = null;
+        // 조회된 데이터가 요청한 사이즈보다 크면 다음 페이지가 있는 것
         if (feeds.size() > size) {
-            nextCursor = feeds.get(size).getFeedId(); // size 번째 인덱스를 다음 커서로
-            feeds.remove(size);  // 마지막 데이터는 다음 페이지를 위해 제거
+            // 마지막 데이터(size 인덱스, 인덱스는 0부터이므로)를 다음 커서 기준으로 삼음
+            nextCursorFeedId = feeds.get(size).getFeedId(); // size 번째 인덱스를 다음 커서로
+
+            feeds.remove(size);  // 마지막 데이터는 응답에서 제외
         }
 
+        // 최종 응답 DTO
         GetILikedFeedListRespDto respDto = GetILikedFeedListRespDto.builder()
                 .feeds(feeds)
-                .nextCursor(nextCursor)
+                .nextCursorFeedId(nextCursorFeedId)
                 .build();
 
         return new ApiRespDto<>("success", "좋아요한 피드 목록 조회 성공", respDto);
