@@ -9,6 +9,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,6 +24,10 @@ public class PrincipalUser implements UserDetails {
     private String email;
     private String profileImgUrl;
     private List<UserRole> userRoles;
+    private LocalDateTime createDt;
+
+    private Integer feedCount;
+    private String crewName;
 
     // 권한 목록 가져오기
     @Override

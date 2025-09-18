@@ -70,6 +70,22 @@
         </where>
     </select>
 
+    <select id="getUserProfileById" resultType="com.runnershigh.runnershigh.dto.user.UserProfileDto">
+        SELECT
+            ut.user_id,
+            ct.crew_name,
+            COUNT(DISTINCT ft.feed_id) AS feed_count
+        FROM
+            user_tb ut
+            LEFT JOIN crew_user_tb cut ON (ut.user_id = cut.user_id)
+            LEFT JOIN crew_tb ct ON (cut.crew_id = ct.crew_id)
+            LEFT JOIN feed_tb ft ON (ut.user_id = ft.user_id)
+        WHERE
+            ut.user_id = #{userId}
+        GROUP BY
+            ut.user_id, ct.crew_name
+    </select>
+
     <!-- 이메일 or 닉네임으로 존재 여부 확인 -->
     <select id="checkUserExist" resultType="int">
         SELECT EXISTS (

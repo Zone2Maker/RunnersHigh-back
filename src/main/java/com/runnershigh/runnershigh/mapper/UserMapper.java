@@ -1,5 +1,6 @@
 package com.runnershigh.runnershigh.mapper;
 
+import com.runnershigh.runnershigh.dto.user.UserProfileDto;
 import com.runnershigh.runnershigh.entity.User;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -17,6 +18,9 @@ public interface UserMapper {
             @Param("nickname") String nickname
     );
     //return : User 객체
+
+    // 회원 프로필 조회
+    Optional<UserProfileDto> getUserProfileById(Integer userId);
 
     //이메일 or 닉네임으로 존재 유무 확인
     //존재하면 1, 없으면 0

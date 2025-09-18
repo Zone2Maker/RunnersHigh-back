@@ -1,8 +1,10 @@
 package com.runnershigh.runnershigh.repository;
 
 
+import com.runnershigh.runnershigh.dto.user.UserProfileDto;
 import com.runnershigh.runnershigh.entity.User;
 import com.runnershigh.runnershigh.mapper.UserMapper;
+import com.runnershigh.runnershigh.security.model.PrincipalUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -16,6 +18,10 @@ public class UserRepository {
 
     public Optional<User> getUserInfo(Integer userId, String email, String nickname) {
         return userMapper.getUserInfo(userId, email, nickname);
+    }
+
+    public Optional<UserProfileDto> getUserProfileById(Integer userId) {
+        return userMapper.getUserProfileById(userId);
     }
 
     public int checkUserExist(String email, String nickname) {
