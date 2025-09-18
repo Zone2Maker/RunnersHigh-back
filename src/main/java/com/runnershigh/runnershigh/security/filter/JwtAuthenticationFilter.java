@@ -1,5 +1,6 @@
 package com.runnershigh.runnershigh.security.filter;
 
+import com.runnershigh.runnershigh.dto.user.UserProfileDto;
 import com.runnershigh.runnershigh.entity.User;
 import com.runnershigh.runnershigh.repository.UserRepository;
 import com.runnershigh.runnershigh.security.jwt.JwtUtils;
@@ -63,6 +64,8 @@ public class JwtAuthenticationFilter implements Filter {
                 // 사용자가 존재하면 -> 검증 끝
                 // 이번 요청이 끝날 때까지 인증된 사용자임을 등록
                 optionalUser.ifPresentOrElse((user) -> {
+                    Optional<UserProfileDto> userProfile = userRepository.getUserProfileById(user.getUserId());
+
                     // 인증 객체에 담길 사용자 정보(PrincipalUser) 객체 생성
                     PrincipalUser principalUser = PrincipalUser.builder()
                             .userId(user.getUserId())
@@ -71,6 +74,9 @@ public class JwtAuthenticationFilter implements Filter {
                             .email(user.getEmail())
                             .profileImgUrl(user.getProfileImgUrl())
                             .userRoles(user.getUserRoles())
+                            .createDt(user.getCreateDt())
+                            .feedCount(userProfile.get().getFeedCount())
+                            .crewName(userProfile.get().getCrewName())
                             .build();
                     // 인증 객체 생성
                     Authentication authentication = new UsernamePasswordAuthenticationToken(principalUser, "", principalUser.getAuthorities());
