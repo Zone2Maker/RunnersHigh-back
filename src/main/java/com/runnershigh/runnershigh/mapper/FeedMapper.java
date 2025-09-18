@@ -47,7 +47,7 @@ public interface FeedMapper {
      * 주간 인기 피드 조회 (좋아요 기준 상위 8개)
      * @return 주간 인기 피드 리스트
      */
-    List<GetFeedDetailRespDto> getWeeklyTopFeeds();
+    List<GetFeedDetailRespDto> getWeeklyTopFeeds(String startDate, String endDate);
 
     /**
      * 피드 추가

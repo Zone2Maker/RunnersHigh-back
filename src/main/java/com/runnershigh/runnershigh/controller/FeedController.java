@@ -51,8 +51,8 @@ public class FeedController {
 
     // 주간 인기 피드 top 8 조회
     @GetMapping("/weekly-top")
-    public ResponseEntity<?> getWeeklyTopFeeds() {
-        return ResponseEntity.ok(feedService.getWeeklyTopFeeds());
+    public ResponseEntity<?> getWeeklyTopFeeds(@RequestParam String startDate, @RequestParam String endDate) {
+        return ResponseEntity.ok(feedService.getWeeklyTopFeeds(startDate, endDate));
     }
 
     // 피드 좋아요

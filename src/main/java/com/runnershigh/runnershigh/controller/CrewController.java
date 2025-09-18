@@ -35,8 +35,8 @@ public class CrewController {
     }
 
     @GetMapping("/weekly-top")
-    public ResponseEntity<?> getWeeklyTopCrews(){
-        return ResponseEntity.ok(crewService.getWeeklyTopCrews());
+    public ResponseEntity<?> getWeeklyTopCrews(@RequestParam String startDate, @RequestParam String endDate){
+        return ResponseEntity.ok(crewService.getWeeklyTopCrews(startDate, endDate));
     }
 
     @PostMapping("/join")

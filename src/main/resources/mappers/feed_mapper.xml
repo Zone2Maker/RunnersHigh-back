@@ -14,7 +14,7 @@
             feed_tb f
             LEFT JOIN like_tb l ON f.feed_id = l.feed_id
         WHERE
-            f.create_dt >= date_add(NOW(), INTERVAL -7 DAY)
+            f.create_dt BETWEEN #{startDate} AND #{endDate}
         GROUP BY
             f.feed_id, f.feed_img_url
         ORDER BY
