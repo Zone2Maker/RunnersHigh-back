@@ -85,9 +85,8 @@ public class FeedService {
     }
 
     // 주간 좋아요 순위 top 8 조회
-    // -> 이거 주석에 top 5라고 작성되어있는데 feed_mapper에서 LIMIT 8로 들어가있습니다!(피그마에 사진칸 8개라서)
-    public ApiRespDto<?> getWeeklyTopFeeds() {
-        List<GetFeedDetailRespDto> feeds = feedRepository.getWeeklyTopFeeds();
+    public ApiRespDto<?> getWeeklyTopFeeds(String startDate, String endDate) {
+        List<GetFeedDetailRespDto> feeds = feedRepository.getWeeklyTopFeeds(startDate, endDate);
         if (feeds.isEmpty()) {
             return new ApiRespDto<>("failed", "주간 인기 피드가 없습니다.", null);
         }

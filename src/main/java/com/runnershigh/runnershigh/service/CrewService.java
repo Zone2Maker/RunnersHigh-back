@@ -10,6 +10,7 @@ import com.runnershigh.runnershigh.security.model.PrincipalUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 import java.util.Optional;
@@ -89,8 +90,8 @@ public class CrewService {
         return new ApiRespDto<>("success", "크루 조회에 성공했습니다", optionalCrew.get());
     }
 
-    public ApiRespDto<?> getWeeklyTopCrews(){
-        List<GetCrewRankRespDto> rankList = crewRepository.getWeeklyTopCrews();
+    public ApiRespDto<?> getWeeklyTopCrews(String startDate, String endDate){
+        List<GetCrewRankRespDto> rankList = crewRepository.getWeeklyTopCrews(startDate, endDate);
         if(rankList.isEmpty()){
             return new ApiRespDto<>("failed", "주간 top5 피드를 불러오는데 실패했습니다.", null);
         }

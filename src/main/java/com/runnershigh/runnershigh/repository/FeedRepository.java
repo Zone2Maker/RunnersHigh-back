@@ -34,8 +34,8 @@ public class FeedRepository {
     }
 
     // 주간 좋아요 순위 top 8 피드 조회
-    public List<GetFeedDetailRespDto> getWeeklyTopFeeds() {
-        return feedMapper.getWeeklyTopFeeds();
+    public List<GetFeedDetailRespDto> getWeeklyTopFeeds(String startDate, String endDate) {
+        return feedMapper.getWeeklyTopFeeds(startDate, endDate);
     }
 
     // feed 객체를 받아 DB에 삽입

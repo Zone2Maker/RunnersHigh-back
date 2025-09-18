@@ -6,6 +6,7 @@ import com.runnershigh.runnershigh.entity.Crew;
 import com.runnershigh.runnershigh.mapper.CrewMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 import java.util.Optional;
@@ -31,8 +32,8 @@ public class CrewRepository {
         return crewMapper.getCrewByCrewId(crewId);
     }
 
-    public List<GetCrewRankRespDto> getWeeklyTopCrews(){
-        return crewMapper.getWeeklyTopCrews();
+    public List<GetCrewRankRespDto> getWeeklyTopCrews(String startDate, String endDate){
+        return crewMapper.getWeeklyTopCrews(startDate, endDate);
     }
 
 }

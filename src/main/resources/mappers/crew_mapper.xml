@@ -61,7 +61,7 @@
                 FROM
                     like_tb
                 WHERE
-                    create_dt >= DATE_SUB(NOW(), INTERVAL 7 DAY)
+                    create_dt BETWEEN #{startDate} AND #{endDate}
                 GROUP BY
                     user_id
             ) AS lt ON(ut.user_id = lt.user_id)

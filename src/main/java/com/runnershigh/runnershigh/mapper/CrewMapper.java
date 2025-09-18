@@ -5,6 +5,7 @@ import com.runnershigh.runnershigh.dto.crew.GetCrewRankRespDto;
 import com.runnershigh.runnershigh.entity.Crew;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 import java.util.Optional;
@@ -21,5 +22,5 @@ public interface CrewMapper {
 
     Optional<GetCrewRespDto> getCrewByCrewId(@Param("crewId") Integer crewId);
 
-    List<GetCrewRankRespDto> getWeeklyTopCrews();
+    List<GetCrewRankRespDto> getWeeklyTopCrews(String startDate, String endDate);
 }
