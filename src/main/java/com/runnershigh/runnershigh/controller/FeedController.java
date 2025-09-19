@@ -30,8 +30,9 @@ public class FeedController {
     @GetMapping("")
     public ResponseEntity<?> getFeedList(@RequestParam(required = false) Integer userId,
                                          @RequestParam(required = false) Integer cursorFeedId,
-                                         @RequestParam(defaultValue = "18") Integer size) {
-        return ResponseEntity.ok(feedService.getFeedList(userId, cursorFeedId, size));
+                                         @RequestParam(defaultValue = "18") Integer size,
+                                         @AuthenticationPrincipal PrincipalUser principalUser) {
+        return ResponseEntity.ok(feedService.getFeedList(userId, cursorFeedId, size, principalUser));
     }
 
     // 내가 좋아요한 피드 목록 조회

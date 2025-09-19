@@ -23,9 +23,11 @@ public class FeedService {
     private LikeRepository likeRepository;
 
     // 피드 목록 조회
-    public ApiRespDto<?> getFeedList(Integer userId, Integer cursorFeedId, Integer size) {
+    public ApiRespDto<?> getFeedList(Integer userId, Integer cursorFeedId, Integer size, PrincipalUser principalUser) {
+        Integer loginUserId = (principalUser != null) ? principalUser.getUserId() : null;
+
         // size + 1개 조회 후 다음 페이지 존재 여부 판단
-        List<GetFeedRespDto> feeds = feedRepository.getFeedList(userId, cursorFeedId, size + 1);
+        List<GetFeedRespDto> feeds = feedRepository.getFeedList(userId, cursorFeedId, size + 1, loginUserId);
 
         Integer nextCursorFeedId = null;
         // 조회된 데이터가 요청한 사이즈보다 크면 다음 페이지가 있는 것
@@ -33,7 +35,7 @@ public class FeedService {
             // 마지막 데이터(size 인덱스, 인덱스는 0부터이므로)를 다음 커서 기준으로 삼음
             nextCursorFeedId = feeds.get(size).getFeedId(); // size 번째 인덱스를 다음 커서로
 
-            feeds.remove(size);  // 마지막 데이터는 응답에서 제외
+            feeds = feeds.subList(0,size); // photo list 12개
         }
 
         // 최종 응답 DTO
@@ -59,7 +61,7 @@ public class FeedService {
             // 마지막 데이터(size 인덱스, 인덱스는 0부터이므로)를 다음 커서 기준으로 삼음
             nextCursorFeedId = feeds.get(size).getFeedId(); // size 번째 인덱스를 다음 커서로
 
-            feeds.remove(size);  // 마지막 데이터는 응답에서 제외
+            feeds = feeds.subList(0,size); // photo list 12개
         }
 
         // 최종 응답 DTO
