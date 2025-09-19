@@ -23,7 +23,8 @@ public interface FeedMapper {
      */
     List<GetFeedRespDto> getFeedList(@Param("userId") Integer userId,
                                      @Param("cursorFeedId") Integer cursorFeedId,
-                                     @Param("size") Integer size);
+                                     @Param("size") Integer size,
+                                     Integer loginUserId);
 
     /**
      * 내가 좋아요한 피드 목록 조회

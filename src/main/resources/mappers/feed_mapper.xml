@@ -25,9 +25,19 @@
     <!-- 피드 전체 목록 반환 -->
     <select id="getFeedList" resultType="com.runnershigh.runnershigh.dto.feed.GetFeedRespDto">
         SELECT
-            f.feed_id,
-            f.feed_img_url,
-            COUNT(l.like_id) AS likeCount
+<!--            f.feed_id,-->
+<!--            f.feed_img_url,-->
+            f.* ,
+            COUNT(l.like_id) AS likeCount,
+            <if test="loginUserId != null">
+                (SELECT COUNT(1)
+                FROM like_tb li
+                WHERE li.feed_id = f.feed_id
+                AND li.user_id = #{loginUserId}) > 0 AS isLikedByUser
+            </if>
+            <if test="loginUserId == null">
+                false AS isLikedByUser
+            </if>
         FROM
             feed_tb f
             LEFT JOIN like_tb l ON f.feed_id = l.feed_id
@@ -40,7 +50,7 @@
             </if>
         </where>
         GROUP BY
-            f.feed_id, f.feed_img_url
+            f.feed_id
         ORDER BY
             f.feed_id DESC
         LIMIT #{size}
