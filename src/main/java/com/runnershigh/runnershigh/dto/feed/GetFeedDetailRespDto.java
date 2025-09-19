@@ -20,4 +20,9 @@ public class GetFeedDetailRespDto {
     private int likeCount;
     // 이거 없으면 MyBatis가 무시한다고 합
     // 조회 결과 DTO에 좋아요 수 포함 가능
+    private Boolean isLikedByUser;
+
+
+
+
 }
