@@ -15,7 +15,6 @@ public class JoinReqDto {
                 .email(this.email)
                 .password(bCryptPasswordEncoder.encode(this.password)) // 비밀번호는 암호화하여 저장
                 .nickname(nickname)
-                .profileImgUrl("https://example.com/default_profile.png")   // 추후 변경
                 .build();
     }
 
