@@ -37,17 +37,16 @@ public class FeedController {
 
     // 내가 좋아요한 피드 목록 조회
     @GetMapping("/liked")
-    public ResponseEntity<?> getILikedFeedList(@RequestParam int userId,
-                                               @RequestParam(required = false) Integer cursorFeedId,
+    public ResponseEntity<?> getILikedFeedList(@RequestParam(required = false) Integer cursorFeedId,
                                                @RequestParam(defaultValue = "18") Integer size,
                                                @AuthenticationPrincipal PrincipalUser principalUser) {
-        return ResponseEntity.ok(feedService.getILikedFeedList(userId, cursorFeedId, size, principalUser));
+        return ResponseEntity.ok(feedService.getILikedFeedList(cursorFeedId, size, principalUser));
     }
 
     // 피드 상세 조회
     @GetMapping("/{feedId}")
-    public ResponseEntity<?> getFeedDetail(@PathVariable Integer feedId) {
-        return ResponseEntity.ok(feedService.getFeedDetail(feedId));
+    public ResponseEntity<?> getFeedDetail(@PathVariable Integer feedId, @AuthenticationPrincipal PrincipalUser principalUser) {
+        return ResponseEntity.ok(feedService.getFeedDetail(feedId, principalUser));
     }
 
     // 주간 인기 피드 top 8 조회

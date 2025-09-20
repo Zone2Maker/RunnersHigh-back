@@ -2,12 +2,10 @@ package com.runnershigh.runnershigh.mapper;
 
 import com.runnershigh.runnershigh.dto.feed.GetFeedDetailRespDto;
 import com.runnershigh.runnershigh.dto.feed.GetFeedRespDto;
-import com.runnershigh.runnershigh.dto.feed.GetILikedFeedRespDto;
 import com.runnershigh.runnershigh.entity.Feed;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,16 +31,14 @@ public interface FeedMapper {
      * @param size : 조회할 데이터 개수
      * @return 내가 좋아요한 피드 리스트
      */
-    List<GetILikedFeedRespDto> getILikedFeedList(@Param("userId") Integer userId,
-                                                 @Param("cursorFeedId") Integer cursorFeedId,
-                                                 @Param("size") Integer size);
+    List<GetFeedRespDto> getILikedFeedList(Integer userId, Integer cursorFeedId, Integer size);
 
     /**
      * 피드 상세 조회
      * @param feedId : 조회할 피드 ID
      * @return 피드 상세 정보
      */
-    Optional<GetFeedDetailRespDto> getFeedDetailByFeedId(@Param("feedId") Integer feedId);
+    Optional<GetFeedDetailRespDto> getFeedDetailByFeedId(@Param("feedId") Integer feedId, Integer loginUserId);
 
     /**
      * 주간 인기 피드 조회 (좋아요 기준 상위 8개)

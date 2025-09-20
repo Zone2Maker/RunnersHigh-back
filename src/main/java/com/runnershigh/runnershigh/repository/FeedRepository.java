@@ -2,13 +2,11 @@ package com.runnershigh.runnershigh.repository;
 
 import com.runnershigh.runnershigh.dto.feed.GetFeedDetailRespDto;
 import com.runnershigh.runnershigh.dto.feed.GetFeedRespDto;
-import com.runnershigh.runnershigh.dto.feed.GetILikedFeedRespDto;
 import com.runnershigh.runnershigh.entity.Feed;
 import com.runnershigh.runnershigh.mapper.FeedMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,13 +22,13 @@ public class FeedRepository {
     }
 
     // 내가 좋아요한 피드 목록 조회
-    public List<GetILikedFeedRespDto> getILikedFeedList(Integer userId, Integer cursorFeedId, Integer size) {
+    public List<GetFeedRespDto> getILikedFeedList(Integer userId, Integer cursorFeedId, Integer size) {
         return feedMapper.getILikedFeedList(userId, cursorFeedId, size);
     }
 
     // 피드 상세 조회
-    public Optional<GetFeedDetailRespDto> getFeedDetailByFeedId(Integer feedId) {
-        return feedMapper.getFeedDetailByFeedId(feedId);
+    public Optional<GetFeedDetailRespDto> getFeedDetailByFeedId(Integer feedId, Integer loginUserId) {
+        return feedMapper.getFeedDetailByFeedId(feedId, loginUserId);
     }
 
     // 주간 좋아요 순위 top 8 피드 조회

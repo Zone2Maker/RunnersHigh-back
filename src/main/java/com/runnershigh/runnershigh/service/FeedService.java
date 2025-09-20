@@ -9,6 +9,7 @@ import com.runnershigh.runnershigh.security.model.PrincipalUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -47,13 +48,9 @@ public class FeedService {
     }
 
     // 내가 좋아요한 피드 목록 조회
-    public ApiRespDto<?> getILikedFeedList(Integer userId, Integer cursorFeedId, Integer size, PrincipalUser principalUser) {
-        if(!Objects.equals(userId, principalUser.getUserId())) {
-            return new ApiRespDto<>("failed", "접근 권한이 없습니다.", null);
-        }
-
+    public ApiRespDto<?> getILikedFeedList(Integer cursorFeedId, Integer size, PrincipalUser principalUser) {
         // size + 1개 조회 후 다음 페이지 존재 여부 판단
-        List<GetILikedFeedRespDto> feeds = feedRepository.getILikedFeedList(userId, cursorFeedId, size + 1);
+        List<GetFeedRespDto> feeds = feedRepository.getILikedFeedList(principalUser.getUserId(), cursorFeedId, size + 1);
 
         Integer nextCursorFeedId = null;
         // 조회된 데이터가 요청한 사이즈보다 크면 다음 페이지가 있는 것
@@ -65,7 +62,7 @@ public class FeedService {
         }
 
         // 최종 응답 DTO
-        GetILikedFeedListRespDto respDto = GetILikedFeedListRespDto.builder()
+        GetFeedListRespDto respDto = GetFeedListRespDto.builder()
                 .feeds(feeds)
                 .nextCursorFeedId(nextCursorFeedId)
                 .build();
@@ -74,11 +71,14 @@ public class FeedService {
     }
 
     // 피드 상세 조회
-    public ApiRespDto<?> getFeedDetail(Integer feedId) {
+    public ApiRespDto<?> getFeedDetail(Integer feedId, PrincipalUser principalUser) {
         if (feedId == null || feedId <= 0) {
             return new ApiRespDto<>("failed", "유효하지 않은 피드 ID입니다.", null);
         }
-        Optional<GetFeedDetailRespDto> feed = feedRepository.getFeedDetailByFeedId(feedId);
+
+        Integer loginUserId = (principalUser != null) ? principalUser.getUserId() : null;
+
+        Optional<GetFeedDetailRespDto> feed = feedRepository.getFeedDetailByFeedId(feedId, loginUserId);
 
         if (feed.isEmpty()) {
             return new ApiRespDto<>("failed", "해당 피드를 찾을 수 없습니다.", null);
