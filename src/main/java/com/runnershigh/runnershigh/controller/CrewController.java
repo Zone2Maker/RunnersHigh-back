@@ -1,11 +1,14 @@
 package com.runnershigh.runnershigh.controller;
 
+import com.runnershigh.runnershigh.dto.ApiRespDto;
 import com.runnershigh.runnershigh.dto.crew.RegisterCrewReqDto;
 import com.runnershigh.runnershigh.dto.crew.JoinCrewReqDto;
+import com.runnershigh.runnershigh.dto.message.GetMessageRespDto;
 import com.runnershigh.runnershigh.security.model.PrincipalUser;
 import com.runnershigh.runnershigh.service.CrewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,10 +18,21 @@ public class CrewController {
     @Autowired
     private CrewService crewService;
 
+    @Autowired
+    private SimpMessagingTemplate messagingTemplate;
+
+
     @PostMapping("")
     public ResponseEntity<?> addCrew(@RequestBody RegisterCrewReqDto registerCrewReqDto,
                                      @AuthenticationPrincipal PrincipalUser principalUser){
-        return ResponseEntity.ok(crewService.addCrew(registerCrewReqDto, principalUser));
+        ApiRespDto<?> apiRespDto = crewService.addCrew(registerCrewReqDto, principalUser);
+        if(apiRespDto.getStatus().equals("success")){
+            GetMessageRespDto respDto = (GetMessageRespDto) apiRespDto.getData();
+
+            // /sub/crew/{crewId} 구독자들에게 메시지 전송
+            messagingTemplate.convertAndSend("/sub/crew/" + respDto.getCrewId(), respDto);
+        }
+        return ResponseEntity.ok(apiRespDto);
     }
 
     @GetMapping("")
@@ -40,7 +54,13 @@ public class CrewController {
     }
 
     @PostMapping("/join")
-    public ResponseEntity<?> joinCrew(@RequestBody JoinCrewReqDto joinCrewReqDto){
-        return ResponseEntity.ok(crewService.joinCrew(joinCrewReqDto));
+    public ResponseEntity<?> joinCrew(@RequestBody JoinCrewReqDto joinCrewReqDto,
+                                      @AuthenticationPrincipal PrincipalUser principalUser){
+        ApiRespDto<?> apiRespDto = crewService.joinCrew(joinCrewReqDto, principalUser);
+        if(apiRespDto.getStatus().equals("success")){
+            GetMessageRespDto respDto = (GetMessageRespDto) apiRespDto.getData();
+            messagingTemplate.convertAndSend("/sub/crew/" + respDto.getCrewId(), respDto);
+        }
+        return ResponseEntity.ok(apiRespDto);
     }
 }
