@@ -109,8 +109,9 @@
     <insert id="addUser" useGeneratedKeys="true" keyProperty="userId">
         INSERT INTO
             user_tb
+            (user_id, email, password, nickname, last_login_dt, create_dt)
         VALUES
-            (0, #{email}, #{password}, #{nickname}, #{profileImgUrl}, NOW(), NOW(), NOW())
+            (0, #{email}, #{password}, #{nickname}, NOW(), NOW())
     </insert>
 
     <!-- 프로필 업데이트 -->

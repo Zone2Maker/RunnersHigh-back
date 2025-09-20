@@ -10,5 +10,6 @@ import java.time.LocalDateTime;
 public class GetFeedRespDto {
     private Integer feedId;
     private String feedImgUrl;
-
+    private Integer likeCount;
+    private Boolean isLikedByUser;
 }
