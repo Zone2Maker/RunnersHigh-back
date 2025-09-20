@@ -2,16 +2,20 @@ package com.runnershigh.runnershigh.service;
 
 import com.runnershigh.runnershigh.dto.ApiRespDto;
 import com.runnershigh.runnershigh.dto.crew.*;
+import com.runnershigh.runnershigh.dto.message.GetMessageRespDto;
 import com.runnershigh.runnershigh.entity.Crew;
+import com.runnershigh.runnershigh.entity.Message;
 import com.runnershigh.runnershigh.repository.CrewRepository;
 import com.runnershigh.runnershigh.repository.CrewUserRepository;
+import com.runnershigh.runnershigh.repository.MessageRepository;
 import com.runnershigh.runnershigh.repository.UserRepository;
 import com.runnershigh.runnershigh.security.model.PrincipalUser;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestParam;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,6 +29,12 @@ public class CrewService {
 
     @Autowired
     private CrewUserRepository crewUserRepository;
+
+    @Autowired
+    private MessageRepository messageRepository;
+
+    @Value("${app.system-user-id}")
+    private Integer systemUserId;
 
     @Transactional(rollbackFor = Exception.class)
     public ApiRespDto<?> addCrew (RegisterCrewReqDto registerCrewReqDto, PrincipalUser principalUser) {
@@ -47,10 +57,37 @@ public class CrewService {
 
         try {
             Optional<Crew> optionalCrew = crewRepository.addCrew(registerCrewReqDto.toEntity());
+
             if(optionalCrew.isEmpty()){
                 return new ApiRespDto<>("failed", "크루 등록에 실패했습니다. 다시 시도해주세요", null);
             }
-            return new ApiRespDto<>("success", "크루를 만들었습니다!", optionalCrew.get());
+
+            //크루 등록 성공 후 실시간 채팅
+            Crew crew = optionalCrew.get();
+            Message newMessage = Message.builder()
+                    .crewId(crew.getCrewId())
+                    .userId(systemUserId)
+                    .message("✨첫 발걸음이 가장 중요합니다. 오늘부터 이 크루의 이야기가 시작됩니다!✨")
+                    .messageType("ENTER")
+                    .createDt(LocalDateTime.now())
+                    .build();
+
+            Optional<Message> optionalMessage = messageRepository.saveMessage(newMessage);
+            if(optionalMessage.isEmpty()) {
+                return new ApiRespDto<>("failed", "서버에 문제가 발생했습니다.", null);
+            }
+            Message savedMessage = optionalMessage.get();
+
+            GetMessageRespDto respDto = GetMessageRespDto.builder()
+                    .messageId(savedMessage.getMessageId())
+                    .message(savedMessage.getMessage())
+                    .messageType(savedMessage.getMessageType())
+                    .createDt(savedMessage.getCreateDt())
+                    .userId(systemUserId)
+                    .crewId(crew.getCrewId())
+                    .build();
+
+            return new ApiRespDto<>("success", "크루를 만들었습니다!", respDto);
         } catch (Exception e){
             System.out.println(e.getMessage());
             return new ApiRespDto<>("failed", "크루 등록 중 오류가 발생했습니다.", null);
@@ -61,12 +98,10 @@ public class CrewService {
 
         List<GetCrewRespDto> crewList = crewRepository.getCrewList(cursorCrewId, size + 1, search, region);
 
-        // 만약 crewList가 size + 1개 라면 다음 페이지가 있다는 것
-        // nextCursor는 size번 메시지의 id가 된다 (인덱스가 0부터 시작하므로)
         Integer nextCursorCrewId = null;
         if(crewList.size() > size) {
             nextCursorCrewId = crewList.get(size).getCrewId();
-            crewList.remove(size);
+            crewList = crewList.subList(0,size);
         }
 
         GetCrewListRespDto respDto = GetCrewListRespDto.builder()
@@ -99,15 +134,14 @@ public class CrewService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public ApiRespDto<?> joinCrew (JoinCrewReqDto joinCrewReqDto) {
+    public ApiRespDto<?> joinCrew (JoinCrewReqDto joinCrewReqDto, PrincipalUser principalUser) {
+        if(!joinCrewReqDto.getUserId().equals(principalUser.getUserId())){
+            return new ApiRespDto<>("failed", "크루에 가입하고 싶다면 로그인을 진행해주세요.", null);
+        }
+
         Optional<GetCrewRespDto> getCrewByCrewId = crewRepository.getCrewByCrewId(joinCrewReqDto.getCrewId());
         if(getCrewByCrewId.isEmpty()){
             return new ApiRespDto<>("failed", "해당 아이디의 크루는 존재하지 않습니다.", null);
-        }
-
-        GetCrewRespDto crew = getCrewByCrewId.get();
-        if(crew.getCurrentMembers().equals(crew.getMaxMembers())){
-            return new ApiRespDto<>("failed", "해당 크루는 정원초과로 가입이 불가능합니다." , null);
         }
 
         boolean getCrewUserByCrewIdAndUserId = crewUserRepository.existsByCrewIdAndUserId(joinCrewReqDto.getCrewId(), joinCrewReqDto.getUserId());
@@ -120,7 +154,33 @@ public class CrewService {
             if(result == 0){
                 return new ApiRespDto<>("failed", "크루 가입에 실패했습니다. 다시 시도해주세요", null);
             }
-            return new ApiRespDto<>("success", "크루에 가입되었습니다.", crew.getCrewId());
+
+            //크루 가입 성공 후 실시간 채팅
+            GetCrewRespDto crew = getCrewByCrewId.get();
+            Message newMessage = Message.builder()
+                    .crewId(crew.getCrewId())
+                    .userId(systemUserId)
+                    .message(principalUser.getUsername() + "님이 입장했습니다.")
+                    .messageType("ENTER")
+                    .createDt(LocalDateTime.now())
+                    .build();
+
+            Optional<Message> optionalMessage = messageRepository.saveMessage(newMessage);
+            if(optionalMessage.isEmpty()) {
+                return new ApiRespDto<>("failed", "서버에 문제가 발생했습니다.", null);
+            }
+            Message savedMessage = optionalMessage.get();
+
+            GetMessageRespDto respDto = GetMessageRespDto.builder()
+                    .messageId(savedMessage.getMessageId())
+                    .message(savedMessage.getMessage())
+                    .messageType(savedMessage.getMessageType())
+                    .createDt(savedMessage.getCreateDt())
+                    .userId(systemUserId)
+                    .crewId(crew.getCrewId())
+                    .build();
+
+            return new ApiRespDto<>("success", "크루에 가입되었습니다.", respDto);
         }catch (Exception e){
             System.out.println(e.getMessage());
             return new ApiRespDto<>("failed", "크루 가입 중 오류가 발생했습니다.", null);

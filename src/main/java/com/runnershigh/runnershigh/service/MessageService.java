@@ -83,13 +83,13 @@ public class MessageService {
 
         // cursorMessageId 보다 작은 messageId의 최신 메시지 중에서 size + 1만큼 가져오기.
         List<GetMessageRespDto> messages = messageRepository.getMessageList(crewId, principalUser.getUserId(), cursorMessageId, size + 1);
-
+        System.out.println(messages);
         // 만약 messages가 size+1개 라면 다음 페이지가 있다는 것
         // nextCursor는 size번 메시지의 id가 된다 (인덱스가 0부터 시작하므로)
         Integer nextCursorMessageId = null;
         if(messages.size() > size) {
             nextCursorMessageId = messages.get(size).getMessageId();
-            messages.remove(size);
+            messages = messages.subList(0, size);
         }
 
         GetMessageListRespDto getMessageListRespDto = GetMessageListRespDto.builder()
