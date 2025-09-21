@@ -15,12 +15,12 @@ public interface FeedMapper {
 
     /**
      * 피드 목록 조회
-     * @param userId : 특정 사용자의 피드 조회 시 사용 (nullable)
+     * @param targetUserId : 특정 사용자의 피드 조회 시 사용 (nullable)
      * @param cursorFeedId : 커서 기반 페이지네이션을 위한 feedId
      * @param size : 조회할 데이터 개수
      * @return 피드 리스트
      */
-    List<GetFeedRespDto> getFeedList(@Param("userId") Integer userId,
+    List<GetFeedRespDto> getFeedList(@Param("targetUserId") Integer targetUserId,
                                      @Param("cursorFeedId") Integer cursorFeedId,
                                      @Param("size") Integer size,
                                      Integer loginUserId);

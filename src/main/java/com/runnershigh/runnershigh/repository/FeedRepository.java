@@ -18,8 +18,8 @@ public class FeedRepository {
     private FeedMapper feedMapper;
 
     // 피드 목록 조회
-    public List<GetFeedRespDto> getFeedList(Integer userId, Integer cursorFeedId, Integer size, Integer loginUserId) {
-        return feedMapper.getFeedList(userId, cursorFeedId, size, loginUserId);
+    public List<GetFeedRespDto> getFeedList(Integer targetUserId, Integer cursorFeedId, Integer size, Integer loginUserId) {
+        return feedMapper.getFeedList(targetUserId, cursorFeedId, size, loginUserId);
     }
 
     // 내가 좋아요한 피드 목록 조회
