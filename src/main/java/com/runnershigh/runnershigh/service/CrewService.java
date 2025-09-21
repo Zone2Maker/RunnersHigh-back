@@ -42,6 +42,9 @@ public class CrewService {
             return new ApiRespDto<>("failed", "로그인 정보가 유효하지 않거나 권한이 없습니다.", null);
         }
 
+        if(registerCrewReqDto.getCrewImgUrl() == null || registerCrewReqDto.getCrewImgUrl().trim().isEmpty()){
+            return new ApiRespDto<>("failed", "대표사진을 선택해주세요.", null);
+        }
         if(registerCrewReqDto.getCrewName() == null || registerCrewReqDto.getCrewName().trim().isEmpty()){
             return new ApiRespDto<>("failed", "크루명을 입력해주세요.", null);
         }
