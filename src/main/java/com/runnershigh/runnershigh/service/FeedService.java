@@ -94,6 +94,16 @@ public class FeedService {
         }
         return new ApiRespDto<>("success", "주간 인기 피드 조회 성공", feeds);
     }
+    
+    // 맵 클러스터링 피드 조회
+    public ApiRespDto<?> getFeedMapList(String startDate, String endDate) {
+        List<GetFeedMapRespDto> feeds = feedRepository.getFeedMapList(startDate, endDate);
+
+        if (feeds.isEmpty()) {
+            return new ApiRespDto<>("failed", "최근 한달 간 게시된 피드가 없습니다.", null);
+        }
+        return new ApiRespDto<>("success", "피드 조회 성공", feeds);
+    }
 
     // 피드 추가 (Repository 1번만 호출 -> 트랜젝션 필요 없음)
     // 나중에 시큐리티 구현하면 principalUser의 userId랑 비교해서 접근 권한 검증

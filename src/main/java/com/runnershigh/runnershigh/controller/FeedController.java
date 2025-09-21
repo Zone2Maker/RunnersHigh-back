@@ -55,6 +55,11 @@ public class FeedController {
         return ResponseEntity.ok(feedService.getWeeklyTopFeeds(startDate, endDate));
     }
 
+    @GetMapping("/map")
+    public ResponseEntity<?> getFeedMapList(@RequestParam String startDate, @RequestParam String endDate) {
+        return ResponseEntity.ok(feedService.getFeedMapList(startDate, endDate));
+    }
+
     // 피드 좋아요
     @PostMapping("/like")
     public ResponseEntity<?> likeFeed(@RequestBody AddLikeReqDto addLikeReqDto) {
