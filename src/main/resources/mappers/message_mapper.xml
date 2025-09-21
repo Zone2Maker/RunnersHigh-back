@@ -32,7 +32,7 @@
                 WHERE user_id = #{userId} AND crew_id = #{crewId}
             )
             <if test="cursorMessageId != null">
-                AND mb.message_id &lt; #{cursorMessageId}
+                AND mb.message_id &lt;= #{cursorMessageId}
             </if>
         </where>
         ORDER BY

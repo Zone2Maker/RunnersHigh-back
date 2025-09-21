@@ -18,7 +18,7 @@
             LEFT JOIN crew_user_tb cu ON ct.crew_id = cu.crew_id
         <where>
             <if test="cursorCrewId != null">
-                ct.crew_id &lt; #{cursorCrewId}
+                ct.crew_id &lt;= #{cursorCrewId}
             </if>
             <if test="search != null">
                 AND (

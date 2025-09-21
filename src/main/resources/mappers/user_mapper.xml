@@ -83,6 +83,7 @@
             LEFT JOIN feed_tb ft ON (ut.user_id = ft.user_id)
         WHERE
             ut.user_id = #{userId}
+            AND ft.feed_status = 'ACTIVE'
         GROUP BY
             ut.user_id, ct.crew_id, ct.crew_name
     </select>
@@ -126,19 +127,4 @@
         WHERE
             user_id = #{userId}
     </update>
-
-
-
-    
-
-
-
-
-
-
-
-
-
-
-
 </mapper>

@@ -27,28 +27,30 @@
     <!-- 피드 전체 목록 반환 -->
     <select id="getFeedList" resultType="com.runnershigh.runnershigh.dto.feed.GetFeedRespDto">
         SELECT
-            f.feed_id,
-            f.feed_img_url,
-            COUNT(l.like_id) AS likeCount
-        <if test="loginUserId != null">
-            , (SELECT COUNT(1)
-            FROM like_tb li
-            WHERE li.feed_id = f.feed_id
-            AND li.user_id = #{loginUserId}) > 0 AS isLikedByUser
-        </if>
-        <if test="loginUserId == null">
-            , false AS isLikedByUser
-        </if>
+        f.feed_id,
+        f.feed_img_url,
+        COUNT(l.like_id) AS likeCount,
+        <choose>
+            <!-- 로그인한 사용자면 해당 사용자의 좋아요 여부 확인 -->
+            <when test="loginUserId != null">
+                CAST(SUM(CASE WHEN l.user_id = #{loginUserId} THEN 1 ELSE 0 END) AS SIGNED) > 0 AS isLikedByUser
+            </when>
+            <otherwise>
+                false AS isLikedByUser
+            </otherwise>
+        </choose>
         FROM
-            feed_tb f
-            LEFT JOIN like_tb l ON f.feed_id = l.feed_id
+        feed_tb f
+        LEFT JOIN like_tb l ON f.feed_id = l.feed_id
         <where>
             f.feed_status = 'ACTIVE'
+            <!-- cursorFeedId: 프론트에서 다음으로 가져올 피드 목록의 첫번째ID를 제공하기 때문에 <가 아닌 <= -->
             <if test="cursorFeedId != null">
-                AND f.feed_id &lt; #{cursorFeedId}
+                AND f.feed_id &lt;= #{cursorFeedId}
             </if>
-            <if test="userId != null">
-                AND f.user_id = #{userId}
+            <!-- 특정 사용자의 피드만 요청 시 사용 -->
+            <if test="targetUserId != null">
+                AND f.user_id = #{targetUserId}
             </if>
         </where>
         GROUP BY
@@ -72,7 +74,7 @@
             l.user_id = #{userId}
             AND f.feed_status = 'ACTIVE'
             <if test="cursorFeedId != null">
-                AND f.feed_id &lt; #{cursorFeedId}
+                AND f.feed_id &lt;= #{cursorFeedId}
             </if>
         </where>
         ORDER BY

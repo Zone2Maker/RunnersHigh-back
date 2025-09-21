@@ -24,11 +24,11 @@ public class FeedService {
     private LikeRepository likeRepository;
 
     // 피드 목록 조회
-    public ApiRespDto<?> getFeedList(Integer userId, Integer cursorFeedId, Integer size, PrincipalUser principalUser) {
+    public ApiRespDto<?> getFeedList(Integer targetUserId, Integer cursorFeedId, Integer size, PrincipalUser principalUser) {
         Integer loginUserId = (principalUser != null) ? principalUser.getUserId() : null;
 
         // size + 1개 조회 후 다음 페이지 존재 여부 판단
-        List<GetFeedRespDto> feeds = feedRepository.getFeedList(userId, cursorFeedId, size + 1, loginUserId);
+        List<GetFeedRespDto> feeds = feedRepository.getFeedList(targetUserId, cursorFeedId, size + 1, loginUserId);
 
         Integer nextCursorFeedId = null;
         // 조회된 데이터가 요청한 사이즈보다 크면 다음 페이지가 있는 것
