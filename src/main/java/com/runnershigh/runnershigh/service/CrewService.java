@@ -57,13 +57,20 @@ public class CrewService {
 
         try {
             Optional<Crew> optionalCrew = crewRepository.addCrew(registerCrewReqDto.toEntity());
-
             if(optionalCrew.isEmpty()){
+                return new ApiRespDto<>("failed", "크루 등록에 실패했습니다. 다시 시도해주세요", null);
+            }
+            Crew crew = optionalCrew.get();
+            JoinCrewReqDto joinCrewReqDto = JoinCrewReqDto.builder()
+                    .crewId(crew.getCrewId())
+                    .userId(principalUser.getUserId())
+                    .build();
+            int result = crewUserRepository.joinCrew(joinCrewReqDto.toEntity());
+            if(result == 0){
                 return new ApiRespDto<>("failed", "크루 등록에 실패했습니다. 다시 시도해주세요", null);
             }
 
             //크루 등록 성공 후 실시간 채팅
-            Crew crew = optionalCrew.get();
             Message newMessage = Message.builder()
                     .crewId(crew.getCrewId())
                     .userId(systemUserId)
