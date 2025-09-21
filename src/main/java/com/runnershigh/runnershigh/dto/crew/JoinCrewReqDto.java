@@ -1,9 +1,11 @@
 package com.runnershigh.runnershigh.dto.crew;
 
 import com.runnershigh.runnershigh.entity.CrewUser;
+import lombok.Builder;
 import lombok.Data;
 
 @Data
+@Builder
 public class JoinCrewReqDto {
     private Integer crewId;
     private Integer userId;
