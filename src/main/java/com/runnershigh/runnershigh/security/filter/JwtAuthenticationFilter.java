@@ -76,6 +76,7 @@ public class JwtAuthenticationFilter implements Filter {
                             .userRoles(user.getUserRoles())
                             .createDt(user.getCreateDt())
                             .feedCount(userProfile.get().getFeedCount())
+                            .crewId(userProfile.get().getCrewId())
                             .crewName(userProfile.get().getCrewName())
                             .build();
                     // 인증 객체 생성
