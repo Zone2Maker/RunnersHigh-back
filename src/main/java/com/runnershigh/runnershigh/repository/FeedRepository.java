@@ -1,6 +1,7 @@
 package com.runnershigh.runnershigh.repository;
 
 import com.runnershigh.runnershigh.dto.feed.GetFeedDetailRespDto;
+import com.runnershigh.runnershigh.dto.feed.GetFeedMapRespDto;
 import com.runnershigh.runnershigh.dto.feed.GetFeedRespDto;
 import com.runnershigh.runnershigh.entity.Feed;
 import com.runnershigh.runnershigh.mapper.FeedMapper;
@@ -34,6 +35,11 @@ public class FeedRepository {
     // 주간 좋아요 순위 top 8 피드 조회
     public List<GetFeedDetailRespDto> getWeeklyTopFeeds(String startDate, String endDate) {
         return feedMapper.getWeeklyTopFeeds(startDate, endDate);
+    }
+
+    // 맵 클러스터링 최근 한달 간 피드 조회
+    public List<GetFeedMapRespDto> getFeedMapList(String startDate, String endDate) {
+        return feedMapper.getFeedMapList(startDate, endDate);
     }
 
     // feed 객체를 받아 DB에 삽입

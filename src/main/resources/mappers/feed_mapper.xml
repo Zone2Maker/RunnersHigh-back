@@ -110,6 +110,19 @@
             u.nickname, u.profile_img_url
     </select>
 
+    <!-- 맵 클러스터링 좌표 -->
+    <select id="getFeedMapList" resultType="com.runnershigh.runnershigh.dto.feed.GetFeedMapRespDto">
+        SELECT
+            feed_id,
+            feed_img_url,
+            feed_longitude,
+            feed_latitude
+        FROM
+            feed_tb
+        WHERE
+            create_dt BETWEEN #{startDate} AND #{endDate}
+    </select>
+
     <!-- 피드 추가(생성) -->
     <insert id="addFeed" useGeneratedKeys="true" keyProperty="feedId">
         INSERT INTO feed_tb (

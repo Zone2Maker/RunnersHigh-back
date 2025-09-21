@@ -1,6 +1,7 @@
 package com.runnershigh.runnershigh.mapper;
 
 import com.runnershigh.runnershigh.dto.feed.GetFeedDetailRespDto;
+import com.runnershigh.runnershigh.dto.feed.GetFeedMapRespDto;
 import com.runnershigh.runnershigh.dto.feed.GetFeedRespDto;
 import com.runnershigh.runnershigh.entity.Feed;
 import org.apache.ibatis.annotations.Mapper;
@@ -45,6 +46,9 @@ public interface FeedMapper {
      * @return 주간 인기 피드 리스트
      */
     List<GetFeedDetailRespDto> getWeeklyTopFeeds(String startDate, String endDate);
+
+    // 맵 클러스터링 할 최근 한달 간 피드 목록
+    List<GetFeedMapRespDto> getFeedMapList(String startDate, String endDate);
 
     /**
      * 피드 추가
