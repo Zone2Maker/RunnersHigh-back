@@ -13,5 +13,6 @@ import java.util.List;
 public class UserProfileDto {
     private Integer userId;
     private Integer feedCount;
+    private Integer crewId;
     private String crewName;
 }

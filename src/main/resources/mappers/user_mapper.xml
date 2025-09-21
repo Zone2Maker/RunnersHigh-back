@@ -73,6 +73,7 @@
     <select id="getUserProfileById" resultType="com.runnershigh.runnershigh.dto.user.UserProfileDto">
         SELECT
             ut.user_id,
+            ct.crew_id,
             ct.crew_name,
             COUNT(DISTINCT ft.feed_id) AS feed_count
         FROM
@@ -83,7 +84,7 @@
         WHERE
             ut.user_id = #{userId}
         GROUP BY
-            ut.user_id, ct.crew_name
+            ut.user_id, ct.crew_id, ct.crew_name
     </select>
 
     <!-- 이메일 or 닉네임으로 존재 여부 확인 -->

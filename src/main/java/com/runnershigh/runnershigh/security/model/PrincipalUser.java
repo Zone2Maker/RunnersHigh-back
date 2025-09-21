@@ -27,6 +27,7 @@ public class PrincipalUser implements UserDetails {
     private LocalDateTime createDt;
 
     private Integer feedCount;
+    private Integer crewId;
     private String crewName;
 
     // 권한 목록 가져오기
