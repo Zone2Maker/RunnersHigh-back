@@ -3,6 +3,7 @@ package com.runnershigh.runnershigh.service;
 import com.runnershigh.runnershigh.dto.ApiRespDto;
 import com.runnershigh.runnershigh.dto.crew.*;
 import com.runnershigh.runnershigh.dto.message.GetMessageRespDto;
+import com.runnershigh.runnershigh.dto.message.UpdateLastReadMessageReqDto;
 import com.runnershigh.runnershigh.entity.Crew;
 import com.runnershigh.runnershigh.entity.Message;
 import com.runnershigh.runnershigh.repository.CrewRepository;
@@ -149,12 +150,12 @@ public class CrewService {
             return new ApiRespDto<>("failed", "크루에 가입하고 싶다면 로그인을 진행해주세요.", null);
         }
 
-        Optional<GetCrewRespDto> getCrewByCrewId = crewRepository.getCrewByCrewId(joinCrewReqDto.getCrewId());
+        Optional<GetCrewRespDto> getCrewByCrewId = crewRepository.getCrewByCrewId(principalUser.getCrewId());
         if(getCrewByCrewId.isEmpty()){
             return new ApiRespDto<>("failed", "해당 아이디의 크루는 존재하지 않습니다.", null);
         }
 
-        boolean getCrewUserByCrewIdAndUserId = crewUserRepository.existsByCrewIdAndUserId(joinCrewReqDto.getCrewId(), joinCrewReqDto.getUserId());
+        boolean getCrewUserByCrewIdAndUserId = crewUserRepository.existsByCrewIdAndUserId(principalUser.getCrewId(), joinCrewReqDto.getUserId());
         if(getCrewUserByCrewIdAndUserId){
             return new ApiRespDto<>("failed", "이미 함께하는 크루가 있습니다." , null);
         }
@@ -162,7 +163,7 @@ public class CrewService {
         try {
             int result = crewUserRepository.joinCrew(joinCrewReqDto.toEntity());
             if(result == 0){
-                return new ApiRespDto<>("failed", "크루 가입에 실패했습니다. 다시 시도해주세요", null);
+                return new ApiRespDto<>("failed", "크루 가입에 실패했습니다. 다시 시도해주세요.", null);
             }
 
             //크루 가입 성공 후 실시간 채팅
@@ -180,6 +181,12 @@ public class CrewService {
                 return new ApiRespDto<>("failed", "서버에 문제가 발생했습니다.", null);
             }
             Message savedMessage = optionalMessage.get();
+
+            // 크루 가입 후 생성된 시스템 메세지의 ID를 last_read_message_id로 업데이트
+            // 이 로직이 들어가야 채팅방에 입장했을 때 내가 가입한 이후의 메세지만 조회 가능
+            // 없으면 채팅방 최초 입장 시에 입장 이전의 메세지 목록도 조회가 가능해진다.
+            UpdateLastReadMessageReqDto lastMessageId = new UpdateLastReadMessageReqDto(savedMessage.getMessageId());
+            crewUserRepository.updateLastReadMessageId(crew.getCrewId(), principalUser.getUserId(), lastMessageId);
 
             GetMessageRespDto respDto = GetMessageRespDto.builder()
                     .messageId(savedMessage.getMessageId())

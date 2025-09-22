@@ -19,7 +19,8 @@
             mb.create_dt,
 
             ut.nickname,
-            ut.profile_img_url
+            ut.profile_img_url,
+            mb.crew_id
         FROM
             message_tb mb
             INNER JOIN user_tb ut ON (mb.user_id = ut.user_id)
