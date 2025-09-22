@@ -24,7 +24,7 @@ public class MessageRepository {
         return Optional.of(message);
     }
 
-    public List<GetMessageRespDto> getMessageList(Integer crewId, Integer userId, Integer cursorMessageId, Integer size) {
+    public List<GetMessageRespDto> getMessageList(Integer crewId, Integer userId, Long cursorMessageId, Integer size) {
         return messageMapper.getMessageList(crewId, userId, cursorMessageId, size);
     }
 
@@ -32,4 +32,7 @@ public class MessageRepository {
         return messageMapper.getMessageByMessageId(messageId);
     }
 
+    public Integer getUnreadMessageCount(Integer crewId, Integer userId) {
+        return messageMapper.getUnreadMessageCount(crewId, userId);
+    }
 }

@@ -1,6 +1,7 @@
 package com.runnershigh.runnershigh.repository;
 
 import com.runnershigh.runnershigh.dto.crewUser.GetLastReadMessageIdReqDto;
+import com.runnershigh.runnershigh.dto.message.UpdateLastReadMessageReqDto;
 import com.runnershigh.runnershigh.entity.CrewUser;
 import com.runnershigh.runnershigh.mapper.CrewUserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,5 +22,9 @@ public class CrewUserRepository {
 
     public boolean existsByCrewIdAndUserId(int crewId, int userId) {
         return crewUserMapper.existsByCrewIdAndUserId(crewId, userId);
+    }
+
+    public int updateLastReadMessageId(Integer crewId, Integer userId, UpdateLastReadMessageReqDto updateLastReadMessageReqDto) {
+        return crewUserMapper.updateLastReadMessageId(crewId, userId, updateLastReadMessageReqDto);
     }
 }

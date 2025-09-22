@@ -38,4 +38,15 @@
             WHERE crew_id = #{crewId} AND user_id = #{userId}
             )
     </select>
+
+    <update id="updateLastReadMessageId">
+        UPDATE
+            crew_user_tb
+        SET
+            last_read_message_id = #{dto.lastReadMessageId}
+        WHERE
+            crew_id = #{crewId}
+            AND
+            user_id = #{userId}
+    </update>
 </mapper>

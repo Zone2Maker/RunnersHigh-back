@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 @Data
 @Builder
 public class Message {
-    private Integer messageId;
+    private Long messageId;
     private Integer crewId;
     private Integer userId;
     private String message;
