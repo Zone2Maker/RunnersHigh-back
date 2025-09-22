@@ -58,4 +58,21 @@
             mb.message_id = #{messageId}
     </select>
 
+    <select id="getUnreadMessageCount">
+        SELECT
+            count(*)
+        FROM
+            message_tb
+        WHERE
+            crew_id = #{crewId}
+            AND message_id > (
+                SELECT
+                    last_read_message_id
+                FROM
+                    crew_user_tb
+                WHERE
+                    user_id = #{userId} AND crew_id = #{crewId}
+                )
+    </select>
+
 </mapper>

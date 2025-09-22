@@ -4,6 +4,7 @@ import com.runnershigh.runnershigh.dto.ApiRespDto;
 import com.runnershigh.runnershigh.dto.message.SaveMessageReqDto;
 import com.runnershigh.runnershigh.dto.message.GetMessageListRespDto;
 import com.runnershigh.runnershigh.dto.message.GetMessageRespDto;
+import com.runnershigh.runnershigh.dto.message.UpdateLastReadMessageReqDto;
 import com.runnershigh.runnershigh.entity.Message;
 import com.runnershigh.runnershigh.entity.User;
 import com.runnershigh.runnershigh.repository.CrewRepository;
@@ -16,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -71,7 +73,7 @@ public class MessageService {
     }
 
     // 메시지 목록 불러오는 메서드
-    public ApiRespDto<?> getMessageList(Integer crewId, Integer cursorMessageId, Integer size, PrincipalUser principalUser) {
+    public ApiRespDto<?> getMessageList(Integer crewId, Long cursorMessageId, Integer size, PrincipalUser principalUser) {
         // 메세지 목록 요청한 사용자가 크루 회원인지 확인
         boolean isMember = crewUserRepository.existsByCrewIdAndUserId(crewId, principalUser.getUserId());
         if(!isMember) {
@@ -86,7 +88,7 @@ public class MessageService {
         System.out.println(messages);
         // 만약 messages가 size+1개 라면 다음 페이지가 있다는 것
         // nextCursor는 size번 메시지의 id가 된다 (인덱스가 0부터 시작하므로)
-        Integer nextCursorMessageId = null;
+        Long nextCursorMessageId = null;
         if(messages.size() > size) {
             nextCursorMessageId = messages.get(size).getMessageId();
             messages = messages.subList(0, size);
@@ -98,5 +100,23 @@ public class MessageService {
                 .build();
 
         return new ApiRespDto<>("success", "채팅 목록을 불러왔습니다.", getMessageListRespDto);
+    }
+
+    // 안읽은 메시지 개수 요청
+    public ApiRespDto<?> getUnreadMessageCount(Integer crewId, PrincipalUser principalUser) {
+        Integer unreadCnt = messageRepository.getUnreadMessageCount(crewId, principalUser.getUserId());
+
+        return new ApiRespDto<>("success", "안읽은 메시지 개수를 조회했습니다.", unreadCnt);
+    }
+
+    // updateLastReadMessageId
+    public ApiRespDto<?> updateLastReadMessageId(Integer crewId, UpdateLastReadMessageReqDto updateLastReadMessageReqDto, PrincipalUser principalUser) {
+        int result = crewUserRepository.updateLastReadMessageId(crewId, principalUser.getUserId(), updateLastReadMessageReqDto);
+        
+        if(result != 1) {
+            return new ApiRespDto<>("failed", "마지막으로 읽은 메시지ID 업데이트 실패", null);
+        }
+
+        return new ApiRespDto<>("success", "마지막으로 읽은 메시지ID 업데이트 성공", null);
     }
 }

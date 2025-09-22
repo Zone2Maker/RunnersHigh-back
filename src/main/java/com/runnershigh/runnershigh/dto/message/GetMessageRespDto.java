@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @Builder
 public class GetMessageRespDto {
     // Message 필드
-    private Integer messageId;
+    private Long messageId;
     private Integer userId;
     private String message;
     private String messageType;
