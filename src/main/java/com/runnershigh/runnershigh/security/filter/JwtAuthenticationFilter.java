@@ -64,7 +64,8 @@ public class JwtAuthenticationFilter implements Filter {
                 // 사용자가 존재하면 -> 검증 끝
                 // 이번 요청이 끝날 때까지 인증된 사용자임을 등록
                 optionalUser.ifPresentOrElse((user) -> {
-                    Optional<UserProfileDto> userProfile = userRepository.getUserProfileById(user.getUserId());
+                    Optional<UserProfileDto> optionalUserProfile = userRepository.getUserProfileById(user.getUserId());
+                    UserProfileDto userProfile = optionalUserProfile.get();
 
                     // 인증 객체에 담길 사용자 정보(PrincipalUser) 객체 생성
                     PrincipalUser principalUser = PrincipalUser.builder()
@@ -75,9 +76,9 @@ public class JwtAuthenticationFilter implements Filter {
                             .profileImgUrl(user.getProfileImgUrl())
                             .userRoles(user.getUserRoles())
                             .createDt(user.getCreateDt())
-                            .feedCount(userProfile.get().getFeedCount())
-                            .crewId(userProfile.get().getCrewId())
-                            .crewName(userProfile.get().getCrewName())
+                            .feedCount(userProfile.getFeedCount())
+                            .crewId(userProfile.getCrewId())
+                            .crewName(userProfile.getCrewName())
                             .build();
                     // 인증 객체 생성
                     Authentication authentication = new UsernamePasswordAuthenticationToken(principalUser, "", principalUser.getAuthorities());
