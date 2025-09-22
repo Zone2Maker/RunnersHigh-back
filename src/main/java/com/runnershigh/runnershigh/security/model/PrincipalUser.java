@@ -3,8 +3,10 @@ package com.runnershigh.runnershigh.security.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.runnershigh.runnershigh.entity.User;
 import com.runnershigh.runnershigh.entity.UserRole;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,6 +18,8 @@ import java.util.stream.Collectors;
 
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class PrincipalUser implements UserDetails {
     private Integer userId;
     private String username;    // 닉네임

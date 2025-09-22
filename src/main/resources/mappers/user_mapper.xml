@@ -80,10 +80,9 @@
             user_tb ut
             LEFT JOIN crew_user_tb cut ON (ut.user_id = cut.user_id)
             LEFT JOIN crew_tb ct ON (cut.crew_id = ct.crew_id)
-            LEFT JOIN feed_tb ft ON (ut.user_id = ft.user_id)
+            LEFT JOIN feed_tb ft ON (ut.user_id = ft.user_id AND ft.feed_status = 'ACTIVE')
         WHERE
             ut.user_id = #{userId}
-            AND ft.feed_status = 'ACTIVE'
         GROUP BY
             ut.user_id, ct.crew_id, ct.crew_name
     </select>
