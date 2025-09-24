@@ -57,6 +57,8 @@ public class MessageService {
 
         Message savedMessage = optionalMessage.get();
 
+        crewUserRepository.updateLastReadMessageId(savedMessage.getCrewId(), savedMessage.getUserId(), savedMessage.getMessageId());
+
         // principalUser에서 메세지를 보낸 유저의 정보를 가져옴
         GetMessageRespDto respDto = GetMessageRespDto.builder()
                 .messageId(savedMessage.getMessageId())
@@ -73,26 +75,20 @@ public class MessageService {
 
     // 메시지 목록 불러오는 메서드
     @Transactional(rollbackFor = Exception.class)
-    public ApiRespDto<?> getMessageList(Integer crewId, Long cursorMessageId, Integer size, PrincipalUser principalUser) {
+    public ApiRespDto<?> getMessageList(Integer crewId, Long cursorMessageId, String direction, Integer size, PrincipalUser principalUser) {
         // 메세지 목록 요청한 사용자가 크루 회원인지 확인
         boolean isMember = crewUserRepository.existsByCrewIdAndUserId(crewId, principalUser.getUserId());
         if(!isMember) {
             return new ApiRespDto<>("failed", "접근 권한이 없습니다.", null);
         }
 
-        // 클라이언트는 맨 처음 요청에 nextCursor로 null을 준다
-        // 그러면 백엔드는 최신순으로 size+1만큼 조회한다
+        List<GetMessageRespDto> messages = null;
 
-        // cursorMessageId 보다 작은 messageId의 최신 메시지 중에서 size + 1만큼 가져오기
-        List<GetMessageRespDto> messages = messageRepository.getMessageList(crewId, principalUser.getUserId(), cursorMessageId, size + 1);
+        if (direction.equals("prev")) {
+            messages = messageRepository.getPrevMessageList(crewId, principalUser.getUserId(), cursorMessageId, size + 1);
 
-        // cursorMessageId가 null일 경우, 즉 메세지 목록 조회 첫 요청일 경우
-        if(cursorMessageId == null && !messages.isEmpty()) {
-            // 메세지 List의 0번째가 가장 최신 메시지
-            GetMessageRespDto latestMessage = messages.get(0);
-            // 마지막으로 읽은 메세지ID를 가장 최신 메시지ID로 업데이트
-            UpdateLastReadMessageReqDto lastMessageId = new UpdateLastReadMessageReqDto(latestMessage.getMessageId());
-            crewUserRepository.updateLastReadMessageId(latestMessage.getCrewId(), principalUser.getUserId(), lastMessageId);
+        } else if (direction.equals("next")) {
+            messages = messageRepository.getNextMessageList(crewId, principalUser.getUserId(), cursorMessageId, size + 1);
         }
 
         // 만약 messages가 size+1개 라면 다음 페이지가 있다는 것
@@ -102,8 +98,6 @@ public class MessageService {
             nextCursorMessageId = messages.get(size).getMessageId();
             messages = messages.subList(0, size);
         }
-
-
 
         GetMessageListRespDto getMessageListRespDto = GetMessageListRespDto.builder()
                 .messages(messages)
@@ -121,13 +115,19 @@ public class MessageService {
     }
 
     // updateLastReadMessageId
-    public ApiRespDto<?> updateLastReadMessageId(Integer crewId, UpdateLastReadMessageReqDto updateLastReadMessageReqDto, PrincipalUser principalUser) {
-        int result = crewUserRepository.updateLastReadMessageId(crewId, principalUser.getUserId(), updateLastReadMessageReqDto);
+    public ApiRespDto<?> updateLastReadMessageId(Integer crewId, PrincipalUser principalUser) {
+        int result = crewUserRepository.updateLastReadMessageId(crewId, principalUser.getUserId(), null);
         
         if(result != 1) {
             return new ApiRespDto<>("failed", "마지막으로 읽은 메시지ID 업데이트 실패", null);
         }
 
         return new ApiRespDto<>("success", "마지막으로 읽은 메시지ID 업데이트 성공", null);
+    }
+
+    public ApiRespDto<?> getLastReadMessageId(Integer crewId, PrincipalUser principalUser) {
+        Long lastReadMessageId = crewUserRepository.getLastReadMessageId(crewId, principalUser.getUserId());
+
+        return new ApiRespDto<>("success", "마지막으로 읽은 메시지ID 조회 성공", lastReadMessageId);
     }
 }

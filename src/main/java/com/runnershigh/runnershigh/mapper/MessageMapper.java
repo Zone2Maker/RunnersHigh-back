@@ -10,7 +10,8 @@ import java.util.Optional;
 @Mapper
 public interface MessageMapper {
     int saveMessage(Message message);
-    List<GetMessageRespDto> getMessageList(Integer crewId, Integer userId, Long cursorMessageId, Integer size);
+    List<GetMessageRespDto> getPrevMessageList(Integer crewId, Integer userId, Long prevCursorId, Integer size);
+    List<GetMessageRespDto> getNextMessageList(Integer crewId, Integer userId, Long nextCursorId, Integer size);
     Optional<GetMessageRespDto> getMessageByMessageId(Integer messageId);
     Integer getUnreadMessageCount(Integer crewId, Integer userId);
 }
