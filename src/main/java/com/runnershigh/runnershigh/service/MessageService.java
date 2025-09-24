@@ -75,7 +75,7 @@ public class MessageService {
 
     // 메시지 목록 불러오는 메서드
     @Transactional(rollbackFor = Exception.class)
-    public ApiRespDto<?> getMessageList(Integer crewId, Long cursorMessageId, String direction, Integer size, PrincipalUser principalUser) {
+    public ApiRespDto<?> getMessageList(Integer crewId, Long prevCursorId, Long nextCursorId, String direction, Integer size, PrincipalUser principalUser) {
         // 메세지 목록 요청한 사용자가 크루 회원인지 확인
         boolean isMember = crewUserRepository.existsByCrewIdAndUserId(crewId, principalUser.getUserId());
         if(!isMember) {
@@ -85,26 +85,30 @@ public class MessageService {
         List<GetMessageRespDto> messages = null;
 
         if (direction.equals("prev")) {
-            messages = messageRepository.getPrevMessageList(crewId, principalUser.getUserId(), cursorMessageId, size + 1);
-
+            messages = messageRepository.getPrevMessageList(crewId, principalUser.getUserId(), prevCursorId, size + 1);
+            prevCursorId = null;
+            if(messages.size() > size) {
+                prevCursorId = messages.get(size).getMessageId();
+                messages = messages.subList(0, size);
+            }
         } else if (direction.equals("next")) {
-            messages = messageRepository.getNextMessageList(crewId, principalUser.getUserId(), cursorMessageId, size + 1);
-        }
-
-        // 만약 messages가 size+1개 라면 다음 페이지가 있다는 것
-        // nextCursor는 size번 메시지의 id가 된다 (인덱스가 0부터 시작하므로)
-        Long nextCursorMessageId = null;
-        if(messages.size() > size) {
-            nextCursorMessageId = messages.get(size).getMessageId();
-            messages = messages.subList(0, size);
+            messages = messageRepository.getNextMessageList(crewId, principalUser.getUserId(), nextCursorId, size + 1);
+            nextCursorId = null;
+            if(messages.size() > size) {
+                nextCursorId = messages.get(size).getMessageId();
+                messages = messages.subList(0, size);
+            }
+        } else {
+            return new ApiRespDto<>("failed", "잘못된 direction 값입니다.", null);
         }
 
         GetMessageListRespDto getMessageListRespDto = GetMessageListRespDto.builder()
                 .messages(messages)
-                .nextCursorMessageId(nextCursorMessageId)
+                .prevCursorId(prevCursorId)
+                .nextCursorId(nextCursorId)
                 .build();
 
-        return new ApiRespDto<>("success", "채팅 목록을 불러왔습니다.", getMessageListRespDto);
+        return new ApiRespDto<>("success", direction.equals("prev") ? "이전" : "다음" + "채팅 목록을 불러왔습니다.", getMessageListRespDto);
     }
 
     // 안읽은 메시지 개수 요청
