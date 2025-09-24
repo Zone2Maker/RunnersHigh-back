@@ -18,14 +18,15 @@ public class MessageController {
     // 채팅 리스트 불러오기
     @GetMapping("")
     public ResponseEntity<?> getMessageList(@PathVariable Integer crewId,
-                                            @RequestParam(required = false) Long cursorMessageId,
+                                            @RequestParam Long prevCursorId,
+                                            @RequestParam Long nextCursorId,
                                             @RequestParam String direction,
                                             @RequestParam(defaultValue = "50") Integer size,
                                             @AuthenticationPrincipal PrincipalUser principalUser) {
         // 키셋 페이지네이션
         // 클라이언트가 다음 메시지를 요청할 때 기준점으로 삼을 값이 필요
         // 보통 마지막으로 본 메시지의 ID를 사용
-        return ResponseEntity.ok(messageService.getMessageList(crewId, cursorMessageId, direction, size, principalUser));
+        return ResponseEntity.ok(messageService.getMessageList(crewId, prevCursorId, nextCursorId, direction, size, principalUser));
     }
 
     // 안읽은 메시지 개수 요청

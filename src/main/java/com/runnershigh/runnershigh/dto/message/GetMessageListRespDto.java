@@ -11,5 +11,6 @@ import java.util.List;
 @Builder
 public class GetMessageListRespDto {
     private List<GetMessageRespDto> messages;
-    private Long nextCursorMessageId; // 다음 요청에 사용할 cursorId
+    private Long prevCursorId;
+    private Long nextCursorId;
 }
