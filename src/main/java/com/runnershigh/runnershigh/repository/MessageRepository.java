@@ -24,8 +24,12 @@ public class MessageRepository {
         return Optional.of(message);
     }
 
-    public List<GetMessageRespDto> getMessageList(Integer crewId, Integer userId, Long cursorMessageId, Integer size) {
-        return messageMapper.getMessageList(crewId, userId, cursorMessageId, size);
+    public List<GetMessageRespDto> getPrevMessageList(Integer crewId, Integer userId, Long prevCursorId, Integer size) {
+        return messageMapper.getPrevMessageList(crewId, userId, prevCursorId, size);
+    }
+
+    public List<GetMessageRespDto> getNextMessageList(Integer crewId, Integer userId, Long nextCursorId, Integer size) {
+        return messageMapper.getNextMessageList(crewId, userId, nextCursorId, size);
     }
 
     public Optional<GetMessageRespDto> getMessageByMessageId(int messageId) {

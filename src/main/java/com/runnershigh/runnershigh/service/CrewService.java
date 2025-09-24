@@ -69,7 +69,9 @@ public class CrewService {
                     .crewId(crew.getCrewId())
                     .userId(principalUser.getUserId())
                     .build();
+
             int result = crewUserRepository.joinCrew(joinCrewReqDto.toEntity());
+
             if(result == 0){
                 return new ApiRespDto<>("failed", "크루 등록에 실패했습니다. 다시 시도해주세요", null);
             }
@@ -185,8 +187,7 @@ public class CrewService {
             // 크루 가입 후 생성된 시스템 메세지의 ID를 last_read_message_id로 업데이트
             // 이 로직이 들어가야 채팅방에 입장했을 때 내가 가입한 이후의 메세지만 조회 가능
             // 없으면 채팅방 최초 입장 시에 입장 이전의 메세지 목록도 조회가 가능해진다.
-            UpdateLastReadMessageReqDto lastMessageId = new UpdateLastReadMessageReqDto(savedMessage.getMessageId());
-            crewUserRepository.updateLastReadMessageId(crew.getCrewId(), principalUser.getUserId(), lastMessageId);
+            crewUserRepository.updateLastReadMessageId(crew.getCrewId(), principalUser.getUserId(), savedMessage.getMessageId());
 
             GetMessageRespDto respDto = GetMessageRespDto.builder()
                     .messageId(savedMessage.getMessageId())

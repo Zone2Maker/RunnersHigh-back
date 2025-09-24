@@ -43,7 +43,20 @@
         UPDATE
             crew_user_tb
         SET
-            last_read_message_id = #{dto.lastReadMessageId}
+            last_read_message_id =
+            <choose>
+                <when test="lastReadMessageId != null">
+                    #{lastReadMessageId}
+                </when>
+                <otherwise>
+                    (SELECT
+                        MAX(message_id)
+                    FROM
+                        message_tb
+                    WHERE
+                        crew_id = #{crewId})
+                </otherwise>
+            </choose>
         WHERE
             crew_id = #{crewId}
             AND

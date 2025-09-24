@@ -1,6 +1,5 @@
 package com.runnershigh.runnershigh.repository;
 
-import com.runnershigh.runnershigh.dto.crewUser.GetLastReadMessageIdReqDto;
 import com.runnershigh.runnershigh.dto.message.UpdateLastReadMessageReqDto;
 import com.runnershigh.runnershigh.entity.CrewUser;
 import com.runnershigh.runnershigh.mapper.CrewUserMapper;
@@ -16,15 +15,15 @@ public class CrewUserRepository {
         return crewUserMapper.joinCrew(crewUser);
     }
 
-    public int getLastReadMessageId(GetLastReadMessageIdReqDto getLastReadMessageIdReqDto) {
-        return crewUserMapper.getLastReadMessageId(getLastReadMessageIdReqDto);
+    public Long getLastReadMessageId(Integer crewId, Integer userId) {
+        return crewUserMapper.getLastReadMessageId(crewId, userId);
     }
 
     public boolean existsByCrewIdAndUserId(int crewId, int userId) {
         return crewUserMapper.existsByCrewIdAndUserId(crewId, userId);
     }
 
-    public int updateLastReadMessageId(Integer crewId, Integer userId, UpdateLastReadMessageReqDto updateLastReadMessageReqDto) {
-        return crewUserMapper.updateLastReadMessageId(crewId, userId, updateLastReadMessageReqDto);
+    public int updateLastReadMessageId(Integer crewId, Integer userId, Long lastReadMessageId) {
+        return crewUserMapper.updateLastReadMessageId(crewId, userId, lastReadMessageId);
     }
 }

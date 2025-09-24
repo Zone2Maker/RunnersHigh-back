@@ -26,5 +26,4 @@ public class WebSocketController {
                                  Authentication authentication) {
         return messageService.saveMessage(crewId, saveMessageReqDto, (PrincipalUser)authentication.getPrincipal());
     }
-
 }
