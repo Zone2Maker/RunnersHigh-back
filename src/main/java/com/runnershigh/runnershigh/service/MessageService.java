@@ -16,9 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class MessageService {
@@ -73,9 +71,41 @@ public class MessageService {
         return new ApiRespDto<>("success", "메시지가 전송되었습니다.", respDto);
     }
 
+    @Transactional(rollbackFor = Exception.class)
+    public ApiRespDto<?> getInitialMessageList (Integer crewId, Long cursorMessageId, Integer size, PrincipalUser principalUser ){
+        boolean isMember = crewUserRepository.existsByCrewIdAndUserId(crewId, principalUser.getUserId());
+        if(!isMember) {
+            return new ApiRespDto<>("failed", "접근 권한이 없습니다.", null);
+        }
+
+        List<GetMessageRespDto> prevMessages = messageRepository.getPrevMessageList(crewId, principalUser.getUserId(), cursorMessageId - 1, size + 1);
+        Long prevCursorId = null;
+        if(prevMessages.size() > size) {
+            prevCursorId = prevMessages.get(size).getMessageId();
+            prevMessages = prevMessages.subList(0, size);
+            Collections.reverse(prevMessages);
+        }
+        List<GetMessageRespDto> nextMessages = messageRepository.getNextMessageList(crewId, principalUser.getUserId(), cursorMessageId, size + 1);
+        Long nextCursorId = null;
+        if(nextMessages.size() > size) {
+            nextCursorId = nextMessages.get(size).getMessageId();
+            nextMessages = nextMessages.subList(0, size);
+        }
+
+        List<GetMessageRespDto> mergedMessages = new ArrayList<>();
+        mergedMessages.addAll(prevMessages);
+        mergedMessages.addAll(nextMessages);
+
+        GetMessageListRespDto getMessageListRespDto = GetMessageListRespDto.builder()
+                .messages(mergedMessages)
+                .build();
+        return new ApiRespDto<>("success", "초기 채팅 목록을 불러왔습니다.", getMessageListRespDto);
+
+    }
+
     // 메시지 목록 불러오는 메서드
     @Transactional(rollbackFor = Exception.class)
-    public ApiRespDto<?> getMessageList(Integer crewId, Long prevCursorId, Long nextCursorId, String direction, Integer size, PrincipalUser principalUser) {
+    public ApiRespDto<?> getMessageList(Integer crewId, Long cursorMessageId, String direction, Integer size, PrincipalUser principalUser) {
         // 메세지 목록 요청한 사용자가 크루 회원인지 확인
         boolean isMember = crewUserRepository.existsByCrewIdAndUserId(crewId, principalUser.getUserId());
         if(!isMember) {
@@ -83,33 +113,30 @@ public class MessageService {
         }
 
         List<GetMessageRespDto> messages = null;
+        Long newCursorId = null;
 
         if (direction.equals("prev")) {
-            messages = messageRepository.getPrevMessageList(crewId, principalUser.getUserId(), prevCursorId, size + 1);
-            prevCursorId = null;
-            if(messages.size() > size) {
-                prevCursorId = messages.get(size).getMessageId();
-                messages = messages.subList(0, size);
-            }
+            messages = messageRepository.getPrevMessageList(crewId, principalUser.getUserId(), cursorMessageId, size + 1);
         } else if (direction.equals("next")) {
-            messages = messageRepository.getNextMessageList(crewId, principalUser.getUserId(), nextCursorId, size + 1);
-            nextCursorId = null;
-            if(messages.size() > size) {
-                nextCursorId = messages.get(size).getMessageId();
-                messages = messages.subList(0, size);
-            }
+            messages = messageRepository.getNextMessageList(crewId, principalUser.getUserId(), cursorMessageId, size + 1);
         } else {
             return new ApiRespDto<>("failed", "잘못된 direction 값입니다.", null);
         }
 
+        if(messages.size() > size) {
+            newCursorId = messages.get(size).getMessageId();
+            messages = messages.subList(0, size);
+        }
+
         GetMessageListRespDto getMessageListRespDto = GetMessageListRespDto.builder()
                 .messages(messages)
-                .prevCursorId(prevCursorId)
-                .nextCursorId(nextCursorId)
+                .newCursorId(newCursorId)
                 .build();
 
-        return new ApiRespDto<>("success", direction.equals("prev") ? "이전" : "다음" + "채팅 목록을 불러왔습니다.", getMessageListRespDto);
+        return new ApiRespDto<>("success", direction.equals("prev") ? "이전 채팅 목록을 불러왔습니다." : "다음 채팅 목록을 불러왔습니다.", getMessageListRespDto);
     }
+
+
 
     // 안읽은 메시지 개수 요청
     public ApiRespDto<?> getUnreadMessageCount(Integer crewId, PrincipalUser principalUser) {
@@ -119,7 +146,7 @@ public class MessageService {
     }
 
     // updateLastReadMessageId
-    public ApiRespDto<?> updateLastReadMessageId(Integer crewId, PrincipalUser principalUser) {
+    public ApiRespDto<?> updateLastReadMessageId(Integer crewId ,PrincipalUser principalUser) {
         int result = crewUserRepository.updateLastReadMessageId(crewId, principalUser.getUserId(), null);
         
         if(result != 1) {
