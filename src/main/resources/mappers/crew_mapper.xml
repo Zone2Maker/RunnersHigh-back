@@ -38,10 +38,13 @@
     <select id="getCrewByCrewId" resultType="com.runnershigh.runnershigh.dto.crew.GetCrewRespDto">
         SELECT
             ct.*,
-            COUNT(cu.user_id) AS currentMembers
+            COUNT(cu.user_id) AS currentMembers,
+            ut.nickname,
+            ut.profile_img_url
         FROM
             crew_tb AS ct
             LEFT JOIN crew_user_tb cu ON ct.crew_id = cu.crew_id
+            LEFT JOIN user_tb ut ON ct.user_id = ut.user_id
         WHERE
             ct.crew_id = #{crewId};
     </select>
