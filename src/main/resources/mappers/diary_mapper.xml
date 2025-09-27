@@ -5,9 +5,9 @@
 <mapper namespace="com.runnershigh.runnershigh.mapper.DiaryMapper">
     <insert id="addDiary" useGeneratedKeys="true" keyProperty="diaryId">
         INSERT INTO
-            diary_tb
+            diary_tb(user_id, diary_content, create_dt, update_dt)
         VALUES
-            (0, #{userId}, #{diaryContent}, NOW(), NOW())
+            (#{userId}, #{diaryContent}, #{createDt}, NOW())
     </insert>
     <select id="getActiveListByUserIdAndDate">
         SELECT
@@ -15,6 +15,7 @@
         FROM
             diary_tb
         WHERE
+            user_id = #{userId} AND
             create_dt BETWEEN #{startDate} AND #{endDate}
     </select>
     <select id="getDiaryByUserIdAndDate">

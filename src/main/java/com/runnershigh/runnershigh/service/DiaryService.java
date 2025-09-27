@@ -43,8 +43,9 @@ public class DiaryService {
         return new ApiRespDto<>("success", "일지 작성 날짜를 조회했습니다.", activeList);
     }
 
-    public ApiRespDto<?> getDiaryByUserIdAndDate(String date, PrincipalUser principalUser) {
-        Optional<Diary> optionalDiary = diaryRepository.getDiaryByUserIdAndDate(principalUser.getUserId(), date);
+    public ApiRespDto<?> getDiaryByUserIdAndDate(String dateStr, PrincipalUser principalUser) {
+        LocalDate requestedDate = LocalDate.parse(dateStr);
+        Optional<Diary> optionalDiary = diaryRepository.getDiaryByUserIdAndDate(principalUser.getUserId(), dateStr);
 
         if(optionalDiary.isEmpty()) {
             return new ApiRespDto<>("failed", "해당 일자에 등록된 일지가 없습니다.", null);
