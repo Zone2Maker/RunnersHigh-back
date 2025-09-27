@@ -1,6 +1,5 @@
 package com.runnershigh.runnershigh.repository;
 
-import com.runnershigh.runnershigh.dto.message.UpdateLastReadMessageReqDto;
 import com.runnershigh.runnershigh.entity.CrewUser;
 import com.runnershigh.runnershigh.mapper.CrewUserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +12,10 @@ public class CrewUserRepository {
 
     public int joinCrew(CrewUser crewUser) {
         return crewUserMapper.joinCrew(crewUser);
+    }
+
+    public int leaveCrew(CrewUser crewUser) {
+        return crewUserMapper.leaveCrew(crewUser);
     }
 
     public Long getLastReadMessageId(Integer crewId, Integer userId) {

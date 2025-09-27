@@ -41,7 +41,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         // CORS 정책 생성
         CorsConfiguration corsConfiguration = new CorsConfiguration();
-//        corsConfiguration.addAllowedOrigin("*");
+//      corsConfiguration.addAllowedOrigin("*");
         corsConfiguration.addAllowedOrigin("http://localhost:5173");
         corsConfiguration.addAllowedMethod(CorsConfiguration.ALL);                 // 모든 HTTP 메서드 허용
         corsConfiguration.addAllowedHeader(CorsConfiguration.ALL);                 // 모든 헤더 허용

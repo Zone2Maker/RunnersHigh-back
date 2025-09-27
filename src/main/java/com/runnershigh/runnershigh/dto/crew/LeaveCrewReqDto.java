@@ -1,0 +1,19 @@
+package com.runnershigh.runnershigh.dto.crew;
+
+import com.runnershigh.runnershigh.entity.CrewUser;
+import lombok.Builder;
+import lombok.Data;
+
+@Data
+@Builder
+public class LeaveCrewReqDto {
+    private Integer crewId;
+    private Integer userId;
+
+    public CrewUser toEntity() {
+        return CrewUser.builder()
+                .crewId(crewId)
+                .userId(userId)
+                .build();
+    }
+}

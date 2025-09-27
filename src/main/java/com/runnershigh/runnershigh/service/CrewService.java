@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -205,4 +206,44 @@ public class CrewService {
         }
     }
 
+
+    @Transactional(rollbackFor = Exception.class)
+    public ApiRespDto<?> leaveCrew(LeaveCrewReqDto leaveCrewReqDto, PrincipalUser principalUser) {
+        if(!Objects.equals(principalUser.getUserId(), leaveCrewReqDto.getUserId())) {
+            return new ApiRespDto<>("failed", "크루 탈퇴 권한이 없습니다.", null);
+        }
+        System.out.println(leaveCrewReqDto.toString());
+        System.out.println(principalUser);
+
+        int result = crewUserRepository.leaveCrew(leaveCrewReqDto.toEntity());
+
+        if(result != 1) {
+            return new ApiRespDto<>("failed", "크루 탈퇴 중 오류가 발생했습니다.", null);
+        }
+
+        Message leaveMessage = Message.builder()
+                .crewId(leaveCrewReqDto.getCrewId())
+                .userId(systemUserId)
+                .message(principalUser.getUsername() + "님이 크루를 탈퇴했습니다.")
+                .messageType("LEAVE")
+                .createDt(LocalDateTime.now())
+                .build();
+
+        Optional<Message> optionalMessage = messageRepository.saveMessage(leaveMessage);
+        if(optionalMessage.isEmpty()) {
+            return new ApiRespDto<>("failed", "서버에 문제가 발생했습니다.", null);
+        }
+        Message savedMessage = optionalMessage.get();
+
+        GetMessageRespDto respDto = GetMessageRespDto.builder()
+                .messageId(savedMessage.getMessageId())
+                .message(savedMessage.getMessage())
+                .messageType(savedMessage.getMessageType())
+                .createDt(savedMessage.getCreateDt())
+                .userId(systemUserId)
+                .crewId(leaveCrewReqDto.getCrewId())
+                .build();
+
+        return new ApiRespDto<>("success", "크루를 탈퇴했습니다.", respDto);
+    }
 }

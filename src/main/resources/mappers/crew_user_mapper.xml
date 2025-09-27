@@ -62,4 +62,13 @@
             AND
             user_id = #{userId}
     </update>
+
+    <delete id="leaveCrew">
+        DELETE FROM
+            crew_user_tb
+        WHERE
+            crew_id = #{crewId}
+        AND
+            user_id = #{userId}
+    </delete>
 </mapper>
