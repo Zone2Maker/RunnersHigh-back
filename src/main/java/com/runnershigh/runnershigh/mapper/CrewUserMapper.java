@@ -8,6 +8,7 @@ import org.apache.ibatis.annotations.Param;
 @Mapper
 public interface CrewUserMapper {
     int joinCrew(CrewUser crewUser);
+    int leaveCrew(CrewUser crewUser);
     boolean existsByCrewIdAndUserId(int crewId, int userId);
     int updateLastReadMessageId(Integer crewId, Integer userId, Long lastReadMessageId);
     Long getLastReadMessageId(Integer crewId, Integer userId);
