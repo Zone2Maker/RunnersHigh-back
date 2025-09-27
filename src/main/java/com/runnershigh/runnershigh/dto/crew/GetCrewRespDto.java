@@ -16,5 +16,9 @@ public class GetCrewRespDto {
     private Integer maxMembers;
     private LocalDateTime createDt;
     private LocalDateTime updateDt;
+
     private Integer currentMembers;
+    private String nickname;
+    private String profileImgUrl;
+
 }
