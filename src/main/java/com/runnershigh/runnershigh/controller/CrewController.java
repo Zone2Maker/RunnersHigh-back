@@ -1,6 +1,7 @@
 package com.runnershigh.runnershigh.controller;
 
 import com.runnershigh.runnershigh.dto.ApiRespDto;
+import com.runnershigh.runnershigh.dto.crew.LeaveCrewReqDto;
 import com.runnershigh.runnershigh.dto.crew.RegisterCrewReqDto;
 import com.runnershigh.runnershigh.dto.crew.JoinCrewReqDto;
 import com.runnershigh.runnershigh.dto.message.GetMessageRespDto;
@@ -20,7 +21,6 @@ public class CrewController {
 
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
-
 
     @PostMapping("")
     public ResponseEntity<?> addCrew(@RequestBody RegisterCrewReqDto registerCrewReqDto,
@@ -58,6 +58,16 @@ public class CrewController {
                                       @AuthenticationPrincipal PrincipalUser principalUser){
         ApiRespDto<?> apiRespDto = crewService.joinCrew(joinCrewReqDto, principalUser);
         if(apiRespDto.getStatus().equals("success")){
+            GetMessageRespDto respDto = (GetMessageRespDto) apiRespDto.getData();
+            messagingTemplate.convertAndSend("/sub/crew/" + respDto.getCrewId(), respDto);
+        }
+        return ResponseEntity.ok(apiRespDto);
+    }
+
+    @PostMapping("/leave")
+    public ResponseEntity<?> leaveCrew(@RequestBody LeaveCrewReqDto leaveCrewReqDto, @AuthenticationPrincipal PrincipalUser principalUser) {
+        ApiRespDto<?> apiRespDto = crewService.leaveCrew(leaveCrewReqDto, principalUser);
+        if(apiRespDto.getStatus().equals("success")) {
             GetMessageRespDto respDto = (GetMessageRespDto) apiRespDto.getData();
             messagingTemplate.convertAndSend("/sub/crew/" + respDto.getCrewId(), respDto);
         }
