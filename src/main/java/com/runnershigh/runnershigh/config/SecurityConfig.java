@@ -41,11 +41,11 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         // CORS 정책 생성
         CorsConfiguration corsConfiguration = new CorsConfiguration();
-//        corsConfiguration.addAllowedOrigin("http://localhost:5173");
-           corsConfiguration.addAllowedOrigin("*");
+//      corsConfiguration.addAllowedOrigin("*");
+        corsConfiguration.addAllowedOrigin("http://localhost:5173");
         corsConfiguration.addAllowedMethod(CorsConfiguration.ALL);                 // 모든 HTTP 메서드 허용
         corsConfiguration.addAllowedHeader(CorsConfiguration.ALL);                 // 모든 헤더 허용
-//        corsConfiguration.setAllowCredentials(true);
+        corsConfiguration.setAllowCredentials(true);
 
         // 모든 URL(/**)에 위에서 만든 CORS 정책 적용
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
