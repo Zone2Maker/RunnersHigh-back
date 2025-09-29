@@ -153,12 +153,14 @@ public class CrewService {
             return new ApiRespDto<>("failed", "크루에 가입하고 싶다면 로그인을 진행해주세요.", null);
         }
 
-        Optional<GetCrewRespDto> getCrewByCrewId = crewRepository.getCrewByCrewId(principalUser.getCrewId());
-        if(getCrewByCrewId.isEmpty()){
+        Optional<GetCrewRespDto> getCrewByCrewId = crewRepository.getCrewByCrewId(joinCrewReqDto.getCrewId());
+        if(getCrewByCrewId.isEmpty()) {
             return new ApiRespDto<>("failed", "해당 아이디의 크루는 존재하지 않습니다.", null);
         }
 
-        boolean getCrewUserByCrewIdAndUserId = crewUserRepository.existsByCrewIdAndUserId(principalUser.getCrewId(), joinCrewReqDto.getUserId());
+        GetCrewRespDto crew = getCrewByCrewId.get();
+
+        boolean getCrewUserByCrewIdAndUserId = crewUserRepository.existsByCrewIdAndUserId(crew.getCrewId(), joinCrewReqDto.getUserId());
         if(getCrewUserByCrewIdAndUserId){
             return new ApiRespDto<>("failed", "이미 함께하는 크루가 있습니다." , null);
         }
@@ -170,7 +172,6 @@ public class CrewService {
             }
 
             //크루 가입 성공 후 실시간 채팅
-            GetCrewRespDto crew = getCrewByCrewId.get();
             Message newMessage = Message.builder()
                     .crewId(crew.getCrewId())
                     .userId(systemUserId)
@@ -205,7 +206,6 @@ public class CrewService {
             return new ApiRespDto<>("failed", "크루 가입 중 오류가 발생했습니다.", null);
         }
     }
-
 
     @Transactional(rollbackFor = Exception.class)
     public ApiRespDto<?> leaveCrew(LeaveCrewReqDto leaveCrewReqDto, PrincipalUser principalUser) {

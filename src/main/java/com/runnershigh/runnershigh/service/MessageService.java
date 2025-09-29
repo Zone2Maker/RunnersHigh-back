@@ -31,7 +31,7 @@ public class MessageService {
 
     // 메세지 저장 메서드
     @Transactional(rollbackFor = Exception.class)
-    public ApiRespDto<?> saveMessage(int crewId, SaveMessageReqDto saveMessageReqDto, PrincipalUser principalUser) {
+    public ApiRespDto<?> saveMessage(Integer crewId, SaveMessageReqDto saveMessageReqDto, PrincipalUser principalUser) {
 
         // 메세지를 보낸 사용자가 크루의 회원이 맞는지 확인
         boolean isMember = crewUserRepository.existsByCrewIdAndUserId(crewId, principalUser.getUserId());
@@ -66,41 +66,10 @@ public class MessageService {
                 .userId(principalUser.getUserId())
                 .nickname(principalUser.getUsername())  // 닉네임
                 .profileImgUrl(principalUser.getProfileImgUrl())
+                .crewId(principalUser.getCrewId())
                 .build();
 
         return new ApiRespDto<>("success", "메시지가 전송되었습니다.", respDto);
-    }
-
-    @Transactional(rollbackFor = Exception.class)
-    public ApiRespDto<?> getInitialMessageList (Integer crewId, Long cursorMessageId, Integer size, PrincipalUser principalUser ){
-        boolean isMember = crewUserRepository.existsByCrewIdAndUserId(crewId, principalUser.getUserId());
-        if(!isMember) {
-            return new ApiRespDto<>("failed", "접근 권한이 없습니다.", null);
-        }
-
-        List<GetMessageRespDto> prevMessages = messageRepository.getPrevMessageList(crewId, principalUser.getUserId(), cursorMessageId - 1, size + 1);
-        Long prevCursorId = null;
-        if(prevMessages.size() > size) {
-            prevCursorId = prevMessages.get(size).getMessageId();
-            prevMessages = prevMessages.subList(0, size);
-            Collections.reverse(prevMessages);
-        }
-        List<GetMessageRespDto> nextMessages = messageRepository.getNextMessageList(crewId, principalUser.getUserId(), cursorMessageId, size + 1);
-        Long nextCursorId = null;
-        if(nextMessages.size() > size) {
-            nextCursorId = nextMessages.get(size).getMessageId();
-            nextMessages = nextMessages.subList(0, size);
-        }
-
-        List<GetMessageRespDto> mergedMessages = new ArrayList<>();
-        mergedMessages.addAll(prevMessages);
-        mergedMessages.addAll(nextMessages);
-
-        GetMessageListRespDto getMessageListRespDto = GetMessageListRespDto.builder()
-                .messages(mergedMessages)
-                .build();
-        return new ApiRespDto<>("success", "초기 채팅 목록을 불러왔습니다.", getMessageListRespDto);
-
     }
 
     // 메시지 목록 불러오는 메서드
