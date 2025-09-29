@@ -28,14 +28,6 @@ public class MessageController {
         return ResponseEntity.ok(messageService.getMessageList(crewId, cursorMessageId, direction, size, principalUser));
     }
 
-    @GetMapping("/initial")
-    public  ResponseEntity<?> getInitialMessageList(@PathVariable Integer crewId,
-                                                    @RequestParam Long cursorMessageId,
-                                                    @RequestParam(defaultValue = "50") Integer size,
-                                                    @AuthenticationPrincipal PrincipalUser principalUser){
-        return  ResponseEntity.ok(messageService.getInitialMessageList(crewId, cursorMessageId, size, principalUser));
-    }
-
     // 안읽은 메시지 개수 요청
     @GetMapping("/unread-count")
     public ResponseEntity<?> getUnreadMessageCount(@PathVariable Integer crewId,
