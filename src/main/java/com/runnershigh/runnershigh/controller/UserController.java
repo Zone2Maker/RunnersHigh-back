@@ -15,7 +15,6 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    //회원정보 조회
     @GetMapping("/info")
     public ResponseEntity<?> getUserInfo(
             @RequestParam(required = false) Integer userId,
@@ -24,7 +23,6 @@ public class UserController {
         return ResponseEntity.ok(userService.getUserInfo(userId, email, nickname));
     }
 
-    //이메일 or 닉네임 중복 여부 확인
     @GetMapping("/check")
     public ResponseEntity<?> checkUserExist(
             @RequestParam(required = false) String email,
@@ -32,7 +30,6 @@ public class UserController {
         return ResponseEntity.ok(userService.checkDuplicate(email, nickname));
     }
 
-    // 회원정보 수정
     @PostMapping("/update")
     public ResponseEntity<?> updateUser(@RequestBody UpdateUserReqDto updateUserReqDto,
                                         @AuthenticationPrincipal PrincipalUser principalUser) {
