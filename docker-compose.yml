@@ -1,0 +1,37 @@
+# 여러 컨테이너를 한 파일로 묶어서 네트워크/볼륨/환경변수 포함해
+# 한 번에 올리고 내리는 관리 도구
+# 컨테이너 안에서 백엔드, DB를 한 번에 ..
+services:
+  db:
+    image: mysql:8.4
+    environment:
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+    ports:
+      - "3306:3306"
+    volumes:
+      - dbdata:/var/lib/mysql
+
+  app:
+    build: .  # .만 해주면 알아서 Dockerfile 실행
+    environment:
+      # 이제 localhost 말고 도커에 올린 db에 연결할 것
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/runnershigh?autoReconnect=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: ${DB_NAME}
+      SPRING_DATASOURCE_PASSWORD: ${DB_ROOT_PASSWORD}
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+
+  adminer:
+    image: adminer
+    ports:
+      - "8081:8080"
+    environment:
+      ADMINER_DEFAULT_SERVER: db
+    depends_on:
+      - db
+
+volumes:
+  dbdata:
