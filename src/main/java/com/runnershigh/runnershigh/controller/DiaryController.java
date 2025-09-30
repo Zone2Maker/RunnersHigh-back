@@ -30,6 +30,4 @@ public class DiaryController {
     public ResponseEntity<?> getDiaryByUserIdAndDate(@RequestParam String date, @AuthenticationPrincipal PrincipalUser principalUser) {
         return ResponseEntity.ok(diaryService.getDiaryByUserIdAndDate(date, principalUser));
     }
-
-
 }

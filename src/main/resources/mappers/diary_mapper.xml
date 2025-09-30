@@ -5,7 +5,7 @@
 <mapper namespace="com.runnershigh.runnershigh.mapper.DiaryMapper">
     <insert id="addDiary" useGeneratedKeys="true" keyProperty="diaryId">
         INSERT INTO
-            diary_tb(user_id, diary_content, create_dt, update_dt)
+            diary_tb (user_id, diary_content, create_dt, update_dt)
         VALUES
             (#{userId}, #{diaryContent}, #{createDt}, NOW())
     </insert>

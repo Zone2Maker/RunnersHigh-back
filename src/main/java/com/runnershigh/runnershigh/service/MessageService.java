@@ -20,6 +20,7 @@ import java.util.*;
 
 @Service
 public class MessageService {
+
     @Autowired
     private MessageRepository messageRepository;
 
@@ -29,11 +30,8 @@ public class MessageService {
     @Autowired
     private CrewUserRepository crewUserRepository;
 
-    // 메세지 저장 메서드
     @Transactional(rollbackFor = Exception.class)
     public ApiRespDto<?> saveMessage(Integer crewId, SaveMessageReqDto saveMessageReqDto, PrincipalUser principalUser) {
-
-        // 메세지를 보낸 사용자가 크루의 회원이 맞는지 확인
         boolean isMember = crewUserRepository.existsByCrewIdAndUserId(crewId, principalUser.getUserId());
         if(!isMember) {
             return new ApiRespDto<>("failed", "크루 멤버만 메시지를 보낼 수 있습니다.", null);
@@ -48,23 +46,20 @@ public class MessageService {
                 .build();
 
         Optional<Message> optionalMessage = messageRepository.saveMessage(newMessage);
-
         if(optionalMessage.isEmpty()) {
             return new ApiRespDto<>("failed", "서버에 문제가 발생했습니다.", null);
         }
 
         Message savedMessage = optionalMessage.get();
-
         crewUserRepository.updateLastReadMessageId(savedMessage.getCrewId(), savedMessage.getUserId(), savedMessage.getMessageId());
 
-        // principalUser에서 메세지를 보낸 유저의 정보를 가져옴
         GetMessageRespDto respDto = GetMessageRespDto.builder()
                 .messageId(savedMessage.getMessageId())
                 .message(savedMessage.getMessage())
                 .messageType(savedMessage.getMessageType())
                 .createDt(savedMessage.getCreateDt())
                 .userId(principalUser.getUserId())
-                .nickname(principalUser.getUsername())  // 닉네임
+                .nickname(principalUser.getUsername())
                 .profileImgUrl(principalUser.getProfileImgUrl())
                 .crewId(principalUser.getCrewId())
                 .build();
@@ -72,10 +67,8 @@ public class MessageService {
         return new ApiRespDto<>("success", "메시지가 전송되었습니다.", respDto);
     }
 
-    // 메시지 목록 불러오는 메서드
     @Transactional(rollbackFor = Exception.class)
     public ApiRespDto<?> getMessageList(Integer crewId, Long cursorMessageId, String direction, Integer size, PrincipalUser principalUser) {
-        // 메세지 목록 요청한 사용자가 크루 회원인지 확인
         boolean isMember = crewUserRepository.existsByCrewIdAndUserId(crewId, principalUser.getUserId());
         if(!isMember) {
             return new ApiRespDto<>("failed", "접근 권한이 없습니다.", null);
@@ -105,29 +98,21 @@ public class MessageService {
         return new ApiRespDto<>("success", direction.equals("prev") ? "이전 채팅 목록을 불러왔습니다." : "다음 채팅 목록을 불러왔습니다.", getMessageListRespDto);
     }
 
-
-
-    // 안읽은 메시지 개수 요청
     public ApiRespDto<?> getUnreadMessageCount(Integer crewId, PrincipalUser principalUser) {
         Integer unreadCnt = messageRepository.getUnreadMessageCount(crewId, principalUser.getUserId());
-
         return new ApiRespDto<>("success", "안읽은 메시지 개수를 조회했습니다.", unreadCnt);
     }
 
-    // updateLastReadMessageId
     public ApiRespDto<?> updateLastReadMessageId(Integer crewId ,PrincipalUser principalUser) {
         int result = crewUserRepository.updateLastReadMessageId(crewId, principalUser.getUserId(), null);
-        
         if(result != 1) {
             return new ApiRespDto<>("failed", "마지막으로 읽은 메시지ID 업데이트 실패", null);
         }
-
         return new ApiRespDto<>("success", "마지막으로 읽은 메시지ID 업데이트 성공", null);
     }
 
     public ApiRespDto<?> getLastReadMessageId(Integer crewId, PrincipalUser principalUser) {
         Long lastReadMessageId = crewUserRepository.getLastReadMessageId(crewId, principalUser.getUserId());
-
         return new ApiRespDto<>("success", "마지막으로 읽은 메시지ID 조회 성공", lastReadMessageId);
     }
 }

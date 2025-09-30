@@ -29,12 +29,10 @@ public class UserRepository {
     }
 
     public Optional<User> addUser(User user) {
-        try {
-            userMapper.addUser(user);
-        } catch(Exception e) {
+        int result = userMapper.addUser(user);
+        if(result == 0){
             return Optional.empty();
         }
-
         return Optional.of(user);
     }
 

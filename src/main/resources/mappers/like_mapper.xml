@@ -9,7 +9,6 @@
         VALUES
             (0, #{feedId}, #{userId}, now(), now())
     </insert>
-
     <delete id="removeLike">
         DELETE FROM
             like_tb

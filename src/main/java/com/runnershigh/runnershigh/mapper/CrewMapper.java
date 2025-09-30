@@ -13,14 +13,11 @@ import java.util.Optional;
 @Mapper
 public interface CrewMapper {
     int addCrew(Crew crew);
-
     List<GetCrewRespDto> getCrewList(
             @Param("cursorCrewId") Integer cursorCrewId,
             @Param("size") Integer size,
             @Param("search") String search,
             @Param("region") String region);
-
     Optional<GetCrewRespDto> getCrewByCrewId(@Param("crewId") Integer crewId);
-
     List<GetCrewRankRespDto> getWeeklyTopCrews(String startDate, String endDate);
 }

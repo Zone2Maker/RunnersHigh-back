@@ -23,23 +23,17 @@ public class FeedService {
     @Autowired
     private LikeRepository likeRepository;
 
-    // 피드 목록 조회
     public ApiRespDto<?> getFeedList(Integer targetUserId, Integer cursorFeedId, Integer size, PrincipalUser principalUser) {
         Integer loginUserId = (principalUser != null) ? principalUser.getUserId() : null;
 
-        // size + 1개 조회 후 다음 페이지 존재 여부 판단
         List<GetFeedRespDto> feeds = feedRepository.getFeedList(targetUserId, cursorFeedId, size + 1, loginUserId);
 
         Integer nextCursorFeedId = null;
-        // 조회된 데이터가 요청한 사이즈보다 크면 다음 페이지가 있는 것
         if (feeds.size() > size) {
-            // 마지막 데이터(size 인덱스, 인덱스는 0부터이므로)를 다음 커서 기준으로 삼음
-            nextCursorFeedId = feeds.get(size).getFeedId(); // size 번째 인덱스를 다음 커서로
-
-            feeds = feeds.subList(0,size); // photo list 12개
+            nextCursorFeedId = feeds.get(size).getFeedId();
+            feeds = feeds.subList(0,size);
         }
 
-        // 최종 응답 DTO
         GetFeedListRespDto respDto = GetFeedListRespDto.builder()
                 .feeds(feeds)
                 .nextCursorFeedId(nextCursorFeedId)
@@ -47,21 +41,15 @@ public class FeedService {
         return new ApiRespDto<>("success", "피드 목록 조회 성공", respDto);
     }
 
-    // 내가 좋아요한 피드 목록 조회
     public ApiRespDto<?> getILikedFeedList(Integer cursorFeedId, Integer size, PrincipalUser principalUser) {
-        // size + 1개 조회 후 다음 페이지 존재 여부 판단
         List<GetFeedRespDto> feeds = feedRepository.getILikedFeedList(principalUser.getUserId(), cursorFeedId, size + 1);
 
         Integer nextCursorFeedId = null;
-        // 조회된 데이터가 요청한 사이즈보다 크면 다음 페이지가 있는 것
         if (feeds.size() > size) {
-            // 마지막 데이터(size 인덱스, 인덱스는 0부터이므로)를 다음 커서 기준으로 삼음
-            nextCursorFeedId = feeds.get(size).getFeedId(); // size 번째 인덱스를 다음 커서로
-
-            feeds = feeds.subList(0,size); // photo list 12개
+            nextCursorFeedId = feeds.get(size).getFeedId();
+            feeds = feeds.subList(0,size);
         }
 
-        // 최종 응답 DTO
         GetFeedListRespDto respDto = GetFeedListRespDto.builder()
                 .feeds(feeds)
                 .nextCursorFeedId(nextCursorFeedId)
@@ -70,7 +58,6 @@ public class FeedService {
         return new ApiRespDto<>("success", "좋아요한 피드 목록 조회 성공", respDto);
     }
 
-    // 피드 상세 조회
     public ApiRespDto<?> getFeedDetail(Integer feedId, PrincipalUser principalUser) {
         if (feedId == null || feedId <= 0) {
             return new ApiRespDto<>("failed", "유효하지 않은 피드 ID입니다.", null);
@@ -79,14 +66,12 @@ public class FeedService {
         Integer loginUserId = (principalUser != null) ? principalUser.getUserId() : null;
 
         Optional<GetFeedDetailRespDto> feed = feedRepository.getFeedDetailByFeedId(feedId, loginUserId);
-
         if (feed.isEmpty()) {
             return new ApiRespDto<>("failed", "해당 피드를 찾을 수 없습니다.", null);
         }
         return new ApiRespDto<>("success", "피드 상세 조회 성공", feed.get());
     }
 
-    // 주간 좋아요 순위 top 8 조회
     public ApiRespDto<?> getWeeklyTopFeeds(String startDate, String endDate) {
         List<GetFeedDetailRespDto> feeds = feedRepository.getWeeklyTopFeeds(startDate, endDate);
         if (feeds.isEmpty()) {
@@ -94,8 +79,7 @@ public class FeedService {
         }
         return new ApiRespDto<>("success", "주간 인기 피드 조회 성공", feeds);
     }
-    
-    // 맵 클러스터링 피드 조회
+
     public ApiRespDto<?> getFeedMapList(String startDate, String endDate) {
         List<GetFeedMapRespDto> feeds = feedRepository.getFeedMapList(startDate, endDate);
 
@@ -105,15 +89,12 @@ public class FeedService {
         return new ApiRespDto<>("success", "피드 조회 성공", feeds);
     }
 
-    // 피드 추가 (Repository 1번만 호출 -> 트랜젝션 필요 없음)
-    // 나중에 시큐리티 구현하면 principalUser의 userId랑 비교해서 접근 권한 검증
     public ApiRespDto<?> addFeed(AddFeedReqDto addFeedReqDto, PrincipalUser principalUser) {
         if(!Objects.equals(principalUser.getUserId(), addFeedReqDto.getUserId())) {
             return new ApiRespDto<>("failed", "접근 권한이 없습니다.", null);
         }
 
         Optional<Feed> optionalFeed = feedRepository.addFeed(addFeedReqDto.toEntity());
-
         if (optionalFeed.isEmpty()) {
             return new ApiRespDto<>("failed", "서버 오류로 피드 등록에 실패했습니다.", null);
         }
@@ -122,21 +103,17 @@ public class FeedService {
 
     public ApiRespDto<?> likeFeed(AddLikeReqDto addLikeReqDto) {
         int result = likeRepository.addLike(addLikeReqDto.toEntity());
-
         if(result != 1) {
             return new ApiRespDto<>("failed", "서버 오류로 좋아요에 실패했습니다. 다시 시도해주세요.", null);
         }
-
         return new ApiRespDto<>("success", "좋아요 등록 성공", null);
     }
 
     public ApiRespDto<?> unlikeFeed(RemoveLikeReqDto removeLikeReqDto) {
         int result = likeRepository.removeLike(removeLikeReqDto);
-
         if(result != 1) {
             return new ApiRespDto<>("failed", "서버 오류로 취소 실패했습니다. 다시 시도해주세요.", null);
         }
-
         return new ApiRespDto<>("success", "좋아요 취소 성공", null);
     }
 }

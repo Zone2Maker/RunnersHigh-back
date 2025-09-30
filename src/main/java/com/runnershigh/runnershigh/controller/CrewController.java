@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/crew")
 public class CrewController {
+
     @Autowired
     private CrewService crewService;
 
@@ -28,8 +29,6 @@ public class CrewController {
         ApiRespDto<?> apiRespDto = crewService.addCrew(registerCrewReqDto, principalUser);
         if(apiRespDto.getStatus().equals("success")){
             GetMessageRespDto respDto = (GetMessageRespDto) apiRespDto.getData();
-
-            // /sub/crew/{crewId} 구독자들에게 메시지 전송
             messagingTemplate.convertAndSend("/sub/crew/" + respDto.getCrewId(), respDto);
         }
         return ResponseEntity.ok(apiRespDto);

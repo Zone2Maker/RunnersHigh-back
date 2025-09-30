@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class PrincipalUser implements UserDetails {
     private Integer userId;
-    private String username;    // 닉네임
+    private String username;
     @JsonIgnore
     private String password;
     private String email;
@@ -34,7 +34,6 @@ public class PrincipalUser implements UserDetails {
     private Integer crewId;
     private String crewName;
 
-    // 권한 목록 가져오기
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return userRoles.stream().map(userRole -> new SimpleGrantedAuthority(userRole.getRole().getRoleName()))
