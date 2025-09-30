@@ -45,7 +45,7 @@ public class CrewService {
         }
 
         if(registerCrewReqDto.getCrewImgUrl() == null || registerCrewReqDto.getCrewImgUrl().trim().isEmpty()){
-            return new ApiRespDto<>("failed", "대표사진을 선택해주세요.", null);
+            return new ApiRespDto<>("failed", "대표 사진을 선택해주세요.", null);
         }
         if(registerCrewReqDto.getCrewName() == null || registerCrewReqDto.getCrewName().trim().isEmpty()){
             return new ApiRespDto<>("failed", "크루명을 입력해주세요.", null);
@@ -63,7 +63,7 @@ public class CrewService {
         try {
             Optional<Crew> optionalCrew = crewRepository.addCrew(registerCrewReqDto.toEntity());
             if(optionalCrew.isEmpty()){
-                return new ApiRespDto<>("failed", "크루 등록에 실패했습니다. 다시 시도해주세요", null);
+                return new ApiRespDto<>("failed", "크루 등록에 실패했습니다. 다시 시도해주세요.", null);
             }
             Crew crew = optionalCrew.get();
             JoinCrewReqDto joinCrewReqDto = JoinCrewReqDto.builder()
@@ -73,7 +73,7 @@ public class CrewService {
 
             int result = crewUserRepository.joinCrew(joinCrewReqDto.toEntity());
             if(result == 0){
-                return new ApiRespDto<>("failed", "크루 등록에 실패했습니다. 다시 시도해주세요", null);
+                return new ApiRespDto<>("failed", "크루 등록에 실패했습니다. 다시 시도해주세요.", null);
             }
 
             Message newMessage = Message.builder()
@@ -125,7 +125,7 @@ public class CrewService {
 
     public ApiRespDto<?> getCrewByCrewId (Integer crewId) {
         if(crewId == null || crewId <= 0){
-            return new ApiRespDto<>("failed", "유효하지 않는 크루 아이디입니다.", null);
+            return new ApiRespDto<>("failed", "유효하지 않은 크루 아이디입니다.", null);
         }
 
         Optional<GetCrewRespDto> optionalCrew = crewRepository.getCrewByCrewId(crewId);
@@ -133,15 +133,15 @@ public class CrewService {
             return new ApiRespDto<>("failed", "해당 아이디의 크루는 존재하지 않습니다.", null);
         }
 
-        return new ApiRespDto<>("success", "크루 조회에 성공했습니다", optionalCrew.get());
+        return new ApiRespDto<>("success", "크루 조회에 성공했습니다.", optionalCrew.get());
     }
 
     public ApiRespDto<?> getWeeklyTopCrews(String startDate, String endDate){
         List<GetCrewRankRespDto> rankList = crewRepository.getWeeklyTopCrews(startDate, endDate);
         if(rankList.isEmpty()){
-            return new ApiRespDto<>("failed", "주간 top5 피드를 불러오는데 실패했습니다.", null);
+            return new ApiRespDto<>("failed", "주간 top5 크루를 불러오는데 실패했습니다.", null);
         }
-        return new ApiRespDto<>("success", "주간 top5 피드를 불러왔습니다.", rankList);
+        return new ApiRespDto<>("success", "주간 top5 크루를 불러왔습니다.", rankList);
     }
 
     @Transactional(rollbackFor = Exception.class)

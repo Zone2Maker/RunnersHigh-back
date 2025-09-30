@@ -48,7 +48,7 @@ public class AuthService {
             Optional<User> optionalUser = userRepository.addUser(user);
 
             if(optionalUser.isEmpty()) {
-                return new ApiRespDto<>("failed", "서버 오류로 회원가입에 실패했습니다.1", null);
+                return new ApiRespDto<>("failed", "서버 오류로 회원가입에 실패했습니다.", null);
             }
 
             UserRole userRole = UserRole.builder()

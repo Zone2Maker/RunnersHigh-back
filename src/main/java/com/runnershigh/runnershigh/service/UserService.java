@@ -19,7 +19,7 @@ public class UserService {
 
     public ApiRespDto<?> getUserInfo(Integer userId, String email, String nickname) {
         if (userId == null && email == null && nickname == null) {
-            return new ApiRespDto<>("failed", "파라미터가 유효하지 않습니다. userId, email, nickname 중 하나는 필수입니다.", null);
+            return new ApiRespDto<>("failed", "파라미터 중 하나는 필수입니다.", null);
         }
 
         Optional<User> optionalUser = userRepository.getUserInfo(userId, email, nickname);
@@ -44,7 +44,7 @@ public class UserService {
     @Transactional(rollbackFor = Exception.class)
     public ApiRespDto<?> updateUser(UpdateUserReqDto updateUserReqDto, PrincipalUser principalUser) {
         if (!principalUser.getUserId().equals(updateUserReqDto.getUserId())) {
-            return new ApiRespDto<>("failed", "프로필 수정 권한이 없습니다", null);
+            return new ApiRespDto<>("failed", "프로필 수정 권한이 없습니다.", null);
         }
 
         User user = updateUserReqDto.toEntity();
