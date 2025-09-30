@@ -19,14 +19,12 @@ public class FeedController {
     @Autowired
     private FeedService feedService;
 
-    // 피드 추가
     @PostMapping("")
     public ResponseEntity<?> addFeed(@RequestBody AddFeedReqDto addFeedReqDto,
                                      @AuthenticationPrincipal PrincipalUser principalUser) {
         return ResponseEntity.ok(feedService.addFeed(addFeedReqDto, principalUser));
     }
 
-    // 피드 목록 조회
     @GetMapping("")
     public ResponseEntity<?> getFeedList(@RequestParam(required = false) Integer targetUserId,
                                          @RequestParam(required = false) Integer cursorFeedId,
@@ -35,7 +33,6 @@ public class FeedController {
         return ResponseEntity.ok(feedService.getFeedList(targetUserId, cursorFeedId, size, principalUser));
     }
 
-    // 내가 좋아요한 피드 목록 조회
     @GetMapping("/liked")
     public ResponseEntity<?> getILikedFeedList(@RequestParam(required = false) Integer cursorFeedId,
                                                @RequestParam(defaultValue = "18") Integer size,
@@ -43,13 +40,11 @@ public class FeedController {
         return ResponseEntity.ok(feedService.getILikedFeedList(cursorFeedId, size, principalUser));
     }
 
-    // 피드 상세 조회
     @GetMapping("/{feedId}")
     public ResponseEntity<?> getFeedDetail(@PathVariable Integer feedId, @AuthenticationPrincipal PrincipalUser principalUser) {
         return ResponseEntity.ok(feedService.getFeedDetail(feedId, principalUser));
     }
 
-    // 주간 인기 피드 top 8 조회
     @GetMapping("/weekly-top")
     public ResponseEntity<?> getWeeklyTopFeeds(@RequestParam String startDate, @RequestParam String endDate) {
         return ResponseEntity.ok(feedService.getWeeklyTopFeeds(startDate, endDate));
@@ -60,13 +55,11 @@ public class FeedController {
         return ResponseEntity.ok(feedService.getFeedMapList(startDate, endDate));
     }
 
-    // 피드 좋아요
     @PostMapping("/like")
     public ResponseEntity<?> likeFeed(@RequestBody AddLikeReqDto addLikeReqDto) {
         return ResponseEntity.ok(feedService.likeFeed(addLikeReqDto));
     }
 
-    // 좋아요 취소
     @PostMapping("/unlike")
     public ResponseEntity<?> unlikeFeed(@RequestBody RemoveLikeReqDto removeLikeReqDto) {
         return ResponseEntity.ok(feedService.unlikeFeed(removeLikeReqDto));
