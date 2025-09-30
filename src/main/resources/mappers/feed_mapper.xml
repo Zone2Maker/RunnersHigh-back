@@ -3,8 +3,6 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.runnershigh.runnershigh.mapper.FeedMapper">
-
-    <!-- 주간 BEST8 게시물 -->
     <select id="getWeeklyTopFeeds" resultType="com.runnershigh.runnershigh.dto.feed.GetFeedRespDto">
         SELECT
             f.feed_id,
@@ -23,32 +21,27 @@
             likeCount DESC
             LIMIT 8
     </select>
-
-    <!-- 피드 전체 목록 반환 -->
     <select id="getFeedList" resultType="com.runnershigh.runnershigh.dto.feed.GetFeedRespDto">
         SELECT
-        f.feed_id,
-        f.feed_img_url,
-        COUNT(l.like_id) AS likeCount,
-        <choose>
-            <!-- 로그인한 사용자면 해당 사용자의 좋아요 여부 확인 -->
-            <when test="loginUserId != null">
-                CAST(SUM(CASE WHEN l.user_id = #{loginUserId} THEN 1 ELSE 0 END) AS SIGNED) > 0 AS isLikedByUser
-            </when>
-            <otherwise>
-                false AS isLikedByUser
-            </otherwise>
-        </choose>
+            f.feed_id,
+            f.feed_img_url,
+            COUNT(l.like_id) AS likeCount,
+            <choose>
+                <when test="loginUserId != null">
+                    CAST(SUM(CASE WHEN l.user_id = #{loginUserId} THEN 1 ELSE 0 END) AS SIGNED) > 0 AS isLikedByUser
+                </when>
+                <otherwise>
+                    false AS isLikedByUser
+                </otherwise>
+            </choose>
         FROM
-        feed_tb f
-        LEFT JOIN like_tb l ON f.feed_id = l.feed_id
+            feed_tb f
+            LEFT JOIN like_tb l ON f.feed_id = l.feed_id
         <where>
             f.feed_status = 'ACTIVE'
-            <!-- cursorFeedId: 프론트에서 다음으로 가져올 피드 목록의 첫번째ID를 제공하기 때문에 <가 아닌 <= -->
             <if test="cursorFeedId != null">
                 AND f.feed_id &lt;= #{cursorFeedId}
             </if>
-            <!-- 특정 사용자의 피드만 요청 시 사용 -->
             <if test="targetUserId != null">
                 AND f.user_id = #{targetUserId}
             </if>
@@ -59,8 +52,6 @@
             f.feed_id DESC
         LIMIT #{size}
     </select>
-
-    <!-- 내가 좋아요한 피드 목록 조회 -->
     <select id="getILikedFeedList" resultType="com.runnershigh.runnershigh.dto.feed.GetFeedRespDto">
         SELECT
             f.feed_id,
@@ -77,12 +68,9 @@
                 AND f.feed_id &lt;= #{cursorFeedId}
             </if>
         </where>
-        ORDER BY
-            f.feed_id DESC
+        ORDER BY f.feed_id DESC
         LIMIT #{size}
     </select>
-
-    <!-- 피드 상세 + 작성자 매핑 -->
     <select id="getFeedDetailByFeedId" resultType="com.runnershigh.runnershigh.dto.feed.GetFeedDetailRespDto">
         SELECT
             f.feed_id,
@@ -92,15 +80,15 @@
             u.nickname,
             u.profile_img_url,
             COUNT(l.like_id) AS likeCount
-        <if test="loginUserId != null">
-            , (SELECT COUNT(1)
-            FROM like_tb li
-            WHERE li.feed_id = f.feed_id
-            AND li.user_id = #{loginUserId}) > 0 AS isLikedByUser
-        </if>
-        <if test="loginUserId == null">
-            , false AS isLikedByUser
-        </if>
+            <if test="loginUserId != null">
+                , (SELECT COUNT(1)
+                FROM like_tb li
+                WHERE li.feed_id = f.feed_id
+                AND li.user_id = #{loginUserId}) > 0 AS isLikedByUser
+            </if>
+            <if test="loginUserId == null">
+                , false AS isLikedByUser
+            </if>
         FROM
             feed_tb f
             LEFT JOIN user_tb u ON f.user_id = u.user_id
@@ -111,8 +99,6 @@
             f.feed_id, f.user_id, f.feed_img_url, f.feed_location,
             u.nickname, u.profile_img_url
     </select>
-
-    <!-- 맵 클러스터링 좌표 -->
     <select id="getFeedMapList" resultType="com.runnershigh.runnershigh.dto.feed.GetFeedMapRespDto">
         SELECT
             feed_id,
@@ -124,8 +110,6 @@
         WHERE
             create_dt BETWEEN #{startDate} AND #{endDate}
     </select>
-
-    <!-- 피드 추가(생성) -->
     <insert id="addFeed" useGeneratedKeys="true" keyProperty="feedId">
         INSERT INTO feed_tb (
             feed_id,
@@ -150,5 +134,4 @@
             now()
         )
     </insert>
-
 </mapper>

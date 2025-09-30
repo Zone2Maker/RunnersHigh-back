@@ -23,7 +23,6 @@ public class RandomNicknameGenerator {
 
     private static final Random random = new Random();
 
-    // 다른 클래스에서 호출 가능한 메서드
     public static String generate() {
         String adj = adjectives.get(random.nextInt(adjectives.size()));
         String noun = nouns.get(random.nextInt(nouns.size()));

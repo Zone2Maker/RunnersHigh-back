@@ -19,8 +19,8 @@ public class WebSocketController {
     @Autowired
     private MessageService messageService;
 
-    @MessageMapping("/crew/{crewId}") // 클라이언트 -> /pub/crew/{crewId}로 발행
-    @SendTo("/sub/crew/{crewId}") // 클라이언트 -> /sub/crew/{crewId}를 구독
+    @MessageMapping("/crew/{crewId}")
+    @SendTo("/sub/crew/{crewId}")
     public ApiRespDto<?> message(@DestinationVariable String crewId,
                                  @Payload SaveMessageReqDto saveMessageReqDto,
                                  Authentication authentication) {

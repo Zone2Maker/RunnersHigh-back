@@ -7,15 +7,11 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public class UserRoleRepository {
+
     @Autowired
     private UserRoleMapper userRoleMapper;
 
     public int addUserRole(UserRole userRole){
         return userRoleMapper.addUserRole(userRole);
     }
-
-    public int updateUserRole(UserRole userRole) {
-        return userRoleMapper.updateUserRole(userRole);
-    }
-
 }

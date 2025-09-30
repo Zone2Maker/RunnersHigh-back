@@ -14,6 +14,4 @@ public class OAuth2User {
     private String providerUserId;
     private LocalDateTime createDt;
     private LocalDateTime updateDt;
-
-
 }

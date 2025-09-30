@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/user")
 public class UserController {
+
     @Autowired
     private UserService userService;
 
@@ -20,7 +21,6 @@ public class UserController {
             @RequestParam(required = false) Integer userId,
             @RequestParam(required = false) String email,
             @RequestParam(required = false) String nickname) {
-
         return ResponseEntity.ok(userService.getUserInfo(userId, email, nickname));
     }
 
@@ -29,7 +29,6 @@ public class UserController {
     public ResponseEntity<?> checkUserExist(
             @RequestParam(required = false) String email,
             @RequestParam(required = false) String nickname) {
-
         return ResponseEntity.ok(userService.checkDuplicate(email, nickname));
     }
 
@@ -37,8 +36,6 @@ public class UserController {
     @PostMapping("/update")
     public ResponseEntity<?> updateUser(@RequestBody UpdateUserReqDto updateUserReqDto,
                                         @AuthenticationPrincipal PrincipalUser principalUser) {
-
-        System.out.println("여기 옴?");
         return ResponseEntity.ok(userService.updateUser(updateUserReqDto, principalUser));
     }
 }

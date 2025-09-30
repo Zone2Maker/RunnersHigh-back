@@ -11,16 +11,15 @@ import java.util.Optional;
 
 @Repository
 public class DiaryRepository {
+
     @Autowired
     private DiaryMapper diaryMapper;
 
     public Optional<Diary> addDiary(Diary diary) {
-        try {
-            diaryMapper.addDiary(diary);
-        } catch(Exception e) {
+        int result = diaryMapper.addDiary(diary);
+        if(result == 0){
             return Optional.empty();
         }
-
         return Optional.of(diary);
     }
 

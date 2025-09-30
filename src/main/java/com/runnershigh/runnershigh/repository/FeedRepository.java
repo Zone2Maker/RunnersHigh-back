@@ -17,41 +17,31 @@ public class FeedRepository {
     @Autowired
     private FeedMapper feedMapper;
 
-    // 피드 목록 조회
     public List<GetFeedRespDto> getFeedList(Integer targetUserId, Integer cursorFeedId, Integer size, Integer loginUserId) {
         return feedMapper.getFeedList(targetUserId, cursorFeedId, size, loginUserId);
     }
 
-    // 내가 좋아요한 피드 목록 조회
     public List<GetFeedRespDto> getILikedFeedList(Integer userId, Integer cursorFeedId, Integer size) {
         return feedMapper.getILikedFeedList(userId, cursorFeedId, size);
     }
 
-    // 피드 상세 조회
     public Optional<GetFeedDetailRespDto> getFeedDetailByFeedId(Integer feedId, Integer loginUserId) {
         return feedMapper.getFeedDetailByFeedId(feedId, loginUserId);
     }
 
-    // 주간 좋아요 순위 top 8 피드 조회
     public List<GetFeedDetailRespDto> getWeeklyTopFeeds(String startDate, String endDate) {
         return feedMapper.getWeeklyTopFeeds(startDate, endDate);
     }
 
-    // 맵 클러스터링 최근 한달 간 피드 조회
     public List<GetFeedMapRespDto> getFeedMapList(String startDate, String endDate) {
         return feedMapper.getFeedMapList(startDate, endDate);
     }
 
-    // feed 객체를 받아 DB에 삽입
-    // 삽입 성공 시 feed 객체 반환, 실패 시 Optional.empty()
     public Optional<Feed> addFeed(Feed feed) {
-        try {
-            feedMapper.addFeed(feed);
-        } catch (Exception e) {
-            // 삽입 실패 시 빈 객체 반환
+        int result = feedMapper.addFeed(feed);;
+        if(result == 0){
             return Optional.empty();
         }
-        // 삽입 성공 시 feed 객체 반환
         return Optional.of(feed);
     }
 }

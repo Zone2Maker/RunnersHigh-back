@@ -19,5 +19,4 @@
             AND
             provider_user_id = #{providerUserId}
     </select>
-
 </mapper>

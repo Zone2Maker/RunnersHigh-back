@@ -12,13 +12,13 @@ import java.util.Optional;
 
 @Repository
 public class MessageRepository {
+
     @Autowired
     private MessageMapper messageMapper;
 
     public Optional<Message> saveMessage(Message message) {
-        try {
-            messageMapper.saveMessage(message);
-        } catch (DuplicateKeyException e) {
+        int result = messageMapper.saveMessage(message);
+        if(result == 0){
             return Optional.empty();
         }
         return Optional.of(message);
