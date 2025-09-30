@@ -9,13 +9,4 @@
         VALUES
             (0, #{userId}, #{roleId}, NOW(), NOW())
     </insert>
-
-    <update id="updateUserRole">
-        UPDATE
-            user_role_tb
-        SET
-            role_id = #{roleId}
-        WHERE
-            user_id = #{userId}
-    </update>
 </mapper>

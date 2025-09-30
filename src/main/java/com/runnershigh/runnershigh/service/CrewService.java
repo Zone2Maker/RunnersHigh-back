@@ -3,7 +3,6 @@ package com.runnershigh.runnershigh.service;
 import com.runnershigh.runnershigh.dto.ApiRespDto;
 import com.runnershigh.runnershigh.dto.crew.*;
 import com.runnershigh.runnershigh.dto.message.GetMessageRespDto;
-import com.runnershigh.runnershigh.dto.message.UpdateLastReadMessageReqDto;
 import com.runnershigh.runnershigh.entity.Crew;
 import com.runnershigh.runnershigh.entity.Message;
 import com.runnershigh.runnershigh.repository.CrewRepository;
@@ -23,6 +22,7 @@ import java.util.Optional;
 
 @Service
 public class CrewService {
+
     @Autowired
     private CrewRepository crewRepository;
 
@@ -72,12 +72,10 @@ public class CrewService {
                     .build();
 
             int result = crewUserRepository.joinCrew(joinCrewReqDto.toEntity());
-
             if(result == 0){
                 return new ApiRespDto<>("failed", "크루 등록에 실패했습니다. 다시 시도해주세요", null);
             }
 
-            //크루 등록 성공 후 실시간 채팅
             Message newMessage = Message.builder()
                     .crewId(crew.getCrewId())
                     .userId(systemUserId)
@@ -109,7 +107,6 @@ public class CrewService {
     }
 
     public ApiRespDto<?> getCrewList (Integer cursorCrewId, Integer size, String search, String region) {
-
         List<GetCrewRespDto> crewList = crewRepository.getCrewList(cursorCrewId, size + 1, search, region);
 
         Integer nextCursorCrewId = null;
@@ -159,7 +156,6 @@ public class CrewService {
         }
 
         GetCrewRespDto crew = getCrewByCrewId.get();
-
         boolean getCrewUserByCrewIdAndUserId = crewUserRepository.existsByCrewIdAndUserId(crew.getCrewId(), joinCrewReqDto.getUserId());
         if(getCrewUserByCrewIdAndUserId){
             return new ApiRespDto<>("failed", "이미 함께하는 크루가 있습니다." , null);
@@ -171,7 +167,6 @@ public class CrewService {
                 return new ApiRespDto<>("failed", "크루 가입에 실패했습니다. 다시 시도해주세요.", null);
             }
 
-            //크루 가입 성공 후 실시간 채팅
             Message newMessage = Message.builder()
                     .crewId(crew.getCrewId())
                     .userId(systemUserId)
@@ -185,10 +180,6 @@ public class CrewService {
                 return new ApiRespDto<>("failed", "서버에 문제가 발생했습니다.", null);
             }
             Message savedMessage = optionalMessage.get();
-
-            // 크루 가입 후 생성된 시스템 메세지의 ID를 last_read_message_id로 업데이트
-            // 이 로직이 들어가야 채팅방에 입장했을 때 내가 가입한 이후의 메세지만 조회 가능
-            // 없으면 채팅방 최초 입장 시에 입장 이전의 메세지 목록도 조회가 가능해진다.
             crewUserRepository.updateLastReadMessageId(crew.getCrewId(), principalUser.getUserId(), savedMessage.getMessageId());
 
             GetMessageRespDto respDto = GetMessageRespDto.builder()
@@ -212,11 +203,8 @@ public class CrewService {
         if(!Objects.equals(principalUser.getUserId(), leaveCrewReqDto.getUserId())) {
             return new ApiRespDto<>("failed", "크루 탈퇴 권한이 없습니다.", null);
         }
-        System.out.println(leaveCrewReqDto.toString());
-        System.out.println(principalUser);
 
         int result = crewUserRepository.leaveCrew(leaveCrewReqDto.toEntity());
-
         if(result != 1) {
             return new ApiRespDto<>("failed", "크루 탈퇴 중 오류가 발생했습니다.", null);
         }

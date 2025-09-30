@@ -3,7 +3,6 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.runnershigh.runnershigh.mapper.UserMapper">
-
     <resultMap id="RoleResultMap" type="com.runnershigh.runnershigh.entity.Role">
         <id property="roleId" column="role_id"/>
         <result property="roleName" column="role_name"/>
@@ -28,9 +27,6 @@
         <result property="updateDt" column="update_dt" />
         <collection property="userRoles" resultMap="UserRoleResultMap" />
     </resultMap>
-
-    <!-- getUserInfo - userId, email, nickname 동적쿼리 이용해서
-    3가지 중 하나로 회원 정보와 권한을 함께 조회-->
     <select id="getUserInfo" resultMap="UserResultMap">
         SELECT
             ut.user_id,
@@ -69,7 +65,6 @@
             </if>
         </where>
     </select>
-
     <select id="getUserProfileById" resultType="com.runnershigh.runnershigh.dto.user.UserProfileDto">
         SELECT
             ut.user_id,
@@ -86,36 +81,25 @@
         GROUP BY
             ut.user_id, ct.crew_id, ct.crew_name
     </select>
-
-    <!-- 이메일 or 닉네임으로 존재 여부 확인 -->
     <select id="checkUserExist" resultType="int">
         SELECT EXISTS (
-        SELECT 1
-        FROM
-            user_tb
-        <where>
-            <if test="email != null and email != ''">
-                email = #{email}
-            </if>
-            <if test="nickname != null and nickname != '' ">
-                OR nickname = #{nickname}
-            </if>
-        </where>
+            SELECT 1 FROM user_tb
+            <where>
+                <if test="email != null and email != ''">
+                    email = #{email}
+                </if>
+                <if test="nickname != null and nickname != '' ">
+                    OR nickname = #{nickname}
+                </if>
+            </where>
         )
     </select>
-    <!-- 중복 방지용으로 존재 여부만 체크하는 것일 경우
-        COUNT 대신 EXISTS (0/1 리턴) 쓰는 게 나음 -->
-
-    <!-- 회원가입 -->
     <insert id="addUser" useGeneratedKeys="true" keyProperty="userId">
         INSERT INTO
-            user_tb
-            (user_id, email, password, nickname, last_login_dt, create_dt)
+            user_tb (user_id, email, password, nickname, last_login_dt, create_dt)
         VALUES
             (0, #{email}, #{password}, #{nickname}, NOW(), NOW())
     </insert>
-
-    <!-- 프로필 업데이트 -->
     <update id="updateUser">
         UPDATE
             user_tb

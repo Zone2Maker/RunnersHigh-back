@@ -9,6 +9,7 @@ import java.util.Optional;
 
 @Repository
 public class OAuth2UserRepository {
+
     @Autowired
     private OAuth2UserMapper oauth2UserMapper;
 

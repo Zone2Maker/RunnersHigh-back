@@ -15,7 +15,6 @@
             0,
             #{crewId},
             #{userId},
-            <!-- 들어가려는 크루의 마지막 메시지 id -->
             IFNULL((SELECT MAX(message_id) FROM message_tb WHERE crew_id = #{crewId}), 0),
             NOW(),
             NOW()
@@ -30,15 +29,13 @@
             AND
             crew_id = #{crewId}
     </select>
-
     <select id="existsByCrewIdAndUserId" resultType="boolean">
         SELECT EXISTS (
             SELECT 1
             FROM crew_user_tb
             WHERE crew_id = #{crewId} AND user_id = #{userId}
-            )
+        )
     </select>
-
     <update id="updateLastReadMessageId">
         UPDATE
             crew_user_tb
@@ -62,13 +59,12 @@
             AND
             user_id = #{userId}
     </update>
-
     <delete id="leaveCrew">
         DELETE FROM
             crew_user_tb
         WHERE
             crew_id = #{crewId}
-        AND
+            AND
             user_id = #{userId}
     </delete>
 </mapper>

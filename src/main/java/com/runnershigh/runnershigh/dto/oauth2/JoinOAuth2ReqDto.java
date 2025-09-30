@@ -13,17 +13,15 @@ public class JoinOAuth2ReqDto {
     private String provider;
     private String providerUserId;
 
-    // User 엔티티
+
     public User toUser(String password, String nickname) {
         return User.builder()
                 .email(email)
                 .password(password)
                 .nickname(nickname)
-                .profileImgUrl("https://example.com/default_profile.png")   // 추후 변경
                 .build();
     }
 
-    // OAuth2User 엔티티 만들기
     public OAuth2User toOAuth2User(int userId) {
         return OAuth2User.builder()
                 .userId(userId)
