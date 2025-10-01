@@ -106,13 +106,13 @@ public class MessageService {
     public ApiRespDto<?> updateLastReadMessageId(Integer crewId ,PrincipalUser principalUser) {
         int result = crewUserRepository.updateLastReadMessageId(crewId, principalUser.getUserId(), null);
         if(result != 1) {
-            return new ApiRespDto<>("failed", "마지막으로 읽은 메시지ID 업데이트 실패", null);
+            return new ApiRespDto<>("failed", "마지막으로 읽은 메시지ID 업데이트를 실패했습니다.", null);
         }
-        return new ApiRespDto<>("success", "마지막으로 읽은 메시지ID 업데이트 성공", null);
+        return new ApiRespDto<>("success", "마지막으로 읽은 메시지ID를 업데이트 했습니다.", null);
     }
 
     public ApiRespDto<?> getLastReadMessageId(Integer crewId, PrincipalUser principalUser) {
         Long lastReadMessageId = crewUserRepository.getLastReadMessageId(crewId, principalUser.getUserId());
-        return new ApiRespDto<>("success", "마지막으로 읽은 메시지ID 조회 성공", lastReadMessageId);
+        return new ApiRespDto<>("success", "마지막으로 읽은 메시지ID를 조회했습니다.", lastReadMessageId);
     }
 }

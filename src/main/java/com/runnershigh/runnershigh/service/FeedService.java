@@ -38,7 +38,7 @@ public class FeedService {
                 .feeds(feeds)
                 .nextCursorFeedId(nextCursorFeedId)
                 .build();
-        return new ApiRespDto<>("success", "피드 목록 조회 성공", respDto);
+        return new ApiRespDto<>("success", "피드 목록을 조회했습니다.", respDto);
     }
 
     public ApiRespDto<?> getILikedFeedList(Integer cursorFeedId, Integer size, PrincipalUser principalUser) {
@@ -55,21 +55,21 @@ public class FeedService {
                 .nextCursorFeedId(nextCursorFeedId)
                 .build();
 
-        return new ApiRespDto<>("success", "좋아요한 피드 목록 조회 성공", respDto);
+        return new ApiRespDto<>("success", "좋아요한 피드 목록을 조회했습니다.", respDto);
     }
 
     public ApiRespDto<?> getFeedDetail(Integer feedId, PrincipalUser principalUser) {
         if (feedId == null || feedId <= 0) {
-            return new ApiRespDto<>("failed", "유효하지 않은 피드 ID입니다.", null);
+            return new ApiRespDto<>("failed", "유효하지 않은 피드ID 입니다.", null);
         }
 
         Integer loginUserId = (principalUser != null) ? principalUser.getUserId() : null;
 
         Optional<GetFeedDetailRespDto> feed = feedRepository.getFeedDetailByFeedId(feedId, loginUserId);
         if (feed.isEmpty()) {
-            return new ApiRespDto<>("failed", "해당 피드를 찾을 수 없습니다.", null);
+            return new ApiRespDto<>("failed", "해당 ID의 피드가 존재하지 않습니다.", null);
         }
-        return new ApiRespDto<>("success", "피드 상세 조회 성공", feed.get());
+        return new ApiRespDto<>("success", "피드 상세 정보를 조회했습니다..", feed.get());
     }
 
     public ApiRespDto<?> getWeeklyTopFeeds(String startDate, String endDate) {
@@ -77,16 +77,16 @@ public class FeedService {
         if (feeds.isEmpty()) {
             return new ApiRespDto<>("failed", "주간 인기 피드가 없습니다.", null);
         }
-        return new ApiRespDto<>("success", "주간 인기 피드 조회 성공", feeds);
+        return new ApiRespDto<>("success", "주간 인기 피드를 조회했습니다.", feeds);
     }
 
     public ApiRespDto<?> getFeedMapList(String startDate, String endDate) {
         List<GetFeedMapRespDto> feeds = feedRepository.getFeedMapList(startDate, endDate);
 
         if (feeds.isEmpty()) {
-            return new ApiRespDto<>("failed", "최근 한달 간 게시된 피드가 없습니다.", null);
+            return new ApiRespDto<>("failed", "최근 일주일 간 게시된 피드가 없습니다.", null);
         }
-        return new ApiRespDto<>("success", "피드 조회 성공", feeds);
+        return new ApiRespDto<>("success", "피드 목록을 조회했습니다.", feeds);
     }
 
     public ApiRespDto<?> addFeed(AddFeedReqDto addFeedReqDto, PrincipalUser principalUser) {
@@ -104,16 +104,16 @@ public class FeedService {
     public ApiRespDto<?> likeFeed(AddLikeReqDto addLikeReqDto) {
         int result = likeRepository.addLike(addLikeReqDto.toEntity());
         if(result != 1) {
-            return new ApiRespDto<>("failed", "서버 오류로 좋아요에 실패했습니다. 다시 시도해주세요.", null);
+            return new ApiRespDto<>("failed", "서버 오류로 좋아요에 실패했습니다.", null);
         }
-        return new ApiRespDto<>("success", "좋아요 등록 성공", null);
+        return new ApiRespDto<>("success", "좋아요를 등록했습니다.", null);
     }
 
     public ApiRespDto<?> unlikeFeed(RemoveLikeReqDto removeLikeReqDto) {
         int result = likeRepository.removeLike(removeLikeReqDto);
         if(result != 1) {
-            return new ApiRespDto<>("failed", "서버 오류로 취소 실패했습니다. 다시 시도해주세요.", null);
+            return new ApiRespDto<>("failed", "서버 오류로 좋아요 취소 실패했습니다.", null);
         }
-        return new ApiRespDto<>("success", "좋아요 취소 성공", null);
+        return new ApiRespDto<>("success", "좋아요를 취소했습니다.", null);
     }
 }

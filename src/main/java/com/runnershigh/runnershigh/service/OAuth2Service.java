@@ -58,7 +58,7 @@ public class OAuth2Service {
 
         oAuth2UserRepository.addOAuth2User(joinOAuth2ReqDto.toOAuth2User(optionalUser.get().getUserId()));
 
-        return new ApiRespDto<>("success", "소셜 계정으로 가입이 완료되었습니다.", null);
+        return new ApiRespDto<>("success", "소셜 계정으로 회원가입에 성공했습니다.", null);
     }
 
     @Transactional(rollbackFor = Exception.class)
