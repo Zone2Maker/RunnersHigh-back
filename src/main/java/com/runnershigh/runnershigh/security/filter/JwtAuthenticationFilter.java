@@ -31,6 +31,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private UserRepository userRepository;
 
     @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        String path = request.getRequestURI();
+
+        return path.startsWith("/feed/weekly-top") ||
+                path.startsWith("/crew/weekly-top") ||
+                path.startsWith("/join") ||
+                path.startsWith("/auth") || // 소셜 로그인/일반 로그인을 위한 /auth/**
+                path.startsWith("/user/check") ||
+                path.startsWith("/oauth2") ||
+                path.startsWith("/ws"); // 웹소켓 연결 시작 지점
+    }
+
+    @Override
     public void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         // 요청 방식이 OPTIONS면 토큰 검사 안하고 통과
         if (request.getMethod().equalsIgnoreCase("OPTIONS")) {
@@ -83,6 +96,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 e.printStackTrace();
             }
         }
-        filterChain.doFilter(servletRequest, servletResponse);
+        filterChain.doFilter(request, response);
     }
 }
