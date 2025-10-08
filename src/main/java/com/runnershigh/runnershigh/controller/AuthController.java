@@ -7,6 +7,7 @@ import com.runnershigh.runnershigh.security.model.PrincipalUser;
 import com.runnershigh.runnershigh.service.AuthService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -47,5 +48,13 @@ public class AuthController {
         ApiRespDto<?> apiRespDto = new ApiRespDto<>("success", "", principalUser);
         log.info("===== GET /auth/principal 요청 처리 완료 =====");
         return ResponseEntity.ok(apiRespDto);
+    }
+
+    @Value("${jwt.secret}")
+    private String secretValueFromProperties;
+
+    @GetMapping("/check-secret")
+    public ResponseEntity<?> checkSecretKey() {
+        return ResponseEntity.ok(secretValueFromProperties);
     }
 }

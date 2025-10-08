@@ -68,6 +68,7 @@ public class SecurityConfig {
 
         http.authorizeHttpRequests(auth -> {
             auth.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                    .requestMatchers("/auth/check-secret").permitAll()
                     .requestMatchers("/ws/**").permitAll()
                     .requestMatchers("/auth/**", "/user/check", "/oauth2/**").permitAll()
                     .requestMatchers(HttpMethod.GET, "/feed/**", "/crew/**", "/feed/weekly-top", "/crew/weekly-top").permitAll()
