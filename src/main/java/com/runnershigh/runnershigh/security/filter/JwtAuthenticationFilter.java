@@ -9,6 +9,7 @@ import io.jsonwebtoken.Claims;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -21,6 +22,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
@@ -50,14 +52,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     public void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String authorization = request.getHeader("Authorization");
-
+        log.info("헤더에서 토큰 꺼내기" + authorization);
         if (jwtUtils.isBearer(authorization)) {
-
+            log.info("Bearer 토큰");
             String accessToken = jwtUtils.removeBearer(authorization);
-
+            log.info("Bearer 제거" + accessToken);
             try {
                 Claims claims = jwtUtils.getClaims(accessToken);
+                log.info("사용자 정보 파싱: " + claims);
                 Integer userId = Integer.parseInt(claims.getId());
+                log.info("사용자ID: " + userId);
 
                 Optional<User> optionalUser = userRepository.getUserInfo(userId, null, null);
 
@@ -80,6 +84,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     Authentication authentication = new UsernamePasswordAuthenticationToken(principalUser, "", principalUser.getAuthorities());
 
                     SecurityContextHolder.getContext().setAuthentication(authentication);
+                    log.info("[JwtFilter] SecurityContext에 인증 정보 저장");
                 }, () -> {
                     throw new AuthenticationServiceException("인증 실패: 사용자 없음");
                 });
