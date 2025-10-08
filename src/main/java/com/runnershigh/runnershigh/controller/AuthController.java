@@ -33,20 +33,10 @@ public class AuthController {
 
     @GetMapping("/principal")
     public ResponseEntity<?> getPrincipal() {
-        log.info("===== GET /auth/principal 요청 시작 =====");
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
         Object principal = authentication.getPrincipal();
-
-        log.info("SecurityContext에서 꺼낸 Principal 객체: {}", principal);
-        log.info("Principal 객체의 실제 클래스 타입: {}", principal.getClass().getName());
-
-        // 여기서 ClassCastException이 발생하는지 확인
         PrincipalUser principalUser = (PrincipalUser) principal;
-        log.info("PrincipalUser로 형변환 성공! userId: {}", principalUser.getUserId());
-
         ApiRespDto<?> apiRespDto = new ApiRespDto<>("success", "", principalUser);
-        log.info("===== GET /auth/principal 요청 처리 완료 =====");
         return ResponseEntity.ok(apiRespDto);
     }
 }
