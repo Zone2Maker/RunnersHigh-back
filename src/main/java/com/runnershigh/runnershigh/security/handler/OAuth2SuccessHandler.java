@@ -42,7 +42,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
         if(optionalOAuth2User.isEmpty()) {
 //            response.sendRedirect("https://runners-high-front-qe73.vercel.app/auth/oauth2/entry?provider="
-            response.sendRedirect("http://3.27.56.187:8080/auth/oauth2/entry?provider="
+            response.sendRedirect("http://localhost:8080/auth/oauth2/entry?provider="
                 + provider + "&providerUserId=" + providerUserId + "&email=" + email);
             return;
         }
@@ -56,6 +56,6 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         }
 
 //        response.sendRedirect("https://runners-high-front-qe73.vercel.app/auth/oauth2/redirect?accessToken=" + accessToken);
-        response.sendRedirect("http://3.27.56.187:8080/auth/oauth2/redirect?accessToken=" + accessToken);
+        response.sendRedirect("http://localhost:8080/auth/oauth2/redirect?accessToken=" + accessToken);
     }
 }
