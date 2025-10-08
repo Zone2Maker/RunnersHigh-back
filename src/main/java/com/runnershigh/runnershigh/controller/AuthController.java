@@ -49,12 +49,4 @@ public class AuthController {
         log.info("===== GET /auth/principal 요청 처리 완료 =====");
         return ResponseEntity.ok(apiRespDto);
     }
-
-    @Value("${jwt.secret}")
-    private String secretValueFromProperties;
-
-    @GetMapping("/check-secret")
-    public ResponseEntity<?> checkSecretKey() {
-        return ResponseEntity.ok(secretValueFromProperties);
-    }
 }
