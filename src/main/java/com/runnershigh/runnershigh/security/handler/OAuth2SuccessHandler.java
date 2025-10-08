@@ -41,12 +41,11 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
                                     .getOAuth2UserByProviderAndProviderUserId(provider, providerUserId);
 
         if(optionalOAuth2User.isEmpty()) {
-            response.sendRedirect("https://runners-high-front-qe73.vercel.app/auth/oauth2/entry?provider="
-                    + provider + "&providerUserId=" + providerUserId + "&email=" + email);
+//            response.sendRedirect("https://runners-high-front-qe73.vercel.app/auth/oauth2/entry?provider="
+            response.sendRedirect("http://3.27.56.187:8080/auth/oauth2/entry?provider="
+                + provider + "&providerUserId=" + providerUserId + "&email=" + email);
             return;
         }
-
-        System.out.println(optionalOAuth2User.get());
 
         OAuth2User oAuth2User = optionalOAuth2User.get();
         Optional<User> optionalUser = userRepository.getUserInfo(oAuth2User.getUserId(), null, null);
@@ -56,6 +55,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
             accessToken = jwtUtils.generateAccessToken(optionalUser.get().getUserId().toString());
         }
 
-        response.sendRedirect("https://runners-high-front-qe73.vercel.app/auth/oauth2/redirect?accessToken=" + accessToken);
+//        response.sendRedirect("https://runners-high-front-qe73.vercel.app/auth/oauth2/redirect?accessToken=" + accessToken);
+        response.sendRedirect("http://3.27.56.187:8080/auth/oauth2/redirect?accessToken=" + accessToken);
     }
 }
