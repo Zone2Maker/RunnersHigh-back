@@ -37,9 +37,10 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
-//        corsConfiguration.addAllowedOriginPattern("http://localhost:5173");
 //        corsConfiguration.addAllowedOriginPattern("*");
-        corsConfiguration.addAllowedOriginPattern("https://runners-high-front-qe73.vercel.app");
+        corsConfiguration.addAllowedOriginPattern("http://localhost:5173"); // 프론트 로컬
+        corsConfiguration.addAllowedOriginPattern("http://3.27.56.187:8080");  // 포스트맨/브라우저 테스트
+        corsConfiguration.addAllowedOriginPattern("https://runners-high-front-qe73.vercel.app"); // vercel
         corsConfiguration.addAllowedMethod(CorsConfiguration.ALL);
         corsConfiguration.addAllowedHeader(CorsConfiguration.ALL);
         corsConfiguration.setAllowCredentials(true);
@@ -64,7 +65,8 @@ public class SecurityConfig {
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         http.authorizeHttpRequests(auth -> {
-            auth.requestMatchers("/ws/**").permitAll()
+            auth.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                    .requestMatchers("/ws/**").permitAll()
                     .requestMatchers("/auth/**", "/user/check", "/oauth2/**").permitAll()
                     .requestMatchers(HttpMethod.GET, "/feed/**", "/crew/**", "/feed/weekly-top", "/crew/weekly-top").permitAll()
                     .requestMatchers("/auth/principal", "/diary/**", "/feed/liked").authenticated()
