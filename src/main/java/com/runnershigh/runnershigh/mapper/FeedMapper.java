@@ -12,13 +12,12 @@ import java.util.Optional;
 
 @Mapper
 public interface FeedMapper {
-    List<GetFeedRespDto> getFeedList(@Param("targetUserId") Integer targetUserId,
-                                     @Param("cursorFeedId") Integer cursorFeedId,
-                                     @Param("size") Integer size,
-                                     Integer loginUserId);
+    int addFeed(Feed feed);
+    int updateFeed(Feed feed);
+    int deleteFeed(Integer feedId);
+    List<GetFeedRespDto> getFeedList(Integer targetUserId, Integer cursorFeedId, Integer size, Integer loginUserId);
     List<GetFeedRespDto> getILikedFeedList(Integer userId, Integer cursorFeedId, Integer size);
-    Optional<GetFeedDetailRespDto> getFeedDetailByFeedId(@Param("feedId") Integer feedId, Integer loginUserId);
+    Optional<GetFeedDetailRespDto> getFeedDetailByFeedId(Integer feedId, Integer loginUserId);
     List<GetFeedDetailRespDto> getWeeklyTopFeeds(String startDate, String endDate);
     List<GetFeedMapRespDto> getFeedMapList(String startDate, String endDate);
-    int addFeed(Feed feed);
 }

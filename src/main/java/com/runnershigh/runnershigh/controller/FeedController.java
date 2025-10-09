@@ -1,8 +1,6 @@
 package com.runnershigh.runnershigh.controller;
 
-import com.runnershigh.runnershigh.dto.feed.AddFeedReqDto;
-import com.runnershigh.runnershigh.dto.feed.AddLikeReqDto;
-import com.runnershigh.runnershigh.dto.feed.RemoveLikeReqDto;
+import com.runnershigh.runnershigh.dto.feed.*;
 import com.runnershigh.runnershigh.security.model.PrincipalUser;
 import com.runnershigh.runnershigh.service.FeedService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.time.LocalDateTime;
 
 @RestController
@@ -23,6 +22,18 @@ public class FeedController {
     public ResponseEntity<?> addFeed(@RequestBody AddFeedReqDto addFeedReqDto,
                                      @AuthenticationPrincipal PrincipalUser principalUser) {
         return ResponseEntity.ok(feedService.addFeed(addFeedReqDto, principalUser));
+    }
+
+    @PostMapping("/update")
+    public ResponseEntity<?> updateFeed(@RequestBody UpdateFeedReqDto updateFeedReqDto,
+                                        @AuthenticationPrincipal PrincipalUser principalUser) {
+        return ResponseEntity.ok(feedService.updateFeed(updateFeedReqDto, principalUser));
+    }
+
+    @PostMapping("/delete")
+    public ResponseEntity<?> deleteFeed(@RequestBody DeleteFeedReqDto deleteFeedReqDto,
+                                        @AuthenticationPrincipal PrincipalUser principalUser) {
+        return ResponseEntity.ok(feedService.deleteFeed(deleteFeedReqDto, principalUser));
     }
 
     @GetMapping("")

@@ -14,13 +14,13 @@
             LEFT JOIN like_tb l ON f.feed_id = l.feed_id
         WHERE
             f.create_dt BETWEEN #{startDate} AND #{endDate}
-            AND f.feed_status = 'ACTIVE'
         GROUP BY
             f.feed_id, f.feed_img_url
         ORDER BY
             likeCount DESC
             LIMIT 8
     </select>
+
     <select id="getFeedList" resultType="com.runnershigh.runnershigh.dto.feed.GetFeedRespDto">
         SELECT
             f.feed_id,
@@ -38,9 +38,8 @@
             feed_tb f
             LEFT JOIN like_tb l ON f.feed_id = l.feed_id
         <where>
-            f.feed_status = 'ACTIVE'
             <if test="cursorFeedId != null">
-                AND f.feed_id &lt;= #{cursorFeedId}
+                f.feed_id &lt;= #{cursorFeedId}
             </if>
             <if test="targetUserId != null">
                 AND f.user_id = #{targetUserId}
@@ -52,6 +51,7 @@
             f.feed_id DESC
         LIMIT #{size}
     </select>
+
     <select id="getILikedFeedList" resultType="com.runnershigh.runnershigh.dto.feed.GetFeedRespDto">
         SELECT
             f.feed_id,
@@ -63,7 +63,6 @@
             LEFT JOIN like_tb l ON f.feed_id = l.feed_id
         <where>
             l.user_id = #{userId}
-            AND f.feed_status = 'ACTIVE'
             <if test="cursorFeedId != null">
                 AND f.feed_id &lt;= #{cursorFeedId}
             </if>
@@ -71,6 +70,7 @@
         ORDER BY f.feed_id DESC
         LIMIT #{size}
     </select>
+
     <select id="getFeedDetailByFeedId" resultType="com.runnershigh.runnershigh.dto.feed.GetFeedDetailRespDto">
         SELECT
             f.feed_id,
@@ -99,6 +99,7 @@
             f.feed_id, f.user_id, f.feed_img_url, f.feed_location,
             u.nickname, u.profile_img_url
     </select>
+
     <select id="getFeedMapList" resultType="com.runnershigh.runnershigh.dto.feed.GetFeedMapRespDto">
         SELECT
             feed_id,
@@ -115,7 +116,6 @@
             feed_id,
             user_id,
             feed_img_url,
-            feed_status,
             feed_location,
             feed_longitude,
             feed_latitude,
@@ -126,7 +126,6 @@
             0,
             #{userId},
             #{feedImgUrl},
-            'ACTIVE',
             #{feedLocation},
             #{feedLongitude},
             #{feedLatitude},
@@ -134,4 +133,24 @@
             now()
         )
     </insert>
+
+    <update id="updateFeed">
+        UPDATE
+            feed_tb
+        SET
+            feed_img_url = #{feedImgUrl},
+            feed_location = #{feedLocation},
+            feed_longitude = #{feedLongitude},
+            feed_latitude = #{feedLatitude},
+            update_dt = NOW()
+        WHERE
+            feed_id = #{feedId}
+    </update>
+
+    <delete id="deleteFeed">
+        DELETE FROM
+            feed_tb
+        WHERE
+            feed_id = #{feedId}
+    </delete>
 </mapper>
