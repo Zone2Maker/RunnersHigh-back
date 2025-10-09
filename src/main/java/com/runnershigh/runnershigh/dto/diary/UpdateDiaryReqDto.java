@@ -6,16 +6,15 @@ import lombok.Data;
 import java.time.LocalDate;
 
 @Data
-public class AddDiaryReqDto {
-    Integer userId;
-    String diaryContent;
-    String diaryDate;
+public class UpdateDiaryReqDto {
+    private Integer diaryId;
+    private Integer userId;
+    private String diaryContent;
 
     public Diary toEntity() {
         return Diary.builder()
-                .userId(userId)
+                .diaryId(diaryId)
                 .diaryContent(diaryContent)
-                .diaryDate(LocalDate.parse(diaryDate).atStartOfDay())
                 .build();
     }
 }

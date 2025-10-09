@@ -10,6 +10,8 @@ import java.util.Optional;
 @Mapper
 public interface DiaryMapper {
     int addDiary(Diary diary);
+    int updateDiary(Diary diary);
+    int deleteDiary(Integer diaryId);
     List<LocalDate> getActiveListByUserIdAndDate(Integer userId, String startDate, String endDate);
-    Optional<Diary> getDiaryByUserIdAndDate(Integer userId, String date);
+    Optional<Diary> getDiaryByUserIdAndDate(Integer userId, String diaryDate);
 }
