@@ -1,6 +1,7 @@
 package com.runnershigh.runnershigh.service;
 
 import com.runnershigh.runnershigh.dto.ApiRespDto;
+import com.runnershigh.runnershigh.dto.user.DeleteUserReqDto;
 import com.runnershigh.runnershigh.dto.user.UpdateUserReqDto;
 import com.runnershigh.runnershigh.entity.User;
 import com.runnershigh.runnershigh.repository.UserRepository;
@@ -53,5 +54,20 @@ public class UserService {
             return new ApiRespDto<>("failed", "회원 정보 수정에 실패하였습니다.", null);
         }
         return new ApiRespDto<>("success", "회원 정보가 수정되었습니다.", null);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public ApiRespDto<?> deleteUser(DeleteUserReqDto deleteUserReqDto, PrincipalUser principalUser) {
+        if (!principalUser.getUserId().equals(deleteUserReqDto.getUserId())) {
+            return new ApiRespDto<>("failed", "회원 탈퇴 권한이 없습니다.", null);
+        }
+
+        int result = userRepository.deleteUser(deleteUserReqDto.getUserId());
+
+        if(result != 1) {
+            return new ApiRespDto<>("failed", "회원 탈퇴 중 오류가 발생했습니다.", null);
+        }
+
+        return new ApiRespDto<>("success", "회원 탈퇴에 성공했습니다.", null);
     }
 }

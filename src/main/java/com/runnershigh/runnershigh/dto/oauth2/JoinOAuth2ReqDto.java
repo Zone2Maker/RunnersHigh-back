@@ -13,7 +13,6 @@ public class JoinOAuth2ReqDto {
     private String provider;
     private String providerUserId;
 
-
     public User toUser(String password, String nickname) {
         return User.builder()
                 .email(email)

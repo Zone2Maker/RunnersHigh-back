@@ -10,7 +10,6 @@ public class UserRoleRepository {
 
     @Autowired
     private UserRoleMapper userRoleMapper;
-
     public int addUserRole(UserRole userRole){
         return userRoleMapper.addUserRole(userRole);
     }

@@ -8,6 +8,7 @@
         <result property="roleName" column="role_name"/>
         <result property="roleNameKor" column="role_name_kor"/>
     </resultMap>
+
     <resultMap id="UserRoleResultMap" type="com.runnershigh.runnershigh.entity.UserRole">
         <id property="userRoleId" column="user_role_id" />
         <result property="userId" column="urt_user_id" />
@@ -16,17 +17,18 @@
         <result property="updateDt" column="urt_update_dt" />
         <association property="role" resultMap="RoleResultMap" />
     </resultMap>
+
     <resultMap id="UserResultMap" type="com.runnershigh.runnershigh.entity.User">
         <id property="userId" column="user_id" />
         <result property="email" column="email" />
         <result property="password" column="password" />
         <result property="nickname" column="nickname" />
         <result property="profileImgUrl" column="profile_img_url" />
-        <result property="lastLoginDt" column="last_login_dt" />
         <result property="createDt" column="create_dt" />
         <result property="updateDt" column="update_dt" />
         <collection property="userRoles" resultMap="UserRoleResultMap" />
     </resultMap>
+
     <select id="getUserInfo" resultMap="UserResultMap">
         SELECT
             ut.user_id,
@@ -34,7 +36,6 @@
             ut.password,
             ut.nickname,
             ut.profile_img_url,
-            ut.last_login_dt,
             ut.create_dt,
             ut.update_dt,
 
@@ -65,6 +66,7 @@
             </if>
         </where>
     </select>
+
     <select id="getUserProfileById" resultType="com.runnershigh.runnershigh.dto.user.UserProfileDto">
         SELECT
             ut.user_id,
@@ -75,12 +77,13 @@
             user_tb ut
             LEFT JOIN crew_user_tb cut ON (ut.user_id = cut.user_id)
             LEFT JOIN crew_tb ct ON (cut.crew_id = ct.crew_id)
-            LEFT JOIN feed_tb ft ON (ut.user_id = ft.user_id AND ft.feed_status = 'ACTIVE')
+            LEFT JOIN feed_tb ft ON (ut.user_id = ft.user_id)
         WHERE
             ut.user_id = #{userId}
         GROUP BY
             ut.user_id, ct.crew_id, ct.crew_name
     </select>
+
     <select id="checkUserExist" resultType="int">
         SELECT EXISTS (
             SELECT 1 FROM user_tb
@@ -94,12 +97,14 @@
             </where>
         )
     </select>
+
     <insert id="addUser" useGeneratedKeys="true" keyProperty="userId">
         INSERT INTO
-            user_tb (user_id, email, password, nickname, last_login_dt, create_dt)
+            user_tb (user_id, email, password, nickname, create_dt)
         VALUES
-            (0, #{email}, #{password}, #{nickname}, NOW(), NOW())
+            (0, #{email}, #{password}, #{nickname}, NOW())
     </insert>
+
     <update id="updateUser">
         UPDATE
             user_tb
@@ -110,4 +115,11 @@
         WHERE
             user_id = #{userId}
     </update>
+
+    <delete id="deleteUser">
+        DELETE FROM
+            user_tb
+        WHERE
+            user_id = #{userId}
+    </delete>
 </mapper>
