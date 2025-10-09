@@ -1,6 +1,7 @@
 package com.runnershigh.runnershigh.controller;
 
 import com.runnershigh.runnershigh.dto.ApiRespDto;
+import com.runnershigh.runnershigh.dto.crew.DeactivateCrewReqDto;
 import com.runnershigh.runnershigh.dto.crew.LeaveCrewReqDto;
 import com.runnershigh.runnershigh.dto.crew.RegisterCrewReqDto;
 import com.runnershigh.runnershigh.dto.crew.JoinCrewReqDto;
@@ -66,10 +67,15 @@ public class CrewController {
     @PostMapping("/leave")
     public ResponseEntity<?> leaveCrew(@RequestBody LeaveCrewReqDto leaveCrewReqDto, @AuthenticationPrincipal PrincipalUser principalUser) {
         ApiRespDto<?> apiRespDto = crewService.leaveCrew(leaveCrewReqDto, principalUser);
-        if(apiRespDto.getStatus().equals("success")) {
+        if(apiRespDto.getData() != null && apiRespDto.getStatus().equals("success")) {
             GetMessageRespDto respDto = (GetMessageRespDto) apiRespDto.getData();
             messagingTemplate.convertAndSend("/sub/crew/" + respDto.getCrewId(), respDto);
         }
         return ResponseEntity.ok(apiRespDto);
+    }
+
+    @PostMapping("/deactivate")
+    public ResponseEntity<?> deactivateCrew(@RequestBody DeactivateCrewReqDto deactivateCrewReqDto, @AuthenticationPrincipal PrincipalUser principalUser){
+        return  ResponseEntity.ok(crewService.deactivateCrew(deactivateCrewReqDto, principalUser));
     }
 }

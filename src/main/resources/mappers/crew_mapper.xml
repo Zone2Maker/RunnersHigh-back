@@ -77,4 +77,18 @@
             currentMembers DESC
         LIMIT 5;
     </select>
+    <update id="updateCrewStatus">
+        UPDATE
+            crew_tb
+        SET
+            crew_status=#{newCrewStatus}
+        WHERE
+            crew_id=#{crewId};
+    </update>
+    <delete id="deleteCrew">
+        DELETE FROM
+            crew_tb
+        WHERE
+            crew_id=#{crewId};
+    </delete>
 </mapper>
