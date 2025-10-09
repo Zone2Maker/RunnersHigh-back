@@ -20,4 +20,6 @@ public interface CrewMapper {
             @Param("region") String region);
     Optional<GetCrewRespDto> getCrewByCrewId(@Param("crewId") Integer crewId);
     List<GetCrewRankRespDto> getWeeklyTopCrews(String startDate, String endDate);
+    int updateCrewStatus(Integer crewId, String newCrewStatus);
+    int deleteCrew(Integer crewId);
 }

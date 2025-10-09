@@ -205,8 +205,15 @@ public class CrewService {
         }
 
         int result = crewUserRepository.leaveCrew(leaveCrewReqDto.toEntity());
-        if(result != 1) {
+        if(result == 0) {
             return new ApiRespDto<>("failed", "크루 탈퇴 중 오류가 발생했습니다.", null);
+        }
+
+        Optional<GetCrewRespDto> optionalCrew = crewRepository.getCrewByCrewId(leaveCrewReqDto.getCrewId());
+        GetCrewRespDto crew = optionalCrew.orElse(null);
+        if(crew != null && crew.getCurrentMembers() == 0){
+            crewRepository.deleteCrew(crew.getCrewId());
+            return new ApiRespDto<>("success", "크루를 탈퇴했습니다.", null);
         }
 
         Message leaveMessage = Message.builder()
@@ -233,5 +240,17 @@ public class CrewService {
                 .build();
 
         return new ApiRespDto<>("success", "크루를 탈퇴했습니다.", respDto);
+    }
+
+    public ApiRespDto<?> deactivateCrew(DeactivateCrewReqDto deactivateCrewReqDto, PrincipalUser principalUser){
+        if(!deactivateCrewReqDto.getUserId().equals(principalUser.getUserId())){
+            return new ApiRespDto<>("failed", "크루 비활성화 권한이 없습니다.", null);
+        }
+
+        int updateCrewStatusResult = crewRepository.updateCrewStatus(deactivateCrewReqDto.getCrewId(), "INACTIVE");
+        if(updateCrewStatusResult == 0){
+            return new ApiRespDto<>("failed", "크루 비활성화에 실패했습니다.", null);
+        }
+        return new ApiRespDto<>("success", "크루를 비활성화했습니다.", null);
     }
 }
