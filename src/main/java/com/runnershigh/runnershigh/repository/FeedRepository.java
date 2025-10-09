@@ -17,6 +17,22 @@ public class FeedRepository {
     @Autowired
     private FeedMapper feedMapper;
 
+    public Optional<Feed> addFeed(Feed feed) {
+        int result = feedMapper.addFeed(feed);;
+        if(result == 0){
+            return Optional.empty();
+        }
+        return Optional.of(feed);
+    }
+
+    public int updateFeed(Feed feed) {
+        return feedMapper.updateFeed(feed);
+    }
+
+    public int deleteFeed(Integer feedId){
+        return feedMapper.deleteFeed(feedId);
+    }
+
     public List<GetFeedRespDto> getFeedList(Integer targetUserId, Integer cursorFeedId, Integer size, Integer loginUserId) {
         return feedMapper.getFeedList(targetUserId, cursorFeedId, size, loginUserId);
     }
@@ -35,13 +51,5 @@ public class FeedRepository {
 
     public List<GetFeedMapRespDto> getFeedMapList(String startDate, String endDate) {
         return feedMapper.getFeedMapList(startDate, endDate);
-    }
-
-    public Optional<Feed> addFeed(Feed feed) {
-        int result = feedMapper.addFeed(feed);;
-        if(result == 0){
-            return Optional.empty();
-        }
-        return Optional.of(feed);
     }
 }

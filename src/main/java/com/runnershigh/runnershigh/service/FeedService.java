@@ -23,6 +23,44 @@ public class FeedService {
     @Autowired
     private LikeRepository likeRepository;
 
+    public ApiRespDto<?> addFeed(AddFeedReqDto addFeedReqDto, PrincipalUser principalUser) {
+        if(!Objects.equals(principalUser.getUserId(), addFeedReqDto.getUserId())) {
+            return new ApiRespDto<>("failed", "접근 권한이 없습니다.", null);
+        }
+
+        Optional<Feed> optionalFeed = feedRepository.addFeed(addFeedReqDto.toEntity());
+        if (optionalFeed.isEmpty()) {
+            return new ApiRespDto<>("failed", "서버 오류로 피드 등록에 실패했습니다.", null);
+        }
+        return new ApiRespDto<>("success", "피드가 성공적으로 등록되었습니다.", optionalFeed.get());
+    }
+
+    public ApiRespDto<?> updateFeed(UpdateFeedReqDto updateFeedReqDto, PrincipalUser principalUser) {
+        if(!Objects.equals(principalUser.getUserId(), updateFeedReqDto.getUserId())) {
+            return new ApiRespDto<>("failed", "피드 수정 권한이 없습니다.", null);
+        }
+
+        int result = feedRepository.updateFeed(updateFeedReqDto.toEntity());
+        if(result != 1) {
+            return new ApiRespDto<>("failed", "피드 수정 중 오류가 발생했습니다.", null);
+        }
+
+        return new ApiRespDto<>("success", "피드를 수정했습니다.", null);
+    }
+
+    public ApiRespDto<?> deleteFeed(DeleteFeedReqDto deleteFeedReqDto, PrincipalUser principalUser) {
+        if(!Objects.equals(principalUser.getUserId(), deleteFeedReqDto.getUserId())) {
+            return new ApiRespDto<>("failed", "피드 삭제 권한이 없습니다.", null);
+        }
+
+        int result = feedRepository.deleteFeed(deleteFeedReqDto.getFeedId());
+        if(result != 1) {
+            return new ApiRespDto<>("failed", "피드 삭제 중 오류가 발생했습니다.", null);
+        }
+
+        return new ApiRespDto<>("success", "피드를 삭제했습니다.", null);
+    }
+
     public ApiRespDto<?> getFeedList(Integer targetUserId, Integer cursorFeedId, Integer size, PrincipalUser principalUser) {
         Integer loginUserId = (principalUser != null) ? principalUser.getUserId() : null;
 
@@ -87,18 +125,6 @@ public class FeedService {
             return new ApiRespDto<>("failed", "최근 일주일 간 게시된 피드가 없습니다.", null);
         }
         return new ApiRespDto<>("success", "피드 목록을 조회했습니다.", feeds);
-    }
-
-    public ApiRespDto<?> addFeed(AddFeedReqDto addFeedReqDto, PrincipalUser principalUser) {
-        if(!Objects.equals(principalUser.getUserId(), addFeedReqDto.getUserId())) {
-            return new ApiRespDto<>("failed", "접근 권한이 없습니다.", null);
-        }
-
-        Optional<Feed> optionalFeed = feedRepository.addFeed(addFeedReqDto.toEntity());
-        if (optionalFeed.isEmpty()) {
-            return new ApiRespDto<>("failed", "서버 오류로 피드 등록에 실패했습니다.", null);
-        }
-        return new ApiRespDto<>("success", "피드가 성공적으로 등록되었습니다.", optionalFeed.get());
     }
 
     public ApiRespDto<?> likeFeed(AddLikeReqDto addLikeReqDto) {

@@ -15,7 +15,6 @@ public class Feed {
     private Integer feedId;
     private Integer userId;
     private String feedImgUrl;
-    private String feedStatus;
     private String feedLocation;
     private Double feedLongitude;
     private Double feedLatitude;
