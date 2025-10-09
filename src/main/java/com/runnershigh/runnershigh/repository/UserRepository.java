@@ -39,5 +39,9 @@ public class UserRepository {
     public int updateUser(User user) {
         return userMapper.updateUser(user);
     }
+
+    public int deleteUser(Integer userId) {
+        return userMapper.deleteUser(userId);
+    }
 }
 

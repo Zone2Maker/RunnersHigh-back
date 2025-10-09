@@ -1,8 +1,10 @@
 package com.runnershigh.runnershigh.controller;
 
+import com.runnershigh.runnershigh.dto.user.DeleteUserReqDto;
 import com.runnershigh.runnershigh.dto.user.UpdateUserReqDto;
 import com.runnershigh.runnershigh.security.model.PrincipalUser;
 import com.runnershigh.runnershigh.service.UserService;
+import org.apache.ibatis.annotations.Delete;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -34,5 +36,10 @@ public class UserController {
     public ResponseEntity<?> updateUser(@RequestBody UpdateUserReqDto updateUserReqDto,
                                         @AuthenticationPrincipal PrincipalUser principalUser) {
         return ResponseEntity.ok(userService.updateUser(updateUserReqDto, principalUser));
+    }
+
+    @GetMapping("/delete")
+    public ResponseEntity<?> deleteUser(@RequestBody DeleteUserReqDto deleteUserReqDto, @AuthenticationPrincipal PrincipalUser principalUser) {
+        return ResponseEntity.ok(userService.deleteUser(deleteUserReqDto, principalUser));
     }
 }

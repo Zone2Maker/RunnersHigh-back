@@ -20,7 +20,6 @@ public class User {
     private String password;
     private String nickname;
     private String profileImgUrl;
-    private LocalDateTime lastLoginDt;
     private LocalDateTime createDt;
     private LocalDateTime updateDt;
 
