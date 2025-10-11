@@ -5,7 +5,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-//@MapperScan("com.runnershigh.runnershigh.mapper")
 public class RunnershighApplication {
 
 	public static void main(String[] args) {
