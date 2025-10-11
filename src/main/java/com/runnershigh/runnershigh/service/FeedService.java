@@ -121,9 +121,6 @@ public class FeedService {
     public ApiRespDto<?> getFeedMapList(String startDate, String endDate) {
         List<GetFeedMapRespDto> feeds = feedRepository.getFeedMapList(startDate, endDate);
 
-        if (feeds.isEmpty()) {
-            return new ApiRespDto<>("failed", "최근 일주일 간 게시된 피드가 없습니다.", null);
-        }
         return new ApiRespDto<>("success", "피드 목록을 조회했습니다.", feeds);
     }
 
