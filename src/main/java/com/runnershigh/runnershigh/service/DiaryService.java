@@ -2,6 +2,8 @@ package com.runnershigh.runnershigh.service;
 
 import com.runnershigh.runnershigh.dto.ApiRespDto;
 import com.runnershigh.runnershigh.dto.diary.AddDiaryReqDto;
+import com.runnershigh.runnershigh.dto.diary.DeleteDiaryReqDto;
+import com.runnershigh.runnershigh.dto.diary.UpdateDiaryReqDto;
 import com.runnershigh.runnershigh.entity.Diary;
 import com.runnershigh.runnershigh.repository.DiaryRepository;
 import com.runnershigh.runnershigh.security.model.PrincipalUser;
@@ -32,6 +34,32 @@ public class DiaryService {
         }
 
         return new ApiRespDto<>("success", "일지를 등록했습니다.", optionalDiary.get());
+    }
+
+    public ApiRespDto<?> updateDiary(UpdateDiaryReqDto updateDiaryReqDto, PrincipalUser principalUser) {
+        if(!Objects.equals(updateDiaryReqDto.getUserId(), principalUser.getUserId())) {
+            return new ApiRespDto<>("failed", "일지 수정 권한이 없습니다.", null);
+        }
+
+        int result = diaryRepository.updateDiary(updateDiaryReqDto.toEntity());
+        if(result != 1) {
+            return new ApiRespDto<>("failed", "일지 수정 중 오류가 발생했습니다.", null);
+        }
+
+        return new ApiRespDto<>("success", "일지를 수정했습니다.", null);
+    }
+
+    public ApiRespDto<?> deleteDiary(DeleteDiaryReqDto deleteDiaryReqDto, PrincipalUser principalUser) {
+        if(!Objects.equals(deleteDiaryReqDto.getUserId(), principalUser.getUserId())) {
+            return new ApiRespDto<>("failed", "일지 삭제 권한이 없습니다.", null);
+        }
+
+        int result = diaryRepository.deleteDiary(deleteDiaryReqDto.getDiaryId());
+        if(result != 1) {
+            return new ApiRespDto<>("failed", "일지 삭제 중 오류가 발생했습니다.", null);
+        }
+
+        return new ApiRespDto<>("success", "일지를 삭제했습니다.", null);
     }
 
     public ApiRespDto<?> getActiveListByUserIdAndDate(Integer year, Integer month, PrincipalUser principalUser) {

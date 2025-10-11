@@ -23,6 +23,14 @@ public class DiaryRepository {
         return Optional.of(diary);
     }
 
+    public int updateDiary(Diary diary) {
+        return diaryMapper.updateDiary(diary);
+    }
+
+    public int deleteDiary(Integer diaryId){
+        return diaryMapper.deleteDiary(diaryId);
+    }
+
     public List<LocalDate> getActiveListByUserIdAndDate(Integer userId, String startDate, String endDate) {
         return diaryMapper.getActiveListByUserIdAndDate(userId, startDate, endDate);
     }
