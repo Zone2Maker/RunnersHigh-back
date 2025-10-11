@@ -34,7 +34,7 @@
             diary_tb
         WHERE
             user_id = #{userId} AND
-            diary_date BETWEEN #{startDate} AND #{endDate}
+            DATE(diary_date) BETWEEN #{startDate} AND #{endDate}
     </select>
 
     <select id="getDiaryByUserIdAndDate">
@@ -45,6 +45,6 @@
         WHERE
             user_id = #{userId}
             AND
-            Date(diaryDate) = #{diaryDate}
+            DATE(diary_date) = #{diaryDate}
     </select>
 </mapper>
