@@ -37,4 +37,12 @@ public class CrewRepository {
         return crewMapper.getWeeklyTopCrews(startDate, endDate);
     }
 
+    public int updateCrewStatus(Integer crewId, String newCrewStatus){
+        return crewMapper.updateCrewStatus(crewId, newCrewStatus);
+    }
+
+    public int deleteCrew(Integer crewId){
+        return crewMapper.deleteCrew(crewId);
+    }
+
 }

@@ -38,7 +38,7 @@ public class UserController {
         return ResponseEntity.ok(userService.updateUser(updateUserReqDto, principalUser));
     }
 
-    @GetMapping("/delete")
+    @PostMapping("/delete")
     public ResponseEntity<?> deleteUser(@RequestBody DeleteUserReqDto deleteUserReqDto, @AuthenticationPrincipal PrincipalUser principalUser) {
         return ResponseEntity.ok(userService.deleteUser(deleteUserReqDto, principalUser));
     }
