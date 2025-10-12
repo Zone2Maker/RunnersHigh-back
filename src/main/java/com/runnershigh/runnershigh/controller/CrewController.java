@@ -76,6 +76,11 @@ public class CrewController {
 
     @PostMapping("/deactivate")
     public ResponseEntity<?> deactivateCrew(@RequestBody DeactivateCrewReqDto deactivateCrewReqDto, @AuthenticationPrincipal PrincipalUser principalUser){
-        return  ResponseEntity.ok(crewService.deactivateCrew(deactivateCrewReqDto, principalUser));
+        ApiRespDto<?> apiRespDto = crewService.deactivateCrew(deactivateCrewReqDto, principalUser);
+        if(apiRespDto.getStatus().equals("success")) {
+            GetMessageRespDto respDto = (GetMessageRespDto) apiRespDto.getData();
+            messagingTemplate.convertAndSend("/sub/crew/" + respDto.getCrewId(), respDto);
+        }
+        return ResponseEntity.ok(apiRespDto);
     }
 }
