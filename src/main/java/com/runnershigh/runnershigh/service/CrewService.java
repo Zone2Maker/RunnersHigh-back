@@ -251,6 +251,30 @@ public class CrewService {
         if(updateCrewStatusResult == 0){
             return new ApiRespDto<>("failed", "크루 비활성화에 실패했습니다.", null);
         }
-        return new ApiRespDto<>("success", "크루를 비활성화했습니다.", null);
+
+        Message leaveMessage = Message.builder()
+                .crewId(deactivateCrewReqDto.getCrewId())
+                .userId(systemUserId)
+                .message("✨크루장이 크루를 삭제했습니다. 하지만 여정은 여기서 끝이 아니에요! 새로운 크루에서 다시 만나요.✨" )
+                .messageType("LEAVE")
+                .createDt(LocalDateTime.now())
+                .build();
+
+        Optional<Message> optionalMessage = messageRepository.saveMessage(leaveMessage);
+        if(optionalMessage.isEmpty()) {
+            return new ApiRespDto<>("failed", "서버에 문제가 발생했습니다.", null);
+        }
+        Message savedMessage = optionalMessage.get();
+
+        GetMessageRespDto respDto = GetMessageRespDto.builder()
+                .messageId(savedMessage.getMessageId())
+                .message(savedMessage.getMessage())
+                .messageType(savedMessage.getMessageType())
+                .createDt(savedMessage.getCreateDt())
+                .userId(systemUserId)
+                .crewId(deactivateCrewReqDto.getCrewId())
+                .build();
+
+        return new ApiRespDto<>("success", "크루를 비활성화했습니다.", respDto);
     }
 }
